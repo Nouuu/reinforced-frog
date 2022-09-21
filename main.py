@@ -1,2 +1,12 @@
+import arcade
+
+from conf.config import WORLD
+from display.world_window import WorldWindow
+from game.world import World
+
 if __name__ == '__main__':
-    print("Hello World")
+    world = World(WORLD)
+
+    window = WorldWindow(world)
+    window.setup()
+    arcade.run()

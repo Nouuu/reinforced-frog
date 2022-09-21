@@ -31,6 +31,11 @@ class World:
             res += '\n'
         print(res)
 
+    def get_token(self, state: tuple):
+        if state in self.__states:
+            return self.__states[state]
+        return None
+
     @property
     def start(self):
         return self.__start
