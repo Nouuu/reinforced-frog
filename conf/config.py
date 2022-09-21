@@ -11,6 +11,7 @@ TURTLE_TOKEN = 'T'
 WALL_TOKEN = 'X'
 WATER_TOKEN = 'W'
 WOOD_TOKEN = 'O'
+GROUND_TOKEN = 'G'
 
 WORLD = """
 """
@@ -45,6 +46,7 @@ class Rewards:
             WALL_TOKEN: -2 * maze_size,
             WATER_TOKEN: -2 * maze_size,
             WOOD_TOKEN: REWARD_DEFAULT,
+            GROUND_TOKEN: REWARD_DEFAULT,
         }
 
     @property
@@ -68,6 +70,7 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 SPRITE_SIZE = 64
 
 ROAD_SPRITE = [get_sprite_resources('topdown_tanks/tileGrass_roadEast')]
+GROUND_SPRITE = [get_sprite_resources('topdown_tanks/tileGrass_roadEast')]
 WATER_SPRITE = [get_sprite_resources('tiles/water')]
 EXIT_SPRITE = [get_sprite_local('grass')]
 START_SPRITE = [get_sprite_local('grass')]
