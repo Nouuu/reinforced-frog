@@ -67,18 +67,39 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 
 SPRITE_SIZE = 64
 
-CAR_SPRITE = [get_sprite_local("car_1"), get_sprite_local("car_2")]
+ROAD_SPRITE = [get_sprite_resources('topdown_tanks/tileGrass_roadEast')]
+WATER_SPRITE = [get_sprite_resources('tiles/water')]
+EXIT_SPRITE = [get_sprite_local('grass')]
+START_SPRITE = [get_sprite_local('grass')]
+WALL_SPRITE = [get_sprite_resources('tiles/stoneCenter')]
+
+FROG_SPRITE = [get_sprite_local('frog')]
+CAR_SPRITE = [
+    {
+        'SPRITE': get_sprite_local("car_1"),
+        'BACKGROUND': ROAD_SPRITE
+    }, {
+        'SPRITE': get_sprite_local("car_2"),
+        'BACKGROUND': ROAD_SPRITE
+    }
+
+]
 TRUCK_SPRITE = [
     {
         'FRONT': get_sprite_local("truck_head"),
-        'BACK': get_sprite_local("truck_tail")
+        'BACK': get_sprite_local("truck_tail"),
+        'BACKGROUND': ROAD_SPRITE
     }
 ]
-EXIT_SPRITE = [get_sprite_local('grass')]
-FROG_SPRITE = [get_sprite_local('frog')]
-ROAD_SPRITE = [get_sprite_resources('topdown_tanks/tileGrass_roadEast')]
-START_SPRITE = [get_sprite_local('grass')]
-TURTLE_SPRITE = [get_sprite_local('turtle')]
-WALL_SPRITE = [get_sprite_resources('tiles/stoneCenter')]
-WATER_SPRITE = [get_sprite_resources('tiles/water')]
-WOOD_SPRITE = [get_sprite_local('wood')]
+TURTLE_SPRITE = [
+    {
+        'SPRITE': get_sprite_local('turtle'),
+        'BACKGROUND': WATER_SPRITE
+    }
+]
+WOOD_SPRITE = [
+    {
+        'SPRITE': get_sprite_local('wood'),
+        'BACKGROUND': WATER_SPRITE
+    }
+]
