@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
-            -Dsonar.branch.name=main
+            -Dsonar.branch.name=dev
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
