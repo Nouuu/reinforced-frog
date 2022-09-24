@@ -52,6 +52,7 @@ class NewWorldWindow(arcade.Window):
             'REINFORCED FROG'
         )
         self.__world_sprites = None
+        self.__entities_sprites = None
         self.__random = random.Random()
         self.__world = world
 
@@ -65,12 +66,13 @@ class NewWorldWindow(arcade.Window):
 
     def __get_xy_state(self, state: tuple) -> tuple:
         return (
-            state[1] / WORLD_SCALING * SPRITE_SIZE,
-            (self.__world.height - state[0]) / WORLD_SCALING * SPRITE_SIZE
+            (state[1] + 0.5) / WORLD_SCALING * SPRITE_SIZE,
+            (self.__world.height - state[0] - 0.5) / WORLD_SCALING * SPRITE_SIZE
         )
 
     def setup(self):
         self.__world_sprites = arcade.SpriteList()
+        self.__entities_sprites = arcade.SpriteList()
 
         for state in self.__world.world_states:
             world_entity: WorldEntity = self.__world.get_world_line_entity(state)
@@ -78,6 +80,13 @@ class NewWorldWindow(arcade.Window):
                 sprite = self.__get_environment_sprite(state, world_entity)
                 self.__world_sprites.append(sprite)
 
+        for state in self.__world.world_entities_states:
+            world_entity: WorldEntity = self.__world.get_world_entity(state)
+            if world_entity is not None:
+                sprite = self.__get_environment_sprite(state, world_entity)
+                self.__entities_sprites.append(sprite)
+
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
+        self.__entities_sprites.draw()
