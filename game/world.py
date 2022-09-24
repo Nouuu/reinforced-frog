@@ -1,4 +1,5 @@
 from conf.config import *
+from game.utils import get_collisions
 
 
 class World:
@@ -80,15 +81,22 @@ class World:
 
 
 class NewWorld:
-    def __init__(self, width: int, height: int, scaling: int, world: {int: WorldEntity},
-                 world_entities: {tuple: WorldEntity}):
-        self.__setup_world(width, height, scaling)
+    def __init__(self,
+                 width: int,
+                 height: int,
+                 scaling: int,
+                 world: {int: WorldEntity},
+                 world_entities: {tuple: WorldEntity},
+                 player: (tuple, WorldEntity)):
+        self.__setup_world(width, height, scaling, player)
         self.__parse_world_lines(world)
         self.__parse_world_entities(world_entities)
 
-    def __setup_world(self, width: int, height: int, scaling: int):
+    def __setup_world(self, width: int, height: int, scaling: int, player: (tuple, WorldEntity)):
         self.__world_states: {(int, int): WorldEntity} = {}
         self.__world_entities_states: {(int, int): WorldEntity} = {}
+        self.__player: WorldEntity = player[1]
+        self.__player_state: (int, int) = player[0]
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
@@ -104,24 +112,32 @@ class NewWorld:
             self.__world_entities_states[state] = world[state]
 
     def print(self):
-        res = ''
-        for row in range(self.__rows):
-            for col in range(self.__cols):
-                state = (row, col)
-                if state in self.__world_entities_states:
-                    res += self.__world_entities_states[state].token
-                elif state in self.__world_states:
-                    res += self.__world_states[state].token
-                else:
-                    res += EMPTY_TOKEN
-
-                # world_entity: WorldEntity | None = self.__world_states[state]
-                # if world_entity is None:
-                #     res += EMPTY_TOKEN
-                # else:
-                #     res += world_entity.token
-            res += '\n'
-        print(res)
+        # res = ''
+        # for row in range(self.__rows):
+        #     for col in range(self.__cols):
+        #         state = (row, col)
+        #         if state == self.__player_state:
+        #             res += self.__player.token
+        #         elif state in self.__world_entities_states:
+        #             res += self.__world_entities_states[state].token
+        #         elif state in self.__world_states:
+        #             res += self.__world_states[state].token
+        #         else:
+        #             res += EMPTY_TOKEN
+        #     res += '\n'
+        # print(res)
+        print('Player position: {}'.format(self.__player_state))
+        print('Player collisions :')
+        print('From ground :\n-------------------')
+        for state in get_collisions(self.__player_state, self.__world_states, self.__world_entities_states,
+                                    self.__scaling):
+            if state in self.__world_states:
+                print(state, '->', self.__world_states[state].token)
+        print('-------------------\nFrom entities :')
+        for state in get_collisions(self.__player_state, self.__world_states, self.__world_entities_states,
+                                    self.__scaling):
+            if state in self.__world_entities_states:
+                print(state, '->', self.__world_entities_states[state].token)
 
     def get_world_line_entity(self, state: (int, int)) -> WorldEntity | None:
         if state in self.__world_states:
@@ -132,6 +148,14 @@ class NewWorld:
         if state in self.__world_entities_states:
             return self.__world_entities_states[state]
         return None
+
+    @property
+    def player(self):
+        return self.__player
+
+    @property
+    def player_state(self):
+        return self.__player_state
 
     @property
     def world_states(self):

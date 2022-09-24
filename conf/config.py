@@ -102,10 +102,10 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 
 # WORLD ENTITIES
 
-WORLD_ENTITIES: {str: WorldEntity} = {
+ENTITIES: {str: WorldEntity} = {
     CAR_TOKEN: WorldEntity(3, 3, CAR_TOKEN, get_sprite_local("car_1")),
     EXIT_TOKEN: WorldEntity(3, 3, EXIT_TOKEN, get_sprite_local('grass', 2)),
-    FROG_TOKEN: WorldEntity(3, 3, FROG_TOKEN, get_sprite_local('frog')),
+    FROG_TOKEN: WorldEntity(3, 3, FROG_TOKEN, get_sprite_local('frog', 0.15)),
     GROUND_TOKEN: WorldEntity(3, 3, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
     ROAD_TOKEN: WorldEntity(3, 3, ROAD_TOKEN, get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)),
     START_TOKEN: WorldEntity(3, 3, START_TOKEN, get_sprite_local('grass', 2)),
@@ -123,23 +123,23 @@ WORLD_HEIGHT = 18
 WORLD_SCALING = 3
 
 WORLD_LINES = {  # y
-    1: WORLD_ENTITIES[GROUND_TOKEN],
-    4: WORLD_ENTITIES[WATER_TOKEN],
-    7: WORLD_ENTITIES[GROUND_TOKEN],
-    10: WORLD_ENTITIES[ROAD_TOKEN],
-    13: WORLD_ENTITIES[ROAD_TOKEN],
-    16: WORLD_ENTITIES[GROUND_TOKEN],
+    1: ENTITIES[GROUND_TOKEN],
+    4: ENTITIES[WATER_TOKEN],
+    7: ENTITIES[GROUND_TOKEN],
+    10: ENTITIES[ROAD_TOKEN],
+    13: ENTITIES[ROAD_TOKEN],
+    16: ENTITIES[GROUND_TOKEN],
 }
 
 WORLD_ENTITIES = {
-    (4, 2): WORLD_ENTITIES[TURTLE_TOKEN],
-    (4, 5): WORLD_ENTITIES[TURTLE_TOKEN],
-    (4, 15): WORLD_ENTITIES[TURTLE_TOKEN],
-    (10, 0): WORLD_ENTITIES[TRUCK_TOKEN],
-    (10, 6): WORLD_ENTITIES[CAR_TOKEN],
-    (10, 18): WORLD_ENTITIES[CAR_TOKEN],
-    (10, 24): WORLD_ENTITIES[CAR_TOKEN],
-    (13, 5): WORLD_ENTITIES[TRUCK_TOKEN],
-    (13, 10): WORLD_ENTITIES[CAR_TOKEN],
-    (13, 15): WORLD_ENTITIES[CAR_TOKEN],
+    (4, 2): ENTITIES[TURTLE_TOKEN],
+    (4, 5): ENTITIES[TURTLE_TOKEN],
+    (4, 15): ENTITIES[WOOD_TOKEN],
+    (10, 0): ENTITIES[TRUCK_TOKEN],
+    (10, 6): ENTITIES[CAR_TOKEN],
+    (10, 18): ENTITIES[CAR_TOKEN],
+    (10, 24): ENTITIES[CAR_TOKEN],
+    (13, 5): ENTITIES[TRUCK_TOKEN],
+    (13, 10): ENTITIES[CAR_TOKEN],
+    (13, 15): ENTITIES[CAR_TOKEN],
 }

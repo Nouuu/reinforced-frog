@@ -51,6 +51,7 @@ class NewWorldWindow(arcade.Window):
             int(world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG'
         )
+        self.__player_sprite = None
         self.__world_sprites = None
         self.__entities_sprites = None
         self.__random = random.Random()
@@ -73,20 +74,27 @@ class NewWorldWindow(arcade.Window):
     def setup(self):
         self.__world_sprites = arcade.SpriteList()
         self.__entities_sprites = arcade.SpriteList()
+        self.__player_sprite = self.__get_environment_sprite(self.__world.player_state, self.__world.player)
 
-        for state in self.__world.world_states:
-            world_entity: WorldEntity = self.__world.get_world_line_entity(state)
-            if world_entity is not None:
-                sprite = self.__get_environment_sprite(state, world_entity)
-                self.__world_sprites.append(sprite)
+        self.setup_world_states()
+        self.setup_world_entities_state()
 
+    def setup_world_entities_state(self):
         for state in self.__world.world_entities_states:
             world_entity: WorldEntity = self.__world.get_world_entity(state)
             if world_entity is not None:
                 sprite = self.__get_environment_sprite(state, world_entity)
                 self.__entities_sprites.append(sprite)
 
+    def setup_world_states(self):
+        for state in self.__world.world_states:
+            world_entity: WorldEntity = self.__world.get_world_line_entity(state)
+            if world_entity is not None:
+                sprite = self.__get_environment_sprite(state, world_entity)
+                self.__world_sprites.append(sprite)
+
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__entities_sprites.draw()
+        self.__player_sprite.draw()
