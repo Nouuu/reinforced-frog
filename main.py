@@ -1,4 +1,7 @@
+import arcade
+
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
+from display.world_window import NewWorldWindow
 from game.world import NewWorld
 
 if __name__ == '__main__':
@@ -11,6 +14,6 @@ if __name__ == '__main__':
 
     world.print()
 
-    # window = WorldWindow(world)
-    # window.setup()
-    # arcade.run()
+    window = NewWorldWindow(world)
+    window.setup()
+    arcade.run()

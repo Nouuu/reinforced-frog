@@ -92,20 +92,20 @@ class NewWorld:
 
         for row in range(self.__rows):
             for col in range(self.__cols):
-                state = (col, row)
+                state = (row, col)
                 self.__world_states[state] = None
 
     def __parse_world_lines(self, world: {int: WorldEntity}):
         for row in range(1, self.__rows, self.__scaling):
             for col in range(1, self.__cols, self.__scaling):
-                state = (col, row)
+                state = (row, col)
                 self.__world_states[state] = world[row]
 
     def print(self):
         res = ''
         for row in range(self.__rows):
             for col in range(self.__cols):
-                state = (col, row)
+                state = (row, col)
                 world_entity: WorldEntity | None = self.__world_states[state]
                 if world_entity is None:
                     res += EMPTY_TOKEN
@@ -114,7 +114,7 @@ class NewWorld:
             res += '\n'
         print(res)
 
-    def get_world_line_token(self, state: (int, int)) -> WorldEntity | None:
+    def get_world_line_entity(self, state: (int, int)) -> WorldEntity | None:
         if state in self.__world_states:
             return self.__world_states[state]
         return None
