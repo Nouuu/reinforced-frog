@@ -80,20 +80,18 @@ class World:
 
 
 class NewWorld:
-    def __init__(self, width: int, height: int, scaling: int, world: {int: WorldEntity}):
+    def __init__(self, width: int, height: int, scaling: int, world: {int: WorldEntity},
+                 world_entities: {tuple: WorldEntity}):
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world)
+        self.__parse_world_entities(world_entities)
 
     def __setup_world(self, width: int, height: int, scaling: int):
-        self.__world_states: {(int, int): WorldEntity | None} = {}
+        self.__world_states: {(int, int): WorldEntity} = {}
+        self.__world_entities_states: {(int, int): WorldEntity} = {}
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
-
-        for row in range(self.__rows):
-            for col in range(self.__cols):
-                state = (row, col)
-                self.__world_states[state] = None
 
     def __parse_world_lines(self, world: {int: WorldEntity}):
         for row in range(1, self.__rows, self.__scaling):
@@ -101,16 +99,27 @@ class NewWorld:
                 state = (row, col)
                 self.__world_states[state] = world[row]
 
+    def __parse_world_entities(self, world: {tuple: WorldEntity}):
+        for state in world.keys():
+            self.__world_entities_states[state] = world[state]
+
     def print(self):
         res = ''
         for row in range(self.__rows):
             for col in range(self.__cols):
                 state = (row, col)
-                world_entity: WorldEntity | None = self.__world_states[state]
-                if world_entity is None:
-                    res += EMPTY_TOKEN
+                if state in self.__world_entities_states:
+                    res += self.__world_entities_states[state].token
+                elif state in self.__world_states:
+                    res += self.__world_states[state].token
                 else:
-                    res += world_entity.token
+                    res += EMPTY_TOKEN
+
+                # world_entity: WorldEntity | None = self.__world_states[state]
+                # if world_entity is None:
+                #     res += EMPTY_TOKEN
+                # else:
+                #     res += world_entity.token
             res += '\n'
         print(res)
 
@@ -119,9 +128,18 @@ class NewWorld:
             return self.__world_states[state]
         return None
 
+    def get_world_entity(self, state: (int, int)) -> WorldEntity | None:
+        if state in self.__world_entities_states:
+            return self.__world_entities_states[state]
+        return None
+
     @property
     def world_states(self):
         return list(self.__world_states.keys())
+
+    @property
+    def world_entities_states(self):
+        return list(self.__world_entities_states.keys())
 
     @property
     def height(self):
