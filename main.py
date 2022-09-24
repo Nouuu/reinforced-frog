@@ -1,12 +1,16 @@
-import arcade
-
-from conf.config import WORLD, ENTITIES
-from display.world_window import WorldWindow
-from game.world import World
+from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
+from game.world import NewWorld
 
 if __name__ == '__main__':
-    world = World(WORLD, ENTITIES)
+    world = NewWorld(
+        width=WORLD_WIDTH,
+        height=WORLD_HEIGHT,
+        scaling=WORLD_SCALING,
+        world=WORLD_LINES
+    )
 
-    window = WorldWindow(world)
-    window.setup()
-    arcade.run()
+    world.print()
+
+    # window = WorldWindow(world)
+    # window.setup()
+    # arcade.run()

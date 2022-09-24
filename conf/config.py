@@ -1,7 +1,6 @@
 # WORLD
 import arcade
 
-from display.entity.utils import get_entity
 from display.entity.world_entity import WorldEntity
 
 CAR_TOKEN = 'C'
@@ -15,21 +14,7 @@ WALL_TOKEN = 'X'
 WATER_TOKEN = 'W'
 WOOD_TOKEN = 'O'
 GROUND_TOKEN = 'G'
-
-# WORLD
-
-WORLD_WIDTH = 24
-WORLD_HEIGHT = 18
-WORLD_SCALING = 3
-
-WORLD_LINES = {  # y
-    1: get_entity(GROUND_TOKEN),
-    4: get_entity(WATER_TOKEN),
-    7: get_entity(GROUND_TOKEN),
-    10: get_entity(ROAD_TOKEN),
-    13: get_entity(ROAD_TOKEN),
-    16: get_entity(GROUND_TOKEN),
-}
+EMPTY_TOKEN = ' '
 
 WORLD = """
 G..G..G..G..G..G..G..
@@ -129,4 +114,19 @@ WORLD_ENTITIES: {str: WorldEntity} = {
     WALL_TOKEN: WorldEntity(3, 3, WALL_TOKEN, get_sprite_resources('tiles/stoneCenter')),
     WATER_TOKEN: WorldEntity(3, 3, WATER_TOKEN, get_sprite_resources('tiles/water')),
     WOOD_TOKEN: WorldEntity(3, 3, WOOD_TOKEN, get_sprite_local("wood", 0.15)),
+}
+
+# WORLD
+
+WORLD_WIDTH = 24
+WORLD_HEIGHT = 18
+WORLD_SCALING = 3
+
+WORLD_LINES = {  # y
+    1: WORLD_ENTITIES[GROUND_TOKEN],
+    4: WORLD_ENTITIES[WATER_TOKEN],
+    7: WORLD_ENTITIES[GROUND_TOKEN],
+    10: WORLD_ENTITIES[ROAD_TOKEN],
+    13: WORLD_ENTITIES[ROAD_TOKEN],
+    16: WORLD_ENTITIES[GROUND_TOKEN],
 }

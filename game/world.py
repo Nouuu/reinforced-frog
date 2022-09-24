@@ -81,38 +81,40 @@ class World:
 
 class NewWorld:
     def __init__(self, width: int, height: int, scaling: int, world: {int: WorldEntity}):
-        self.__parse_world(width, height, scaling)
+        self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world)
-        self.__nb_world_states = len(self.__world_states)
 
-        def __parse_world(self, width: int, height: int, scaling: int):
-            self.__world_states = {}
-            self.__rows = height
-            self.__cols = width
-            self.__scaling = scaling
-            pass
+    def __setup_world(self, width: int, height: int, scaling: int):
+        self.__world_states: {(int, int): WorldEntity | None} = {}
+        self.__rows = height
+        self.__cols = width
+        self.__scaling = scaling
 
-    def __parse_world_lines(self, str_world: {int: WorldEntity}):
-        self.__world_states = {}
-        row = 0
-        col = 0
-        for row, line in enumerate(str_world.strip().splitlines()):
-            for col, char in enumerate(line):
-                self.__world_states[(row, col)] = char
+        for row in range(self.__rows):
+            for col in range(self.__cols):
+                state = (col, row)
+                self.__world_states[state] = None
 
-        self.__rows = int((row + 1) / 2)
-        self.__cols = int((col + 1) / 2)
+    def __parse_world_lines(self, world: {int: WorldEntity}):
+        for row in range(1, self.__rows, self.__scaling):
+            for col in range(1, self.__cols, self.__scaling):
+                state = (col, row)
+                self.__world_states[state] = world[row]
 
     def print(self):
         res = ''
         for row in range(self.__rows):
             for col in range(self.__cols):
-                state = (row, col)
-                res += self.__world_states[state]
+                state = (col, row)
+                world_entity: WorldEntity | None = self.__world_states[state]
+                if world_entity is None:
+                    res += EMPTY_TOKEN
+                else:
+                    res += world_entity.token
             res += '\n'
         print(res)
 
-    def get_world_token(self, state: tuple) -> str | None:
+    def get_world_line_token(self, state: (int, int)) -> WorldEntity | None:
         if state in self.__world_states:
             return self.__world_states[state]
         return None
