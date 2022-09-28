@@ -11,7 +11,7 @@ if __name__ == '__main__':
         scaling=WORLD_SCALING,
         world=WORLD_LINES,
         world_entities=WORLD_ENTITIES,
-        player=((14, 9), ENTITIES[FROG_TOKEN])
+        player=((13, 1), ENTITIES[FROG_TOKEN])
     )
 
     world.print()

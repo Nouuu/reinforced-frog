@@ -103,17 +103,17 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 # WORLD ENTITIES
 
 ENTITIES: {str: WorldEntity} = {
-    CAR_TOKEN: WorldEntity(3, 3, CAR_TOKEN, get_sprite_local("car_1")),
-    EXIT_TOKEN: WorldEntity(3, 3, EXIT_TOKEN, get_sprite_local('grass', 2)),
-    FROG_TOKEN: WorldEntity(3, 3, FROG_TOKEN, get_sprite_local('frog', 0.15)),
-    GROUND_TOKEN: WorldEntity(3, 3, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
-    ROAD_TOKEN: WorldEntity(3, 3, ROAD_TOKEN, get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)),
-    START_TOKEN: WorldEntity(3, 3, START_TOKEN, get_sprite_local('grass', 2)),
-    TRUCK_TOKEN: WorldEntity(4, 3, TRUCK_TOKEN, get_sprite_local("truck")),
-    TURTLE_TOKEN: WorldEntity(3, 3, TURTLE_TOKEN, get_sprite_local("turtle", 0.1)),
-    WALL_TOKEN: WorldEntity(3, 3, WALL_TOKEN, get_sprite_resources('tiles/stoneCenter')),
-    WATER_TOKEN: WorldEntity(3, 3, WATER_TOKEN, get_sprite_resources('tiles/water')),
-    WOOD_TOKEN: WorldEntity(3, 3, WOOD_TOKEN, get_sprite_local("wood", 0.15)),
+    CAR_TOKEN: WorldEntity(1, 1, CAR_TOKEN, get_sprite_local("car_1")),
+    EXIT_TOKEN: WorldEntity(1, 1, EXIT_TOKEN, get_sprite_local('grass', 2)),
+    FROG_TOKEN: WorldEntity(1, 1, FROG_TOKEN, get_sprite_local('frog', 0.15)),
+    GROUND_TOKEN: WorldEntity(1, 1, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
+    ROAD_TOKEN: WorldEntity(1, 1, ROAD_TOKEN, get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)),
+    START_TOKEN: WorldEntity(1, 1, START_TOKEN, get_sprite_local('grass', 2)),
+    TRUCK_TOKEN: WorldEntity(2, 1, TRUCK_TOKEN, get_sprite_local("truck")),
+    TURTLE_TOKEN: WorldEntity(1, 1, TURTLE_TOKEN, get_sprite_local("turtle", 0.1)),
+    WALL_TOKEN: WorldEntity(1, 1, WALL_TOKEN, get_sprite_resources('tiles/stoneCenter')),
+    WATER_TOKEN: WorldEntity(1, 1, WATER_TOKEN, get_sprite_resources('tiles/water')),
+    WOOD_TOKEN: WorldEntity(1, 1, WOOD_TOKEN, get_sprite_local("wood", 0.15)),
 }
 
 # WORLD

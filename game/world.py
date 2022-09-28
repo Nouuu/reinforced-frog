@@ -129,12 +129,14 @@ class NewWorld:
         print('Player position: {}'.format(self.__player_state))
         print('Player collisions :')
         print('From ground :\n-------------------')
-        for state in get_collisions(self.__player_state, self.__world_states, self.__world_entities_states,
+        for state in get_collisions(self.__player, self.__player_state, self.__world_states,
+                                    self.__world_entities_states,
                                     self.__scaling):
             if state in self.__world_states:
                 print(state, '->', self.__world_states[state].token)
         print('-------------------\nFrom entities :')
-        for state in get_collisions(self.__player_state, self.__world_states, self.__world_entities_states,
+        for state in get_collisions(self.__player, self.__player_state, self.__world_states,
+                                    self.__world_entities_states,
                                     self.__scaling):
             if state in self.__world_entities_states:
                 print(state, '->', self.__world_entities_states[state].token)
