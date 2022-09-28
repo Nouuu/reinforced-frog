@@ -85,7 +85,7 @@ class NewWorld:
                  width: int,
                  height: int,
                  scaling: int,
-                 world: {int: WorldEntity},
+                 world: [WorldEntity],
                  world_entities: {tuple: WorldEntity},
                  player: (tuple, WorldEntity)):
         self.__setup_world(width, height, scaling, player)
@@ -101,11 +101,12 @@ class NewWorld:
         self.__cols = width
         self.__scaling = scaling
 
-    def __parse_world_lines(self, world: {int: WorldEntity}):
-        for row in range(1, self.__rows, self.__scaling):
-            for col in range(1, self.__cols, self.__scaling):
+    def __parse_world_lines(self, world: [WorldEntity]):
+        for row in range(self.__scaling // 2, self.__rows, self.__scaling):
+            for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
-                self.__world_states[state] = world[row]
+                print(state)
+                self.__world_states[state] = world[row // self.__scaling]
 
     def __parse_world_entities(self, world: {tuple: WorldEntity}):
         for state in world.keys():
