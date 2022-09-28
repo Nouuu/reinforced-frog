@@ -1,5 +1,5 @@
 from conf.config import *
-from game.utils import get_collisions
+from game.utils import get_collisions, is_in_safe_zone_on_water
 
 
 class World:
@@ -56,12 +56,17 @@ class World:
                                     self.__scaling):
             if state in self.__world_states:
                 print(state, '->', self.__world_states[state].token)
+
         print('-------------------\nFrom entities :')
         for state in get_collisions(self.__player, self.__player_state, self.__world_states,
                                     self.__world_entities_states,
                                     self.__scaling):
             if state in self.__world_entities_states:
                 print(state, '->', self.__world_entities_states[state].token)
+
+        print('-------------------\nIs in safe zone :')
+        print(
+            is_in_safe_zone_on_water(self.__player, self.__player_state, self.__world_entities_states, self.__scaling))
 
     def get_world_line_entity(self, state: (int, int)) -> WorldEntity | None:
         if state in self.__world_states:

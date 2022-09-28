@@ -28,3 +28,18 @@ def get_collisions(entity: WorldEntity, entity_state: tuple, world_line_entities
             collisions.add(entity_state)
 
     return collisions
+
+
+def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entities: {tuple: WorldEntity},
+                             scaling: int) -> bool:
+    state_positions = get_positions(entity_state, entity, scaling)
+
+    entities_positions = set()
+    for entity_state in world_entities.keys():
+        for state in get_positions(entity_state, world_entities[entity_state], scaling):
+            entities_positions.add(state)
+
+    for pos in state_positions:
+        if pos not in entities_positions:
+            return False
+    return True
