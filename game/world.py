@@ -105,7 +105,6 @@ class NewWorld:
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
             for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
-                print(state)
                 self.__world_states[state] = world[row // self.__scaling]
 
     def __parse_world_entities(self, world: {tuple: WorldEntity}):

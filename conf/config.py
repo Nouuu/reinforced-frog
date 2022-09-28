@@ -103,7 +103,7 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 # WORLD ENTITIES
 
 ENTITIES: {str: WorldEntity} = {
-    CAR_TOKEN: WorldEntity(1, 1, CAR_TOKEN, get_sprite_local("car_1")),
+    CAR_TOKEN: WorldEntity(1, 1, CAR_TOKEN, get_sprite_local("car_1", 0.6)),
     EXIT_TOKEN: WorldEntity(1, 1, EXIT_TOKEN, get_sprite_local('grass', 2)),
     FROG_TOKEN: WorldEntity(1, 1, FROG_TOKEN, get_sprite_local('frog', 0.15)),
     GROUND_TOKEN: WorldEntity(1, 1, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
