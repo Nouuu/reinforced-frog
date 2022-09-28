@@ -1,11 +1,11 @@
 import arcade
 
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES, WORLD_ENTITIES, FROG_TOKEN, ENTITIES
-from display.world_window import NewWorldWindow
-from game.world import NewWorld
+from display.world_window import WorldWindow
+from game.world import World
 
 if __name__ == '__main__':
-    world = NewWorld(
+    world = World(
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
@@ -16,6 +16,6 @@ if __name__ == '__main__':
 
     world.print()
 
-    window = NewWorldWindow(world)
+    window = WorldWindow(world)
     window.setup()
     arcade.run()
