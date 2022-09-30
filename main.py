@@ -9,7 +9,7 @@ if __name__ == '__main__':
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
-        world=WORLD_LINES,
+        world_lines=WORLD_LINES,
         world_entities=WORLD_ENTITIES,
         player=((13, 50), ENTITIES[FROG_TOKEN])
     )

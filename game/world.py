@@ -7,11 +7,11 @@ class World:
                  width: int,
                  height: int,
                  scaling: int,
-                 world: [WorldEntity],
+                 world_lines: [WorldLine],
                  world_entities: {tuple: WorldEntity},
                  player: (tuple, WorldEntity)):
         self.__setup_world(width, height, scaling, player)
-        self.__parse_world_lines(world)
+        self.__parse_world_lines(world_lines)
         self.__parse_world_entities(world_entities)
 
     def __setup_world(self, width: int, height: int, scaling: int, player: (tuple, WorldEntity)):
@@ -23,11 +23,11 @@ class World:
         self.__cols = width
         self.__scaling = scaling
 
-    def __parse_world_lines(self, world: [WorldEntity]):
+    def __parse_world_lines(self, world_lines: [WorldLine]):
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
             for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
-                self.__world_states[state] = world[row // self.__scaling]
+                self.__world_states[state] = world_lines[row // self.__scaling].line_type
 
     def __parse_world_entities(self, world: {tuple: WorldEntity}):
         for state in world.keys():
