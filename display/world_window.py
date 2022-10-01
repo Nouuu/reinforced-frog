@@ -1,73 +1,83 @@
-import copy
 import random
 
+from arcade import Sprite
+
 from conf.config import *
-from game.world import World
+from game.game import Game
 
 
 class WorldWindow(arcade.Window):
-    def __init__(self, world: World):
+    def __init__(self, game: Game):
         super().__init__(
-            world.width * SPRITE_SIZE,
-            world.height * SPRITE_SIZE,
+            int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
+            int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG'
         )
-        self.__sprites = None
+        self.__players_sprites = None
+        self.__world_sprites = None
+        self.__entities_sprites = None
         self.__random = random.Random()
-        self.__world = world
+        self.__game = game
 
-    def __rand(self, range: int):
-        return self.__random.randrange(range, step=1)
+    def __rand(self, r: int):
+        return self.__random.randrange(r, step=1)
 
-    def __get_environment_sprite(self, state: tuple, sprites: []):
-        sprite = copy.deepcopy(sprites[self.__rand(len(sprites))])
-        sprite.center_x = (state[1] + 0.5) * SPRITE_SIZE
-        sprite.center_y = (self.__world.height - state[0] - 0.5) * SPRITE_SIZE
+    def __get_environment_sprite(self, state: tuple, world_entity: WorldEntity) -> Sprite:
+        sprite = world_entity.sprite
+        sprite.center_x, sprite.center_y = self.__get_xy_state(state)
         return sprite
 
-    def __get_truck_sprite(self, state: tuple):
-        previous_state = (state[0], state[1] - 1)
-        if self.__world.get_token(previous_state) == TRUCK_TOKEN:
-            sprite = copy.deepcopy(TRUCK_SPRITES['SPRITES'][self.__rand(len(TRUCK_SPRITES['SPRITES']))]['FRONT'])
-        else:
-            sprite = copy.deepcopy(TRUCK_SPRITES['SPRITES'][self.__rand(len(TRUCK_SPRITES['SPRITES']))]['BACK'])
-        sprite.center_x = (state[1] + 0.5) * SPRITE_SIZE
-        sprite.center_y = (self.__world.height - state[0] - 0.5) * SPRITE_SIZE
-        return sprite
-
-    def __get_truck_background_sprite(self, state: tuple):
-        return self.__get_environment_sprite(state, TRUCK_SPRITES['BACKGROUNDS'])
+    def __get_xy_state(self, state: tuple) -> tuple:
+        return (
+            (state[1] + 0.5) / WORLD_SCALING * SPRITE_SIZE,
+            (self.__game.world.height - state[0] - 0.5) / WORLD_SCALING * SPRITE_SIZE
+        )
 
     def setup(self):
-        self.__sprites = arcade.SpriteList()
+        self.setup_world_states()
+        self.setup_players_states()
+        self.setup_world_entities_state()
 
-        for state in self.__world.states:
-            token = self.__world.get_token(state)
-            if token == ROAD_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, ROAD_SPRITES))
-            elif token == GROUND_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, GROUND_SPRITES))
-            elif token == WATER_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, WATER_SPRITES))
-            elif token == START_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, START_SPRITES))
-            elif token == EXIT_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, EXIT_SPRITES))
-            elif token == WALL_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, WALL_SPRITES))
-            elif token == CAR_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, CAR_SPRITES['BACKGROUNDS']))
-                self.__sprites.append(self.__get_environment_sprite(state, CAR_SPRITES['SPRITES']))
-            elif token == TURTLE_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, TURTLE_SPRITES['BACKGROUNDS']))
-                self.__sprites.append(self.__get_environment_sprite(state, TURTLE_SPRITES['SPRITES']))
-            elif token == WOOD_TOKEN:
-                self.__sprites.append(self.__get_environment_sprite(state, WOOD_SPRITES['BACKGROUNDS']))
-                self.__sprites.append(self.__get_environment_sprite(state, WOOD_SPRITES['SPRITES']))
-            elif token == TRUCK_TOKEN:
-                self.__sprites.append(self.__get_truck_background_sprite(state))
-                self.__sprites.append(self.__get_truck_sprite(state))
+    def setup_world_entities_state(self):
+        self.__entities_sprites = arcade.SpriteList()
+        for state in self.__game.world.world_entities_states:
+            world_entity: WorldEntity = self.__game.world.get_world_entity(state)
+            if world_entity is not None:
+                sprite = self.__get_environment_sprite(state, world_entity)
+                self.__entities_sprites.append(sprite)
+
+    def setup_world_states(self):
+        self.__world_sprites = arcade.SpriteList()
+        for state in self.__game.world.world_states:
+            world_entity: WorldEntity = self.__game.world.get_world_line_entity(state)
+            if world_entity is not None:
+                sprite = self.__get_environment_sprite(state, world_entity)
+                self.__world_sprites.append(sprite)
+
+    def setup_players_states(self):
+        self.__players_sprites = arcade.SpriteList()
+        for player in self.__game.players:
+            sprite = player.sprite
+            sprite.center_x, sprite.center_y = self.__get_xy_state(player.state)
+            self.__players_sprites.append(sprite)
 
     def on_draw(self):
         arcade.start_render()
-        self.__sprites.draw()
+        self.__world_sprites.draw()
+        self.__entities_sprites.draw()
+        self.__players_sprites.draw()
+
+    def on_update(self, delta_time: float):
+        self.__game.step()
+        self.setup_players_states()
+        self.__players_sprites.update()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.LEFT:
+            self.__game.human_step(ACTION_MOVES[ACTION_LEFT])
+        elif symbol == arcade.key.RIGHT:
+            self.__game.human_step(ACTION_MOVES[ACTION_RIGHT])
+        elif symbol == arcade.key.UP:
+            self.__game.human_step(ACTION_MOVES[ACTION_UP])
+        elif symbol == arcade.key.DOWN:
+            self.__game.human_step(ACTION_MOVES[ACTION_DOWN])
