@@ -15,13 +15,13 @@ class Game:
     def step(self):
         for player in self.__players:
             action = player.best_move()
-            reward, new_state = self.__world.step(player.state, action)
+            reward, new_state = self.__world.step(player.state, action, player.world_entity)
             player.step(action, reward, new_state)
 
     def human_step(self, action: (int, int)):
         for player in self.__players:
             if player.is_human:
-                reward, new_state = self.__world.step(player.state, action)
+                reward, new_state = self.__world.step(player.state, action, player.world_entity)
                 player.step(action, reward, new_state)
                 break
 
