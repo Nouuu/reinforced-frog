@@ -1,3 +1,4 @@
+from conf.config import ACTION_MOVES
 from game.Player import Player
 from game.world import World
 
@@ -15,7 +16,7 @@ class Game:
     def step(self):
         for player in self.__players:
             action = player.best_move()
-            reward, new_state = self.__world.step(player.state, action, player.world_entity)
+            reward, new_state = self.__world.step(player.state, ACTION_MOVES[action], player.world_entity)
             player.step(action, reward, new_state)
 
     def human_step(self, action: (int, int)):
