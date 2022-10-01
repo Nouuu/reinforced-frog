@@ -11,7 +11,8 @@ class WorldWindow(arcade.Window):
         super().__init__(
             int(world.width / WORLD_SCALING * SPRITE_SIZE),
             int(world.height / WORLD_SCALING * SPRITE_SIZE),
-            'REINFORCED FROG'
+            'REINFORCED FROG',
+            update_rate=1/60
         )
         self.__player_sprite = None
         self.__world_sprites = None

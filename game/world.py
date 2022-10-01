@@ -82,6 +82,7 @@ class World:
 
     def update_entities(self):
         for world_line in self.__world_lines:
+            world_line.spawn_entity()
             world_line.move_entities()
         self.__update_world_entities(self.__world_lines)
 
