@@ -1,14 +1,17 @@
 from conf.config import *
+from game.Position import Position
 from game.utils import get_positions
 
 
 class World:
-    def __init__(self,
-                 width: int,
-                 height: int,
-                 scaling: int,
-                 world: [WorldEntity],
-                 world_entities: {tuple: WorldEntity}):
+    def __init__(
+        self,
+        width: int,
+        height: int,
+        scaling: int,
+        world: [WorldEntity],
+        world_entities: {tuple: WorldEntity}
+    ):
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world)
         self.__parse_world_entities(world_entities)
@@ -74,6 +77,12 @@ class World:
             return -self.__cols * self.__rows, state
         return -1, new_state
 
+    def is_outside(position: Position):
+        if not 0 < position.x < WORLD_WIDTH:
+            return False
+        if not 0 < position.y < WORLD_HEIGHT:
+            return False
+
     @property
     def world_states(self):
         return list(self.__world_states.keys())
@@ -89,3 +98,8 @@ class World:
     @property
     def width(self):
         return self.__cols
+
+    @property
+    def scailing(self):
+        return self.__scaling
+

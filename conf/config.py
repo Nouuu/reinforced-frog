@@ -24,11 +24,13 @@ ACTION_RIGHT = 'R'
 ACTION_NONE = 'N'
 ACTIONS = [ACTION_NONE, ACTION_UP, ACTION_DOWN, ACTION_LEFT, ACTION_RIGHT]
 
-ACTION_MOVES = {ACTION_NONE: (0, 0),
-                ACTION_UP: (-1, 0),
-                ACTION_DOWN: (1, 0),
-                ACTION_LEFT: (0, -1),
-                ACTION_RIGHT: (0, 1)}
+ACTION_MOVES = {
+    ACTION_NONE: (0, 0),
+    ACTION_UP: (-1, 0),
+    ACTION_DOWN: (1, 0),
+    ACTION_LEFT: (0, -1),
+    ACTION_RIGHT: (0, 1)
+}
 
 # REWARDS & STATES
 

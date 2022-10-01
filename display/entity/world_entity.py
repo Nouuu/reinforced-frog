@@ -2,7 +2,6 @@ import copy
 
 from arcade import Sprite
 
-
 class WorldEntity:
 
     def __init__(self, width: int, height: int, token: str, sprite: Sprite):
