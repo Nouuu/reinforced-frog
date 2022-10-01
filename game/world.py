@@ -8,11 +8,10 @@ class World:
                  height: int,
                  scaling: int,
                  world_lines: [WorldLine],
-                 world_entities: {tuple: WorldEntity},
                  player: (tuple, WorldEntity)):
         self.__setup_world(width, height, scaling, player)
         self.__parse_world_lines(world_lines)
-        self.__parse_world_entities(world_entities)
+        self.__update_world_entities(world_lines)
 
     def __setup_world(self, width: int, height: int, scaling: int, player: (tuple, WorldEntity)):
         self.__world_states: {(int, int): WorldEntity} = {}
@@ -24,14 +23,17 @@ class World:
         self.__scaling = scaling
 
     def __parse_world_lines(self, world_lines: [WorldLine]):
+        self.__world_lines = world_lines
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
             for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
                 self.__world_states[state] = world_lines[row // self.__scaling].line_type
 
-    def __parse_world_entities(self, world: {tuple: WorldEntity}):
-        for state in world.keys():
-            self.__world_entities_states[state] = world[state]
+    def __update_world_entities(self, world_lines: [WorldLine]):
+        self.__world_entities_states: {(int, int): WorldEntity} = {}
+        for (index, world_line) in enumerate(world_lines):
+            for (pos_x, entity) in world_line.spawned_entities.items():
+                self.__world_entities_states[((index * self.__scaling)+self.__scaling // 2, pos_x)] = entity
 
     def print(self):
         # res = ''
@@ -77,6 +79,11 @@ class World:
         if state in self.__world_entities_states:
             return self.__world_entities_states[state]
         return None
+
+    def update_entities(self):
+        for world_line in self.__world_lines:
+            world_line.move_entities()
+        self.__update_world_entities(self.__world_lines)
 
     @property
     def player(self):

@@ -55,8 +55,16 @@ class WorldWindow(arcade.Window):
                 sprite = self.__get_environment_sprite(state, world_entity)
                 self.__world_sprites.append(sprite)
 
+    def clear_world_entities_state(self):
+        self.__entities_sprites.clear()
+
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__entities_sprites.draw()
         self.__player_sprite.draw()
+
+    def on_update(self, delta_time):
+        self.__world.update_entities()
+        self.clear_world_entities_state()
+        self.setup_world_entities_state()
