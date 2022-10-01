@@ -33,7 +33,7 @@ class WorldLine:
         new_entities_positions = {}
         for (pos_x, entity) in self.__spawned_entities.items():
             new_pos_x = pos_x + (self.__speed * self.__direction)
-            if self.__width > new_pos_x > -self.__scaling:
+            if self.__width+self.__scaling > new_pos_x > -self.__scaling:
                 new_entities_positions[new_pos_x] = entity
         self.__spawned_entities = new_entities_positions
 
