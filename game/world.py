@@ -1,4 +1,5 @@
 from conf.config import *
+from game.utils import get_positions
 
 
 class World:
@@ -29,8 +30,11 @@ class World:
         for state in world.keys():
             self.__world_entities_states[state] = world[state]
 
-    def __is_forbidden_state(self, new_state) -> bool:
-        return new_state not in self.__world_states
+    def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
+        for state in get_positions(new_state, world_entity, self.__scaling):
+            if not 0 <= state[0] <= self.__rows or not 0 <= state[1] <= self.__cols:
+                return True
+        return False
 
     def print(self):
         pass
@@ -64,11 +68,11 @@ class World:
             return self.__world_entities_states[state]
         return None
 
-    def step(self, state: (int, int), action: (int, int)) -> (float, (int, int)):
-        new_state = (state[0] + action[0], state[1] + action[1])
-        if self.__is_forbidden_state(new_state):
-            return -1, state
-        return 0, new_state
+    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int)):
+        new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
+        if self.__is_forbidden_state(new_state, world_entity):
+            return -self.__cols * self.__rows, state
+        return -1, new_state
 
     @property
     def world_states(self):
