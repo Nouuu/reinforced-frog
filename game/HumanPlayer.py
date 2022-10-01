@@ -1,4 +1,7 @@
-from conf.config import ACTION_NONE
+from arcade import Sprite
+
+from conf.config import ACTION_NONE, ENTITIES, FROG_TOKEN, ACTION_MOVES, ACTION_DOWN
+from display.entity.world_entity import WorldEntity
 from game.Player import Player
 from game.world import World
 
@@ -13,10 +16,18 @@ class HumanPlayer(Player):
         pass
 
     def best_move(self) -> (int, int):
-        return ACTION_NONE
+        return ACTION_MOVES[ACTION_NONE]
 
     def step(self, action: (int, int), reward: float, new_state: (int, int)):
         self.__state = new_state
+
+    @property
+    def sprite(self) -> Sprite:
+        return ENTITIES[FROG_TOKEN].sprite
+
+    @property
+    def world_entity(self) -> WorldEntity:
+        return ENTITIES[FROG_TOKEN]
 
     @property
     def is_human(self):

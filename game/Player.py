@@ -1,3 +1,6 @@
+from arcade import Sprite
+
+from display.entity.world_entity import WorldEntity
 from game.world import World
 
 
@@ -11,6 +14,12 @@ class Player:
     def step(self, action: (int, int), reward: float, new_state: (int, int)):
         pass
 
+    @property
+    def sprite(self) -> Sprite:
+        pass
+
+    def world_entity(self) -> WorldEntity:
+        pass
     @property
     def is_human(self) -> bool:
         pass
