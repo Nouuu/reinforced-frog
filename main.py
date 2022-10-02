@@ -1,6 +1,6 @@
 import arcade
 
-from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES, WORLD_ENTITIES, FROG_TOKEN, ENTITIES
+from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES, FROG_TOKEN, ENTITIES
 from display.world_window import WorldWindow
 from game.HumanPlayer import HumanPlayer
 from game.Position import Position
@@ -12,8 +12,8 @@ if __name__ == '__main__':
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
-        world=WORLD_LINES,
-        world_entities=WORLD_ENTITIES
+        world_lines=WORLD_LINES,
+        player=((13, 50), ENTITIES[FROG_TOKEN])
     )
 
     player = HumanPlayer()

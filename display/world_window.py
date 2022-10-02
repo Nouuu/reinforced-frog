@@ -9,9 +9,10 @@ from game.game import Game
 class WorldWindow(arcade.Window):
     def __init__(self, game: Game):
         super().__init__(
-            int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
-            int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
-            'REINFORCED FROG'
+            int(world.width / WORLD_SCALING * SPRITE_SIZE),
+            int(world.height / WORLD_SCALING * SPRITE_SIZE),
+            'REINFORCED FROG',
+            update_rate=1/60000
         )
         self.__players_sprites = None
         self.__world_sprites = None
@@ -58,34 +59,16 @@ class WorldWindow(arcade.Window):
                 sprite = self.__get_environment_sprite(state, world_entity)
                 self.__world_sprites.append(sprite)
 
-    def setup_players_states(self):
-        self.__players_sprites = arcade.SpriteList()
-        for player in self.__game.players:
-            sprite = player.sprite
-            sprite.center_x, sprite.center_y = self.__get_xy_state(player.state)
-            self.__players_sprites.append(sprite)
+    def clear_world_entities_state(self):
+        self.__entities_sprites.clear()
 
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__entities_sprites.draw()
-        self.__players_sprites.draw()
+        self.__player_sprite.draw()
 
-    def on_update(self, delta_time: float):
-        # act only on player when it's humain game and only one player
-        if self.__game.__players[0].is_dead():
-            self.show_menu()
-            return
-        self.__game.step()
-        self.setup_players_states()
-        self.__players_sprites.update()
-
-    def on_key_press(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.LEFT:
-            self.__game.human_step(ACTION_MOVES[ACTION_LEFT])
-        elif symbol == arcade.key.RIGHT:
-            self.__game.human_step(ACTION_MOVES[ACTION_RIGHT])
-        elif symbol == arcade.key.UP:
-            self.__game.human_step(ACTION_MOVES[ACTION_UP])
-        elif symbol == arcade.key.DOWN:
-            self.__game.human_step(ACTION_MOVES[ACTION_DOWN])
+    def on_update(self, delta_time):
+        self.__world.update_entities()
+        self.clear_world_entities_state()
+        self.setup_world_entities_state()
