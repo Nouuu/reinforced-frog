@@ -5,6 +5,7 @@ from display.entity.world_entity import WorldEntity
 from game.Position import Position
 from game.utils import get_collisions
 from game.world import World
+from utils import is_in_safe_zone_on_water
 
 class Player:
     # Est ce le fait d'être mort ne doit pas être dans le state
@@ -40,7 +41,15 @@ class Player:
         )
         if collisions.len() > 0:
             return False
-        # TODO
+
+        if not is_in_safe_zone_on_water(
+                self.__world_entity,
+                (self._position.x, self._position.y),
+                self.__world.get_world_entity((self._position.x, self._position.y)),
+                self.__world.scaling
+            ):
+            return False
+
         # Get Collsion et is_safe_zone_on_water
         return True
 
