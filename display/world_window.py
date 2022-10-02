@@ -19,6 +19,10 @@ class WorldWindow(arcade.Window):
         self.__random = random.Random()
         self.__game = game
 
+    def show_menu(self):
+        # This is a aracde only feature that should show a menu
+        pass
+
     def __rand(self, r: int):
         return self.__random.randrange(r, step=1)
 
@@ -68,6 +72,10 @@ class WorldWindow(arcade.Window):
         self.__players_sprites.draw()
 
     def on_update(self, delta_time: float):
+        # act only on player when it's humain game and only one player
+        if self.__game.__players[0].is_dead():
+            self.show_menu()
+            return
         self.__game.step()
         self.setup_players_states()
         self.__players_sprites.update()
