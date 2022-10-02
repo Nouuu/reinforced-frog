@@ -1,3 +1,4 @@
+from typing import Tuple
 from arcade import Sprite
 
 from display.entity.world_entity import WorldEntity
@@ -5,34 +6,36 @@ from game.Position import Position
 from game.utils import get_collisions
 from game.world import World
 
-
 class Player:
-    # Est ce le fait d'^être mort ne doit pas être dans le state
-    def __init__(self, world: World, intial_state: (int, int)):
-        x, y = intial_state
+    # Est ce le fait d'être mort ne doit pas être dans le state
+    def __init__(self, world: World, position: Position):
         self.__world = world
-        self.__position = Position(x, y)
-        self.__world_entity = WorldEntity(self.__position.x, self.__position.y, 1, 1, "player.png")
+        self._position = position
+
+        # Not sure about this
+        self.__world_entity = WorldEntity(position.x, position.y, 1, 1, "player.png")
 
 
-    def best_move(self) -> (int, int):
+    def best_move(self) -> Tuple[int, int]:
+        # TODO
         pass
 
-    def step(self, action: (int, int), reward: float, new_state: (int, int)):
+    def step(self, action: Tuple[int, int], reward: float, new_state: Tuple[int, int]):
+        # TODO
         pass
 
     def is_dead(self):
         # Acceder au world dimesion...
         # il faut être entre 0 et max -1 sur les deux coordonnées
-        if not 0 < self.__position.x < self.__world.width:
+        if not 0 < self._position.x < self.__world.width:
             return False
-        if not 0 < self.__position.y < self.__world.height:
+        if not 0 < self._position.y < self.__world.height:
             return False
         collisions = get_collisions(
             self.__world_entity,
-            (self.__position.x, self.__position.y),
-            self.__world.get_world_line_entity((self.__position.x, self.__position.y)),
-            self.__world.get_world_entity((self.__position.x, self.__position.y)),
+            (self._position.x, self._position.y),
+            self.__world.get_world_line_entity((self._position.x, self._position.y)),
+            self.__world.get_world_entity((self._position.x, self._position.y)),
             self.__world.scaling
         )
         if collisions.len() > 0:
@@ -45,20 +48,16 @@ class Player:
     # Je pense pas que ça soit le role du player de connaitre son sprite
     @property
     def sprite(self) -> Sprite:
-        pass
+        self.__world_entity.sprite
 
     def world_entity(self) -> WorldEntity:
-        pass
+        self.__world_entity
 
     @property
-    def is_human(self) -> bool:
-        pass
-
-    @property
-    def state(self) -> (int, int):
-        pass
+    def state(self) -> Tuple[int, int]:
+        return self._position.x, self._position.y
 
     @property
     def position(self) -> Position:
-        return self.__position
+        return self._position
 

@@ -1,9 +1,12 @@
+from typing import Tuple, List
 from game.Player import Player
+from game.HumanPlayer import HumanPlayer
+from game.Position import Position
 from game.world import World
 
 
 class Game:
-    def __init__(self, world: World, players: [Player], player_init_state: (int, int)):
+    def __init__(self, world: World, players: List[Player], player_init_state: Position):
         self.__world = world
         self.__players = players
         self.__player_init_state = player_init_state
@@ -18,9 +21,9 @@ class Game:
             reward, new_state = self.__world.step(player.state, action, player.world_entity)
             player.step(action, reward, new_state)
 
-    def human_step(self, action: (int, int)):
+    def human_step(self, action: Tuple[int, int]):
         for player in self.__players:
-            if player.is_human:
+            if isinstance(player, HumanPlayer):
                 reward, new_state = self.__world.step(player.state, action, player.world_entity)
                 player.step(action, reward, new_state)
                 break
