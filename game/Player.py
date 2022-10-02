@@ -5,7 +5,6 @@ from display.entity.world_entity import WorldEntity
 from game.Position import Position
 from game.utils import get_collisions
 from game.world import World
-from utils import is_in_safe_zone_on_water
 
 class Player:
     # Est ce le fait d'être mort ne doit pas être dans le state

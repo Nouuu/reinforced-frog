@@ -9,8 +9,8 @@ from game.game import Game
 class WorldWindow(arcade.Window):
     def __init__(self, game: Game):
         super().__init__(
-            int(world.width / WORLD_SCALING * SPRITE_SIZE),
-            int(world.height / WORLD_SCALING * SPRITE_SIZE),
+            int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
+            int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG',
             update_rate=1/60000
         )

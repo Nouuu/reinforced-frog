@@ -19,8 +19,6 @@ if __name__ == '__main__':
     player = HumanPlayer()
 
     position = Position(13, 50)
-    world.is_on_water(position)
-
     game = Game(world, [player], position)
     game.start()
 

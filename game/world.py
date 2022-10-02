@@ -1,6 +1,5 @@
 from typing import Tuple, List, Dict
 from conf.config import WorldEntity, WorldLine
-from game.Position import Position
 from game.utils import get_positions
 
 
@@ -13,7 +12,7 @@ class World:
         world_lines: List[WorldLine],
         player: Tuple[Tuple[int, int], WorldEntity]
     ):
-        self.__setup_world(width, height, scaling, player)
+        self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
         self.__update_world_entities(world_lines)
 
