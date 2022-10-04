@@ -1,5 +1,5 @@
 from conf.config import *
-from game.utils import get_positions
+from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water
 
 
 class World:
@@ -34,6 +34,20 @@ class World:
         for state in get_positions(new_state, world_entity, self.__scaling):
             if not 0 <= state[0] <= self.__rows or not 0 <= state[1] <= self.__cols:
                 return True
+        for state in get_collisions(world_entity, new_state, self.__world_states,
+                                    self.__world_entities_states,
+                                    self.__scaling):
+            if state in self.__world_states:
+                if self.__world_states[state].token in FORBIDDEN_STATES \
+                    and (
+                    self.__world_states[state].token != WATER_TOKEN
+                    or not is_in_safe_zone_on_water(world_entity, new_state, self.__world_entities_states,
+                                                    self.__scaling)
+                ):
+                    return True
+            elif state in self.__world_entities_states:
+                if self.__world_entities_states[state].token in FORBIDDEN_STATES:
+                    return True
         return False
 
     def print(self):
@@ -71,7 +85,7 @@ class World:
     def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int)):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         if self.__is_forbidden_state(new_state, world_entity):
-            return -self.__cols * self.__rows, state
+            return -2 * self.__cols * self.__rows, state
         return -1, new_state
 
     @property

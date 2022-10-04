@@ -11,6 +11,7 @@ REVERSED_TRUCK_TOKEN = 'RZ'
 REVERSED_TURTLE_TOKEN = 'RT'
 EXIT_TOKEN = 'E'
 FROG_TOKEN = 'F'
+FROG_IA_TOKEN = 'FIA'
 ROAD_TOKEN = 'R'
 START_TOKEN = 'S'
 WALL_TOKEN = 'X'
@@ -87,6 +88,7 @@ ENTITIES: {str: WorldEntity} = {
     REVERSED_TURTLE_TOKEN: WorldEntity(1, 1, REVERSED_TURTLE_TOKEN, get_sprite_local("turtle_reversed", 0.2)),
     EXIT_TOKEN: WorldEntity(1, 1, EXIT_TOKEN, get_sprite_local('grass', 2)),
     FROG_TOKEN: WorldEntity(1, 1, FROG_TOKEN, get_sprite_local('frog', 0.12)),
+    FROG_IA_TOKEN: WorldEntity(1, 1, FROG_IA_TOKEN, get_sprite_local('frog_ia', 0.12)),
     GROUND_TOKEN: WorldEntity(1, 1, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
     ROAD_TOKEN: WorldEntity(1, 1, ROAD_TOKEN, get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)),
     START_TOKEN: WorldEntity(1, 1, START_TOKEN, get_sprite_local('grass', 2)),
