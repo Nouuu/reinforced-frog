@@ -1,3 +1,5 @@
+import xxhash
+
 from conf.config import *
 from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water
 
@@ -103,3 +105,12 @@ class World:
     @property
     def width(self):
         return self.__cols
+
+    # get world lines states tokens in string and return md5 hash
+    def __world_str(self):
+        return ''.join([self.__world_states[state].token for state in self.__world_states]) \
+               + ''.join([self.__world_entities_states[state].token for state in self.__world_entities_states])
+
+    @property
+    def hash_world_states(self) -> bytes:
+        return xxhash.xxh3_64_digest(self.__world_str())
