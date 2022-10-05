@@ -15,20 +15,26 @@ class Agent(Player):
         self.__alpha = alpha
         self.__gamma = gamma
         self.__state = (0, 0)
-        self.__qtable = {}
+        self.__qtable: {str: {(int, int): float}} = {}
         self.__score = 0
+        self.__world_height = 0
+        self.__world_width = 0
 
     def init(self, world: World, intial_state: (int, int)):
         self.__state = intial_state
-        self.__init_qtable(world)
+        self.__world_height = world.height
+        self.__world_width = world.width
 
-    def __init_qtable(self, world):
-        for x in range(world.width):
-            for y in range(world.height):
-                state = (y, x)
-                self.__qtable[state] = {}
-                for action in ACTION_MOVES:
-                    self.__qtable[state][action] = 0
+    def __get_qtable_state(self, world_state: str) -> {(int, int): float}:
+        if world_state not in self.__qtable:
+            self.__qtable[world_state] = {}
+            for x in range(self.__world_width):
+                for y in range(self.__world_height):
+                    state = (y, x)
+                    self.__qtable[world_state][state] = {}
+                    for action in ACTION_MOVES:
+                        self.__qtable[world_state][state][action] = 0
+        return self.__qtable[world_state]
 
     def best_move(self) -> str:
         actions = self.__qtable[self.__state]
