@@ -17,15 +17,15 @@ class Game:
     def step(self):
         for player in self.__players:
             action = player.best_move()
-            reward, new_state, environment = self.__world.step(player.state, ACTION_MOVES[action], player.world_entity)
+            reward, new_state, environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
+                                                                             player.world_entity)
             player.step(action, reward, new_state, environment)
 
     def human_step(self, action: (int, int)):
-        for player in self.__players:
-            if player.is_human:
-                reward, new_state, environment = self.__world.step(player.state, action, player.world_entity)
-                player.step(action, reward, new_state, environment)
-                break
+        for player in filter(lambda player_f: player_f.is_human, self.__players):
+            reward, new_state, environment, is_game_over = self.__world.step(player.state, action, player.world_entity)
+            player.step(action, reward, new_state, environment)
+            break
 
     @property
     def world(self):

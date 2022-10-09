@@ -24,11 +24,11 @@ if __name__ == '__main__':
     if os.path.exists(AGENT_LEARNING_FILE):
         agent.load(AGENT_LEARNING_FILE)
 
-    game = Game(world, [player, agent], (13, 50))
+    game = Game(world, [player, agent], (59, 50))
     game.start()
 
     window = WorldWindow(game)
     window.setup()
     arcade.run()
 
-    agent.save(AGENT_LEARNING_FILE, True)
+    agent.save(AGENT_LEARNING_FILE)

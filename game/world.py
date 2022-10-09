@@ -103,16 +103,22 @@ class World:
             return self.__world_entities_states[state]
         return None
 
-    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int), bytes):
+    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
+        float, (int, int), bytes, bool):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
+        is_game_over = False
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
             reward = -2 * self.__cols * self.__rows
+            is_game_over = True
+
+        if self.__is_win_state():
+            is_game_over = True
 
         self.__history.append(self.__world_str(new_state[0], 3))
-        return reward, new_state, self.__hash_world_states(3)
+        return reward, new_state, self.__hash_world_states(3), is_game_over
 
     @property
     def world_states(self):
@@ -129,3 +135,6 @@ class World:
     @property
     def width(self):
         return self.__cols
+
+    def __is_win_state(self) -> bool:
+        return False

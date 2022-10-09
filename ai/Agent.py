@@ -58,10 +58,7 @@ class Agent(Player):
         self.__current_environment = environment
         self.__score += reward
 
-    def save(self, filename: str, debug=False):
-        if debug:
-            print(f'Saving {filename}')
-            print(f'QTable: \n----{self.__qtable.keys()}\n----')
+    def save(self, filename: str):
         with open(filename, 'wb') as file:
             pickle.dump((self.__qtable, self.__score_history), file)
 
