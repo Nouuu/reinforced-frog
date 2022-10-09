@@ -1,7 +1,7 @@
 import arcade
 
 from ai.Agent import Agent
-from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES, WORLD_ENTITIES, FROG_TOKEN, ENTITIES
+from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES, WORLD_ENTITIES
 from display.world_window import WorldWindow
 from game.HumanPlayer import HumanPlayer
 from game.game import Game

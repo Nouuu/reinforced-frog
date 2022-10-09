@@ -21,6 +21,7 @@ class World:
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
+        self.__history: [str] = []
 
     def __parse_world_lines(self, world: [WorldEntity]):
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
@@ -51,6 +52,24 @@ class World:
                 if self.__world_entities_states[state].token in FORBIDDEN_STATES:
                     return True
         return False
+
+    def __filter_states(self, states: {(int, int): WorldEntity}, current_line: int, number_of_lines) -> {
+        (int, int): WorldEntity}:
+        return filter(lambda state: (current_line - 1) * self.__scaling <= state[0] < (
+            current_line + number_of_lines) * self.__scaling, states)
+
+    def __world_str(self, current_line: int, number_of_lines: int) -> str:
+        return \
+            ''.join([self.__world_states[state].token for state in
+                     self.__filter_states(self.__world_states, current_line, number_of_lines)]) + \
+            ''.join([self.__world_entities_states[state].token for state in
+                     self.__filter_states(self.__world_entities_states, current_line, number_of_lines)])
+
+    def __hash_world_states(self, history: int) -> bytes:
+        return xxhash.xxh3_64_digest('|'.join(self.__history[-history:]))
+
+    def get_current_environment(self, current_line: int, number_of_lines: int) -> bytes:
+        return xxhash.xxh3_64_digest(self.__world_str(current_line, number_of_lines))
 
     def print(self):
         pass
@@ -84,11 +103,16 @@ class World:
             return self.__world_entities_states[state]
         return None
 
-    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int)):
+    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int), bytes):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
+        reward = -1
+
         if self.__is_forbidden_state(new_state, world_entity):
-            return -2 * self.__cols * self.__rows, state
-        return -1, new_state
+            new_state = state
+            reward = -2 * self.__cols * self.__rows
+
+        self.__history.append(self.__world_str(new_state[0], 3))
+        return reward, new_state, self.__hash_world_states(3)
 
     @property
     def world_states(self):
@@ -105,12 +129,3 @@ class World:
     @property
     def width(self):
         return self.__cols
-
-    # get world lines states tokens in string and return md5 hash
-    def __world_str(self):
-        return ''.join([self.__world_states[state].token for state in self.__world_states]) \
-               + ''.join([self.__world_entities_states[state].token for state in self.__world_entities_states])
-
-    @property
-    def hash_world_states(self) -> bytes:
-        return xxhash.xxh3_64_digest(self.__world_str())

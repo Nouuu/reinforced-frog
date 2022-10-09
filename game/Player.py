@@ -5,13 +5,13 @@ from game.world import World
 
 
 class Player:
-    def init(self, world: World, intial_state: (int, int)):
+    def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
         pass
 
     def best_move(self) -> str:
         pass
 
-    def step(self, action: str, reward: float, new_state: (int, int)):
+    def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
         pass
 
     @property
@@ -21,6 +21,7 @@ class Player:
     @property
     def world_entity(self) -> WorldEntity:
         pass
+
     @property
     def is_human(self) -> bool:
         pass
