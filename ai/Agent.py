@@ -1,3 +1,5 @@
+import pickle
+
 from arcade import Sprite
 
 from conf.config import ACTION_MOVES, FROG_IA_TOKEN, ENTITIES
@@ -18,6 +20,7 @@ class Agent(Player):
         self.__current_environment = b''
         self.__qtable: {bytes: {(int, int): float}} = {}
         self.__score = 0
+        self.__score_history = []
         self.__world_height = 0
         self.__world_width = 0
 
@@ -26,6 +29,10 @@ class Agent(Player):
         self.__current_environment = initial_environment
         self.__world_height = world.height
         self.__world_width = world.width
+        self.__score = 0
+
+    def save_score(self):
+        self.__score_history.append(self.__score)
 
     def __get_qtable_state(self, environment: bytes) -> {(int, int): float}:
         if environment not in self.__qtable:
@@ -50,6 +57,17 @@ class Agent(Player):
         self.__state = new_state
         self.__current_environment = environment
         self.__score += reward
+
+    def save(self, filename: str, debug=False):
+        if debug:
+            print(f'Saving {filename}')
+            print(f'QTable: \n----{self.__qtable.keys()}\n----')
+        with open(filename, 'wb') as file:
+            pickle.dump((self.__qtable, self.__score_history), file)
+
+    def load(self, filename: str):
+        with open(filename, 'rb') as file:
+            (self.__qtable, self.__score_history) = pickle.load(file)
 
     @property
     def sprite(self) -> Sprite:
