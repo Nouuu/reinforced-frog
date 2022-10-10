@@ -107,9 +107,8 @@ class World:
 
     def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
         float, (int, int), bytes, bool):
-        self.update_entities()
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
-        reward = -1
+        reward = -0.3
         is_game_over = False
 
         if self.__is_forbidden_state(new_state, world_entity):
@@ -117,7 +116,8 @@ class World:
             reward = -2 * self.__cols * self.__rows
             is_game_over = True
 
-        if self.__is_win_state():
+        if self.__is_win_state(new_state, world_entity):
+            reward = self.__cols * self.__rows
             is_game_over = True
 
         self.__history.append(self.__world_str(new_state[0], 3))
@@ -145,5 +145,10 @@ class World:
     def width(self):
         return self.__cols
 
-    def __is_win_state(self) -> bool:
+    def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
+        for state in get_collisions(world_entity, new_state, self.__world_states,
+                                    self.__world_entities_states,
+                                    self.__scaling):
+            if state in self.__world_states and self.__world_states[state].token in WIN_STATES:
+                return True
         return False

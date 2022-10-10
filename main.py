@@ -23,7 +23,7 @@ if __name__ == '__main__':
     if os.path.exists(AGENT_LEARNING_FILE):
         agent.load(AGENT_LEARNING_FILE)
 
-    game = Game(world, [player, agent], (59, 50))
+    game = Game(world, [player, agent], (112, 50))
     game.start()
 
     window = WorldWindow(game)

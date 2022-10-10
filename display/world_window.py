@@ -65,8 +65,8 @@ class WorldWindow(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
-        self.__players_sprites.draw()
         self.__entities_sprites.draw()
+        self.__players_sprites.draw()
 
     def on_update(self, delta_time: float):
         self.__game.step()

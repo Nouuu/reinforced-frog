@@ -14,6 +14,9 @@ class Player:
     def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
         pass
 
+    def save_score(self):
+        pass
+
     @property
     def sprite(self) -> Sprite:
         pass
