@@ -85,6 +85,7 @@ class World:
         return None
 
     def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int)):
+        self.update_entities()
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         if self.__is_forbidden_state(new_state, world_entity):
             return -2 * self.__cols * self.__rows, state
