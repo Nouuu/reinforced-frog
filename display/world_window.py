@@ -11,7 +11,8 @@ class WorldWindow(arcade.Window):
         super().__init__(
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
-            'REINFORCED FROG'
+            'REINFORCED FROG',
+            update_rate=1 / 60000
         )
         self.__players_sprites = None
         self.__world_sprites = None
@@ -64,13 +65,15 @@ class WorldWindow(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
-        self.__entities_sprites.draw()
         self.__players_sprites.draw()
+        self.__entities_sprites.draw()
 
     def on_update(self, delta_time: float):
         self.__game.step()
         self.setup_players_states()
         self.__players_sprites.update()
+        self.setup_world_entities_state()
+        self.__entities_sprites.update()
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LEFT:
