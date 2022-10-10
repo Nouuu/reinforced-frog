@@ -18,12 +18,13 @@ class Game:
             self.init_player(player)
 
     def init_player(self, player):
+        self.__i = 0
         player.init(self.__world, self.__player_init_state,
                     self.__world.get_current_environment(self.__player_init_state, AGENT_VISIBLE_LINES_ABOVE,
                                                          AGENT_VISIBLE_COLS_ARROUND))
 
     def step(self) -> (bool, bool):
-        # self.__i += 1
+        self.__i += 1
         self.__world.update_entities()
         game_over = False
         for player in self.__players:
@@ -31,9 +32,9 @@ class Game:
             reward, new_state, environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
                                                                              player.world_entity)
             player.step(action, reward, new_state, environment)
-            # if self.__i % 100 == 0 and not player.is_human:
-            #     print(
-            #         f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
+            if self.__i % 100 == 0 and not player.is_human:
+                print(
+                    f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
 
             game_over = game_over or is_game_over
             if is_game_over:

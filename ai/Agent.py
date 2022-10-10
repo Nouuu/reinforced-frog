@@ -51,21 +51,23 @@ class Agent(Player):
     def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
         max_q = max(self.get_qtable_state(environment, new_state).values())
         self.get_qtable_state(self.__current_environment, self.__state)[action] += \
-            self.__alpha * (reward + self.__gamma * max_q - self.get_qtable_state(environment, self.__state)[action])
+            self.__alpha * (
+                reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
+                action])
         self.__state = new_state
         self.__current_environment = environment
         self.__score += reward
-q
+
     def save(self, filename: str):
         print(f'Qtable entries : {len(self.__qtable)}')
         if self.__qtable_load_count is not None:
             print(f'New states since previous load: {len(self.__qtable) - self.__qtable_load_count}')
         with open(filename, 'wb') as file:
-            pickle.dump((self.__qtable, self.__score_history), file)
+            pickle.dump(self.__qtable, file)
 
     def load(self, filename: str):
         with open(filename, 'rb') as file:
-            (self.__qtable, self.__score_history) = pickle.load(file)
+            self.__qtable = pickle.load(file)
             self.__qtable_load_count = len(self.__qtable)
 
     @property
@@ -91,4 +93,3 @@ q
     @property
     def score_history(self):
         return self.__score_history
-

@@ -59,7 +59,7 @@ class World:
                         cols_arround: int) -> {
         (int, int): WorldEntity}:
         min_line = max(current_state[0] - 1 * self.__scaling + self.__scaling // 2, 0)
-        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling//2, self.__rows - 1)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling // 2, self.__rows - 1)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + cols_arround, self.__cols - 1)
         return dict(filter(lambda state: min_line <= state[0][0] < max_line and min_col <= state[0][1] < max_col,
@@ -67,10 +67,11 @@ class World:
 
     def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - 1 * self.__scaling + self.__scaling // 2, 0)
-        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling//2, self.__rows - 1)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling // 2, self.__rows - 1)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + cols_arround, self.__cols - 1)
         world_str = ''
+        # print(f"current_line: {current_state[0]}, min_line: {min_line}, max_line: {max_line}")
         filtered_world_states = self.__filter_states(self.__world_states, current_state, number_of_lines,
                                                      cols_arround)
         filtered_world_entities_states = self.__filter_states(self.__world_entities_states, current_state,
@@ -136,8 +137,7 @@ class World:
             new_state = state
             reward = -2 * self.__cols * self.__rows * (new_state[0] / self.__rows)
             is_game_over = True
-
-        if self.__is_win_state(new_state, world_entity):
+        elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
             is_game_over = True
 
