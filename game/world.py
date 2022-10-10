@@ -58,16 +58,16 @@ class World:
     def __filter_states(self, states: {(int, int): WorldEntity}, current_state: (int, int), number_of_lines: int,
                         cols_arround: int) -> {
         (int, int): WorldEntity}:
-        min_line = max(current_state[0] - 1 * self.__scaling + self.__scaling // 2, 0)
-        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling // 2, self.__rows - 1)
+        min_line = max(current_state[0] - 1 * self.__scaling - self.__scaling // 2, 0)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) + self.__scaling // 2, self.__rows - 1)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + cols_arround, self.__cols - 1)
         return dict(filter(lambda state: min_line <= state[0][0] < max_line and min_col <= state[0][1] < max_col,
                            states.items()))
 
     def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
-        min_line = max(current_state[0] - 1 * self.__scaling + self.__scaling // 2, 0)
-        max_line = min(current_state[0] + (number_of_lines * self.__scaling) - self.__scaling // 2, self.__rows - 1)
+        min_line = max(current_state[0] - 1 * self.__scaling - self.__scaling // 2, 0)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) + self.__scaling // 2, self.__rows - 1)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + cols_arround, self.__cols - 1)
         world_str = ''
