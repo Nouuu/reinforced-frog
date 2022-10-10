@@ -62,20 +62,18 @@ class WorldWindow(arcade.Window):
             sprite.center_x, sprite.center_y = self.__get_xy_state(player.state)
             self.__players_sprites.append(sprite)
 
-    def clear_world_entities_state(self):
-        self.__entities_sprites.clear()
-
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__players_sprites.draw()
-        self.clear_world_entities_state()
-        self.setup_world_entities_state()
+        self.__entities_sprites.draw()
 
     def on_update(self, delta_time: float):
         self.__game.step()
         self.setup_players_states()
         self.__players_sprites.update()
+        self.setup_world_entities_state()
+        self.__entities_sprites.update()
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LEFT:
