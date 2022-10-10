@@ -24,7 +24,7 @@ if __name__ == '__main__':
     if os.path.exists(AGENT_LEARNING_FILE):
         agent.load(AGENT_LEARNING_FILE)
 
-    game = Game(world, [agent], (112, 50), auto_start=True, debug=True)
+    game = Game(world, [agent], (112, 95), auto_start=True, debug=True)
     game.start()
 
     print("Agent start learning 100000 round")

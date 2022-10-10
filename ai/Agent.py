@@ -48,14 +48,14 @@ class Agent(Player):
         action = max(actions, key=actions.get)
         return action
 
-    def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
-        max_q = max(self.get_qtable_state(environment, new_state).values())
+    def step(self, action: str, reward: float, new_state: (int, int), new_environment: bytes):
+        max_q = max(self.get_qtable_state(new_environment, new_state).values())
         self.get_qtable_state(self.__current_environment, self.__state)[action] += \
             self.__alpha * (
                 reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
                 action])
         self.__state = new_state
-        self.__current_environment = environment
+        self.__current_environment = new_environment
         self.__score += reward
 
     def save(self, filename: str):
