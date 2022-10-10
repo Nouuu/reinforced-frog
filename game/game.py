@@ -1,14 +1,17 @@
-from conf.config import ACTION_MOVES
+from conf.config import ACTION_MOVES, AGENT_VISIBLE_LINES_ABOVE, AGENT_VISIBLE_COLS_ARROUND
 from game.Player import Player
 from game.world import World
 
 
 class Game:
-    def __init__(self, world: World, players: [Player], player_init_state: (int, int), auto_start: bool = True):
+    def __init__(self, world: World, players: [Player], player_init_state: (int, int), auto_start: bool = True,
+                 debug: bool = False):
         self.__world = world
         self.__players = players
         self.__player_init_state = player_init_state
         self.__auto_start = auto_start
+        self.__debug = debug
+        self.__i = 0
 
     def start(self):
         for player in self.__players:
@@ -16,21 +19,33 @@ class Game:
 
     def init_player(self, player):
         player.init(self.__world, self.__player_init_state,
-                    self.__world.get_current_environment(self.__player_init_state[0], 3))
+                    self.__world.get_current_environment(self.__player_init_state, AGENT_VISIBLE_LINES_ABOVE,
+                                                         AGENT_VISIBLE_COLS_ARROUND))
 
-    def step(self):
+    def step(self) -> (bool, bool):
+        # self.__i += 1
         self.__world.update_entities()
+        game_over = False
         for player in self.__players:
             action = player.best_move()
             reward, new_state, environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
                                                                              player.world_entity)
             player.step(action, reward, new_state, environment)
+            # if self.__i % 100 == 0 and not player.is_human:
+            #     print(
+            #         f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
+
+            game_over = game_over or is_game_over
             if is_game_over:
+                if self.__debug:
+                    print(f"Score : {round(player.score, 4)},\t\tlast state : {new_state}")
                 player.save_score()
                 if self.__auto_start:
                     self.init_player(player)
                 else:
                     self.__game_over(player)
+
+        return game_over, len(self.__players) > 0  # Return if there is still player in game and if the game is over
 
     def human_step(self, action: (int, int)):
         for player in filter(lambda player_f: player_f.is_human, self.__players):

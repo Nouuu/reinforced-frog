@@ -11,6 +11,9 @@ class Player:
     def best_move(self) -> str:
         pass
 
+    def get_qtable_state(self, environment: bytes, state: (int, int)) -> {(int, int): float}:
+        pass
+
     def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
         pass
 
@@ -30,5 +33,13 @@ class Player:
         pass
 
     @property
+    def score(self) -> int:
+        pass
+
+    @property
     def state(self) -> (int, int):
+        pass
+
+    @property
+    def score_history(self):
         pass
