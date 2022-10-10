@@ -11,8 +11,8 @@ class WorldWindow(arcade.Window):
         super().__init__(
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
-            'REINFORCED FROG'
-            update_rate=1/60000
+            'REINFORCED FROG',
+            update_rate=1 / 60000
         )
         self.__players_sprites = None
         self.__world_sprites = None
@@ -86,5 +86,3 @@ class WorldWindow(arcade.Window):
             self.__game.human_step(ACTION_MOVES[ACTION_UP])
         elif symbol == arcade.key.DOWN:
             self.__game.human_step(ACTION_MOVES[ACTION_DOWN])
-
- 

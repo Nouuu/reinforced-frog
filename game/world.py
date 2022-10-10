@@ -7,9 +7,8 @@ class World:
                  width: int,
                  height: int,
                  scaling: int,
-                 world_lines: [WorldLine],
-                 player: (tuple, WorldEntity)):
-        self.__setup_world(width, height, scaling, player)
+                 world_lines: [WorldLine]):
+        self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
         self.__update_world_entities(world_lines)
 
@@ -31,7 +30,7 @@ class World:
         self.__world_entities_states: {(int, int): WorldEntity} = {}
         for (index, world_line) in enumerate(world_lines):
             for (pos_x, entity) in world_line.spawned_entities.items():
-                self.__world_entities_states[((index * self.__scaling)+self.__scaling // 2, pos_x)] = entity
+                self.__world_entities_states[((index * self.__scaling) + self.__scaling // 2, pos_x)] = entity
 
     def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
         for state in get_positions(new_state, world_entity, self.__scaling):
@@ -90,6 +89,7 @@ class World:
         if self.__is_forbidden_state(new_state, world_entity):
             return -2 * self.__cols * self.__rows, state
         return -1, new_state
+
     def update_entities(self):
         for world_line in self.__world_lines:
             world_line.spawn_entity()
