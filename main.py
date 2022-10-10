@@ -15,8 +15,7 @@ if __name__ == '__main__':
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
-        world=WORLD_LINES,
-        world_entities=WORLD_ENTITIES)
+        world_lines=WORLD_LINES)
 
     player = HumanPlayer()
     agent = Agent(AGENT_LEARNING_RATE, AGENT_GAMMA)
