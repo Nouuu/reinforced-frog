@@ -3,7 +3,7 @@ from typing import Dict
 import xxhash
 
 from conf.config import *
-from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water
+from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water, filter_states
 
 
 class World:
@@ -66,16 +66,6 @@ class World:
                 return True
         return False
 
-    def __filter_states(self, states: {(int, int): WorldEntity}, current_state: (int, int), number_of_lines: int,
-                        cols_arround: int) -> {
-        (int, int): WorldEntity}:
-        min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
-        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows - 1)
-        min_col = max(current_state[1] - cols_arround, 0)
-        max_col = min(current_state[1] + cols_arround, self.__cols - 1)
-        return dict(filter(lambda state: min_line <= state[0][0] < max_line and min_col <= state[0][1] < max_col,
-                           states.items()))
-
     def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
         max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows - 1)
@@ -83,21 +73,26 @@ class World:
         max_col = min(current_state[1] + cols_arround, self.__cols - 1)
         world_str = ''
         # print(f"current_line: {current_state[0]}, min_line: {min_line}, max_line: {max_line}")
-        filtered_world_states = self.__filter_states(self.__world_states, current_state, number_of_lines,
-                                                     cols_arround)
-        filtered_world_entities_states = self.__filter_states(self.__world_entities_states, current_state,
-                                                              number_of_lines, cols_arround)
+        filtered_world_states = filter_states(self.__world_states, self.__scaling, min_line, max_line, min_col, max_col)
+        filtered_world_entities_states = filter_states(self.__world_entities_states, self.__scaling, min_line, max_line,
+                                                       min_col, max_col)
+
         for row in range(min_line, max_line):
             for col in range(min_col, max_col):
                 if (row, col) in filtered_world_states:
-                    world_str += filtered_world_states[(row, col)].token
+                    world_str += COMMON_WORLD_TOKEN if \
+                        filtered_world_states[(row, col)].token not in FORBIDDEN_STATES else \
+                        FORBIDDEN_WORLD_TOKEN
                 else:
                     world_str += ' '
                 if (row, col) in filtered_world_entities_states:
-                    world_str += filtered_world_entities_states[(row, col)].token
+                    world_str += COMMON_ENTITY_TOKEN if \
+                        filtered_world_entities_states[(row, col)].token not in FORBIDDEN_STATES else \
+                        FORBIDDEN_ENTITY_TOKEN
                 else:
                     world_str += ' '
             world_str += '\n'
+        # print(world_str)
         return world_str
 
     def __hash_world_states(self, history: int) -> bytes:
