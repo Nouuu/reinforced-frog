@@ -68,9 +68,9 @@ class World:
 
     def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
-        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows - 1)
+        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows)
         min_col = max(current_state[1] - cols_arround, 0)
-        max_col = min(current_state[1] + cols_arround, self.__cols - 1)
+        max_col = min(current_state[1] + cols_arround, self.__cols)
         world_str = ''
         # print(f"current_line: {current_state[0]}, min_line: {min_line}, max_line: {max_line}")
         filtered_world_states = filter_states(self.__world_states, self.__scaling, min_line, max_line, min_col, max_col)
