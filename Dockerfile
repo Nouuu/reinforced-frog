@@ -1,0 +1,21 @@
+FROM python:3.10
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+VOLUME /app/qtable
+
+ENV AGENT_LEARNING_FILE='qtable/qtable.data' \
+    AGENT_LEARNING_RATE=0.6 \
+    AGENT_GAMMA=0.8 \
+    AGENT_VISIBLE_LINES_ABOVE=2 \
+    AGENT_VISIBLE_COLS_ARROUND=20 \
+    AGENT_QTABLE_HISTORY=2 \
+    LEARNING_MODE=True \
+    AGENT_DEBUG=False \
+    LEARNING_TIME=20
+
+CMD [ "python", "./main.py" ]
