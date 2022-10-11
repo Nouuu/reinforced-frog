@@ -53,7 +53,7 @@ class World:
                                                     self.__scaling)
                 ):
                     return True
-            elif state in self.__world_entities_states:
+            if state in self.__world_entities_states:
                 if self.__world_entities_states[state].token in FORBIDDEN_STATES:
                     return True
         return False

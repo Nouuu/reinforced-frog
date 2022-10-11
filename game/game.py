@@ -56,6 +56,8 @@ class Game:
         for player in filter(lambda player_f: player_f.is_human, self.__players):
             reward, new_state, environment, is_game_over = self.__world.step(player.state, action, player.world_entity)
             player.step(action, reward, new_state, environment)
+            if is_game_over:
+                self.init_player(player)
 
     def __game_over(self, player: Player):
         self.__players.remove(player)
