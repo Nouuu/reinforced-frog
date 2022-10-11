@@ -80,17 +80,13 @@ class World:
         for row in range(min_line, max_line):
             for col in range(min_col, max_col):
                 if (row, col) in filtered_world_states:
-                    world_str += EXIT_TOKEN if filtered_world_states[(row, col)].token == EXIT_TOKEN else \
-                        (COMMON_WORLD_TOKEN if
-                         filtered_world_states[(row, col)].token not in FORBIDDEN_STATES else FORBIDDEN_WORLD_TOKEN)
+                    world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_states[(row, col)].token]
                 else:
-                    world_str += ' '
+                    world_str += AGENT_ENVIRONMENT_TOKENS[EMPTY_TOKEN]
                 if (row, col) in filtered_world_entities_states:
-                    world_str += COMMON_ENTITY_TOKEN if \
-                        filtered_world_entities_states[(row, col)].token not in FORBIDDEN_STATES else \
-                        FORBIDDEN_ENTITY_TOKEN
+                    world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_entities_states[(row, col)].token]
                 else:
-                    world_str += ' '
+                    world_str += AGENT_ENVIRONMENT_TOKENS[EMPTY_TOKEN]
             world_str += '\n'
         # print(world_str)
         return world_str
