@@ -1,11 +1,14 @@
-from conf.config import ACTION_MOVES, AGENT_VISIBLE_LINES_ABOVE, AGENT_VISIBLE_COLS_ARROUND
+from typing import Dict
+
+from conf.config import ACTION_MOVES
 from game.Player import Player
 from game.world import World
 
 
 class Game:
-    def __init__(self, world: World, players: [Player], player_init_state: (int, int), auto_start: bool = True,
-                 debug: bool = False):
+    def __init__(self, world: World, players: [Player], player_init_state: (int, int),
+                 env: Dict[str, str | float | int | bool], auto_start: bool = True, debug: bool = False):
+        self.__env = env
         self.__world = world
         self.__players = players
         self.__player_init_state = player_init_state
@@ -20,8 +23,9 @@ class Game:
     def init_player(self, player):
         self.__i = 0
         player.init(self.__world, self.__player_init_state,
-                    self.__world.get_current_environment(self.__player_init_state, AGENT_VISIBLE_LINES_ABOVE,
-                                                         AGENT_VISIBLE_COLS_ARROUND))
+                    self.__world.get_current_environment(self.__player_init_state,
+                                                         self.__env['AGENT_VISIBLE_LINES_ABOVE'],
+                                                         self.__env['AGENT_VISIBLE_COLS_ARROUND']))
 
     def step(self) -> (bool, bool):
         self.__i += 1

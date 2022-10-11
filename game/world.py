@@ -1,3 +1,5 @@
+from typing import Dict
+
 import xxhash
 
 from conf.config import *
@@ -9,7 +11,8 @@ class World:
                  width: int,
                  height: int,
                  scaling: int,
-                 world_lines: [WorldLine]):
+                 world_lines: [WorldLine], env: Dict[str, str | float | int | bool]):
+        self.__env = env
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
         self.__update_world_entities(world_lines)
@@ -152,8 +155,9 @@ class World:
             and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
             reward -= 1
 
-        self.__history.append(self.__world_str(new_state, AGENT_VISIBLE_LINES_ABOVE, AGENT_VISIBLE_COLS_ARROUND))
-        return reward, new_state, self.__hash_world_states(AGENT_QTABLE_HISTORY), is_game_over
+        self.__history.append(self.__world_str(new_state, self.__env['AGENT_VISIBLE_LINES_ABOVE'],
+                                               self.__env['AGENT_VISIBLE_COLS_ARROUND']))
+        return reward, new_state, self.__hash_world_states(self.__env['AGENT_QTABLE_HISTORY']), is_game_over
 
     def update_entities(self):
         for world_line in self.__world_lines:

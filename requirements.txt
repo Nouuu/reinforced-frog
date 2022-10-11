@@ -2,3 +2,4 @@ arcade
 xxhash
 refurb
 keyboard
+python-dotenv
