@@ -43,7 +43,7 @@ if __name__ == '__main__':
             # decrease second_left each second
             if int(second_left - time.perf_counter()) % 60 == 0:
                 second_left -= 1
-                print(f"{int(second_left - time.perf_counter()) // 60} minutes left")
+                print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
             if player_loose:
                 pass
                 # print(f"Agent game over, {i} round left")

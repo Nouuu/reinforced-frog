@@ -80,9 +80,9 @@ class World:
         for row in range(min_line, max_line):
             for col in range(min_col, max_col):
                 if (row, col) in filtered_world_states:
-                    world_str += COMMON_WORLD_TOKEN if \
-                        filtered_world_states[(row, col)].token not in FORBIDDEN_STATES else \
-                        FORBIDDEN_WORLD_TOKEN
+                    world_str += EXIT_TOKEN if filtered_world_states[(row, col)].token == EXIT_TOKEN else \
+                        (COMMON_WORLD_TOKEN if
+                         filtered_world_states[(row, col)].token not in FORBIDDEN_STATES else FORBIDDEN_WORLD_TOKEN)
                 else:
                     world_str += ' '
                 if (row, col) in filtered_world_entities_states:
