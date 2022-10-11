@@ -1,4 +1,5 @@
 # WORLD
+from typing import Dict, List
 import arcade
 
 from display.entity.world_entity import WorldEntity
@@ -32,7 +33,13 @@ ACTION_DOWN = 'D'
 ACTION_LEFT = 'L'
 ACTION_RIGHT = 'R'
 ACTION_NONE = 'N'
-ACTIONS = [ACTION_UP, ACTION_DOWN, ACTION_LEFT, ACTION_RIGHT, ACTION_NONE]
+ACTIONS = [
+    ACTION_UP,
+    ACTION_DOWN,
+    ACTION_LEFT,
+    ACTION_RIGHT,
+    ACTION_NONE
+]
 
 ACTION_MOVES = {
     ACTION_NONE: (0, 0),
@@ -111,7 +118,7 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
 
 # WORLD ENTITIES
 
-ENTITIES: {str: WorldEntity} = {
+ENTITIES: Dict[str, WorldEntity] = {
     CAR_TOKEN: WorldEntity(1, 1, CAR_TOKEN, get_sprite_local("car_1", 0.65)),
     TRUCK_TOKEN: WorldEntity(2, 1, TRUCK_TOKEN, get_sprite_local("truck", 0.32)),
     TURTLE_TOKEN: WorldEntity(1, 1, TURTLE_TOKEN, get_sprite_local("turtle", 0.2)),
@@ -131,12 +138,12 @@ ENTITIES: {str: WorldEntity} = {
 
 # LINE ENTITIES
 
-ROAD_ENTITIES: [WorldEntity] = [ENTITIES[TRUCK_TOKEN], ENTITIES[CAR_TOKEN]]
-REVERSED_ROAD_ENTITIES: [WorldEntity] = [ENTITIES[REVERSED_TRUCK_TOKEN], ENTITIES[REVERSED_CAR_TOKEN]]
-WATER_TUR_ENTITIES: [WorldEntity] = [ENTITIES[TURTLE_TOKEN]]
-REVERSED_WATER_TUR_ENTITIES: [WorldEntity] = [ENTITIES[REVERSED_TURTLE_TOKEN]]
-WATER_WOOD_ENTITIES: [WorldEntity] = [ENTITIES[WOOD_TOKEN]]
-NO_ENTITIES: [WorldEntity] = []
+ROAD_ENTITIES: List[WorldEntity] = [ENTITIES[TRUCK_TOKEN], ENTITIES[CAR_TOKEN]]
+REVERSED_ROAD_ENTITIES: List[WorldEntity] = [ENTITIES[REVERSED_TRUCK_TOKEN], ENTITIES[REVERSED_CAR_TOKEN]]
+WATER_TUR_ENTITIES: List[WorldEntity] = [ENTITIES[TURTLE_TOKEN]]
+REVERSED_WATER_TUR_ENTITIES: List[WorldEntity] = [ENTITIES[REVERSED_TURTLE_TOKEN]]
+WATER_WOOD_ENTITIES: List[WorldEntity] = [ENTITIES[WOOD_TOKEN]]
+NO_ENTITIES: List[WorldEntity] = []
 
 # WORLD
 
@@ -146,7 +153,7 @@ WORLD_SCALING = 9
 
 # WORLD LINES
 
-WORLD_LINES: [WorldLine] = [  # y
+WORLD_LINES: List[WorldLine] = [  # y
     WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[EXIT_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES),
     WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 3, DIRECTION_LEFT, 0.012,
               REVERSED_ROAD_ENTITIES),
