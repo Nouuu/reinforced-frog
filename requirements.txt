@@ -1,3 +1,5 @@
 arcade
 xxhash
 refurb
+keyboard
+typing
