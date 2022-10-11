@@ -1,5 +1,16 @@
 FROM python:3.10
 
+RUN apt-get update \
+  && apt-get install -y -qq --no-install-recommends \
+    libxext6 \
+    libx11-6 \
+    libglvnd0 \
+    libgl1 \
+    libglx0 \
+    libegl1 \
+    freeglut3-dev \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY requirements.txt ./
@@ -18,4 +29,4 @@ ENV AGENT_LEARNING_FILE='qtable/qtable.data' \
     AGENT_DEBUG=False \
     LEARNING_TIME=20
 
-CMD [ "python", "./main.py" ]
+CMD [ "python","-u", "./main.py" ]
