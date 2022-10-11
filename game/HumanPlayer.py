@@ -21,6 +21,9 @@ class HumanPlayer(Player):
     def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
         self.__state = new_state
 
+    def update_state(self, new_state):
+        self.__state = new_state
+
     @property
     def sprite(self) -> Sprite:
         return ENTITIES[FROG_TOKEN].sprite

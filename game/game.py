@@ -1,7 +1,8 @@
 from typing import Dict
 
-from conf.config import ACTION_MOVES
+from conf.config import ACTION_MOVES, WORLD_SCALING
 from game.Player import Player
+from game.utils import is_in_safe_zone_on_water
 from game.world import World
 
 
@@ -32,6 +33,7 @@ class Game:
         self.__world.update_entities()
         game_over = False
         for player in self.__players:
+            self.__water_entity_move(player)
             action = player.best_move()
             reward, new_state, environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
                                                                              player.world_entity)
@@ -59,6 +61,10 @@ class Game:
             if is_game_over:
                 self.init_player(player)
 
+    def __water_entity_move(self, player):
+        if is_in_safe_zone_on_water(player.world_entity, player.state, self.world.world_entities_states, WORLD_SCALING):
+            player.update_state((int(player.state[0]), player.state[1] + self.world.get_world_line(player.state).move_factor))
+
     def __game_over(self, player: Player):
         self.__players.remove(player)
 
@@ -69,3 +75,4 @@ class Game:
     @property
     def players(self):
         return self.__players
+

@@ -140,6 +140,9 @@ class World:
             return self.__world_entities_states[state]
         return None
 
+    def get_world_line(self, state: (int, int)) -> WorldLine:
+        return self.__world_lines[state[0] // self.__scaling]
+
     def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
         float, (int, int), bytes, bool):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
@@ -173,7 +176,7 @@ class World:
 
     @property
     def world_entities_states(self):
-        return list(self.__world_entities_states.keys())
+        return self.__world_entities_states
 
     @property
     def height(self):

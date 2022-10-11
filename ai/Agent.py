@@ -70,6 +70,9 @@ class Agent(Player):
             self.__qtable = pickle.load(file)
             self.__qtable_load_count = len(self.__qtable)
 
+    def update_state(self, new_state):
+        self.__state = new_state
+
     @property
     def sprite(self) -> Sprite:
         return ENTITIES[FROG_IA_TOKEN].sprite
