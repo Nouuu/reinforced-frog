@@ -101,7 +101,9 @@ class World:
         return world_str
 
     def __hash_world_states(self, history: int) -> bytes:
-        return xxhash.xxh3_64_digest('|'.join(self.__history[-history:]))
+        if len(self.__history) > history:
+            self.__history = self.__history[-history:]
+        return xxhash.xxh3_64_digest('|'.join(self.__history))
 
     def get_current_environment(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> bytes:
         return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
