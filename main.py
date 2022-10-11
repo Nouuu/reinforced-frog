@@ -1,4 +1,5 @@
 import os
+import time
 
 import arcade
 import keyboard as keyboard
@@ -27,14 +28,18 @@ if __name__ == '__main__':
     game = Game(world, [agent], (112, 95), auto_start=True, debug=False)
     game.start()
 
-    print("Agent start learning 100000 round")
-    i = 100000
-    while i > 0:
+    second_left = int(time.perf_counter()) + 10 * 60
+    print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60} minutes left")
+    while time.perf_counter() < second_left:
         if keyboard.is_pressed('q'):
             break
         player_loose, game_over = game.step()
+        # decrease second_left each second
+        if int(second_left - time.perf_counter()) % 60 == 0:
+            second_left -= 1
+            print(f"{int(second_left - time.perf_counter()) // 60} minutes left")
         if player_loose:
-            i -= 1
+            pass
             # print(f"Agent game over, {i} round left")
 
     best_score = sorted(agent.score_history, key=lambda score: score[1], reverse=True)[0]
