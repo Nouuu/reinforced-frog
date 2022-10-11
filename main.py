@@ -24,7 +24,7 @@ if __name__ == '__main__':
     if os.path.exists(AGENT_LEARNING_FILE):
         agent.load(AGENT_LEARNING_FILE)
 
-    game = Game(world, [agent], (112, 95), auto_start=True, debug=True)
+    game = Game(world, [agent], (112, 95), auto_start=True, debug=False)
     game.start()
 
     print("Agent start learning 100000 round")
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         player_loose, game_over = game.step()
         if player_loose:
             i -= 1
-            print(f"Agent game over, {i} round left")
+            # print(f"Agent game over, {i} round left")
 
     best_score = sorted(agent.score_history, key=lambda score: score[1], reverse=True)[0]
     print(f"Agent best score is : {best_score}")

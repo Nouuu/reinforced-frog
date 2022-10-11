@@ -32,7 +32,7 @@ class Game:
             reward, new_state, environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
                                                                              player.world_entity)
             player.step(action, reward, new_state, environment)
-            if self.__i % 100 == 0 and not player.is_human:
+            if self.__i % 100 == 0 and not player.is_human and self.__debug:
                 print(
                     f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
 
