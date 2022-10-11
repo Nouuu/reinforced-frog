@@ -1,5 +1,6 @@
 import random
 
+import arcade.key
 from arcade import Sprite
 
 from conf.config import *
@@ -14,6 +15,7 @@ class WorldWindow(arcade.Window):
             'REINFORCED FROG',
             update_rate=1 / 60000
         )
+        self.__debug = False
         self.__players_sprites = None
         self.__world_sprites = None
         self.__entities_sprites = None
@@ -62,11 +64,29 @@ class WorldWindow(arcade.Window):
             sprite.center_x, sprite.center_y = self.__get_xy_state(player.state)
             self.__players_sprites.append(sprite)
 
+    def __draw_debug(self):
+        self.__players_sprites = arcade.SpriteList()
+        for player in self.__game.players:
+            state = self.__get_xy_state(player.state)
+            arcade.draw_rectangle_outline(state[0], state[1], SPRITE_SIZE,
+                                          SPRITE_SIZE,
+                                          arcade.color.BLUE, 5)
+        for entity_state in self.__game.world.world_entities_states:
+            state = self.__get_xy_state(entity_state)
+            entity: WorldEntity = self.__game.world.get_world_entity(entity_state)
+            arcade.draw_rectangle_outline(state[0],
+                                          state[1],
+                                          entity.width * SPRITE_SIZE,
+                                          entity.height * SPRITE_SIZE,
+                                          arcade.color.RED, 5)
+
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__entities_sprites.draw()
         self.__players_sprites.draw()
+        if self.__debug:
+            self.__draw_debug()
 
     def on_update(self, delta_time: float):
         self.__game.step()
@@ -84,3 +104,5 @@ class WorldWindow(arcade.Window):
             self.__game.human_step(ACTION_MOVES[ACTION_UP])
         elif symbol == arcade.key.DOWN:
             self.__game.human_step(ACTION_MOVES[ACTION_DOWN])
+        elif symbol == arcade.key.D:
+            self.__debug = not self.__debug
