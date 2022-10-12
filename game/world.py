@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, List, Type
+from typing import Tuple
 
 import xxhash
 
@@ -77,8 +77,7 @@ class World:
         filtered_world_states = filter_states(self.__world_states, self.__scaling, min_line, max_line, min_col, max_col)
         filtered_world_entities_states = filter_states(self.__world_entities_states, self.__scaling, min_line, max_line,
                                                        min_col, max_col)
-
-        for row in range(min_line, max_line):
+        for row in range(min_line, max_line, self.__scaling):
             for col in range(min_col, max_col):
                 if (row, col) in filtered_world_states:
                     world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_states[(row, col)].token]
@@ -114,11 +113,11 @@ class World:
         return self.__world_lines[state[0] // self.__scaling]
 
     def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
-            float,
-            Tuple[int, int],
-            bytes,
-            bool
-        ]:
+        float,
+        Tuple[int, int],
+        bytes,
+        bool
+    ]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
