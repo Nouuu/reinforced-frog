@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple, List, Type
 
 import xxhash
 
@@ -11,7 +11,7 @@ class World:
                  width: int,
                  height: int,
                  scaling: int,
-                 world_lines: [WorldLine], env: Dict[str, str | float | int | bool]):
+                 world_lines: List[WorldLine], env: Dict[str, str | float | int | bool]):
         self.__env = env
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
@@ -20,12 +20,12 @@ class World:
         self.__update_entity_matrix()
 
     def __setup_world(self, width: int, height: int, scaling: int):
-        self.__world_states: {(int, int): WorldEntity} = {}
-        self.__world_entities_states: {(int, int): WorldEntity} = {}
+        self.__world_states: Dict[Tuple[int, int], WorldEntity] = {}
+        self.__world_entities_states: Dict[Tuple[int, int], WorldEntity] = {}
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
-        self.__history: [str] = []
+        self.__history: List[str] = []
 
     def __setup_entity_matrix(self):
         self.__world_line_matrix: list[list[str]] = []
@@ -49,8 +49,8 @@ class World:
         for i in self.__world_entity_matrix:
             print(len(i))
 
-    def __parse_world_lines(self, world_lines: [WorldLine]):
-        self.__world_lines: list[WorldLine] = world_lines
+    def __parse_world_lines(self, world_lines: List[WorldLine]):
+        self.__world_lines = world_lines
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
             for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
@@ -82,7 +82,7 @@ class World:
                     return True
         return False
 
-    def __is_on_ground(self, new_state: (int, int), world_entity: WorldEntity) -> bool:
+    def __is_on_ground(self, new_state: Tuple[int, int], world_entity: WorldEntity) -> bool:
         for state in get_collisions(world_entity, new_state, self.__world_states,
                                     self.__world_entities_states,
                                     self.__scaling):
@@ -91,7 +91,7 @@ class World:
                 return True
         return False
 
-    def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
+    def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
         max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows)
         min_col = max(current_state[1] - cols_arround, 0)
@@ -121,7 +121,7 @@ class World:
             self.__history = self.__history[-history:]
         return xxhash.xxh3_64_digest('|'.join(self.__history))
 
-    def get_current_environment(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> bytes:
+    def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
         return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
 
     def print(self):
@@ -146,18 +146,22 @@ class World:
         # print(
         #     is_in_safe_zone_on_water(self.__player, self.__player_state, self.__world_entities_states, self.__scaling))
 
-    def get_world_line_entity(self, state: (int, int)) -> WorldEntity | None:
+    def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
             return self.__world_states[state]
         return None
 
-    def get_world_entity(self, state: (int, int)) -> WorldEntity | None:
+    def get_world_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_entities_states:
             return self.__world_entities_states[state]
         return None
 
-    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
-        float, (int, int), bytes, bool):
+    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
+            float,
+            Tuple[int, int],
+            bytes,
+            bool
+        ]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
@@ -173,9 +177,14 @@ class World:
             and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
             reward -= 1
 
-        self.__history.append(self.__world_str(new_state, self.__env['AGENT_VISIBLE_LINES_ABOVE'],
-                                               self.__env['AGENT_VISIBLE_COLS_ARROUND']))
-        return reward, new_state, self.__hash_world_states(self.__env['AGENT_QTABLE_HISTORY']), is_game_over
+        self.__history.append(
+            self.__world_str(
+                new_state,
+                int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])
+            )
+        )
+        return reward, new_state, self.__hash_world_states(int(self.__env['AGENT_QTABLE_HISTORY'])), is_game_over
 
     def update_entities(self):
         for world_line in self.__world_lines:
