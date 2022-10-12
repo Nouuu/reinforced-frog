@@ -62,8 +62,12 @@ class Game:
                 self.init_player(player)
 
     def __water_entity_move(self, player):
-        if is_in_safe_zone_on_water(player.world_entity, player.state, self.world.world_entities_states, WORLD_SCALING):
-            player.update_state((int(player.state[0]), player.state[1] + self.world.get_world_line(player.state).move_factor))
+        if is_in_safe_zone_on_water(player.world_entity, player.state, self.__world.world_entities_states,
+                                    WORLD_SCALING):
+            new_state = (player.state[0], player.state[1] + self.__world.get_world_line(player.state).move_factor)
+            player.update_state(new_state,
+                                self.__world.get_current_environment(new_state, self.__env['AGENT_VISIBLE_LINES_ABOVE'],
+                                                                     self.__env['AGENT_VISIBLE_COLS_ARROUND']))
 
     def __game_over(self, player: Player):
         self.__players.remove(player)
@@ -75,4 +79,3 @@ class Game:
     @property
     def players(self):
         return self.__players
-
