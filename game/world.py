@@ -31,20 +31,24 @@ class World:
         self.__world_line_matrix: list[list[str]] = []
         self.__world_entity_matrix: list[list[str]] = []
         for line in self.__world_lines:
+            token = line.line_type.token
             for i in range(0, self.__scaling):
                 line_matrix = []
                 for j in range(0, self.width):
-                    line_matrix.append(line.line_type.token)
+                    line_matrix.append(token)
                 self.__world_line_matrix.append(line_matrix)
 
     def __update_entity_matrix(self):
         self.__world_entity_matrix: list[list[str]] = [[value for value in line] for line in self.__world_line_matrix]
         for state, entity in self.__world_entities_states.items():
-            x = state[1] - ((entity.width * self.__scaling) // 2)
-            y = state[0] - ((entity.height * self.__scaling) // 2)
-            for i in range(y, min(y + entity.height * self.__scaling, self.__rows)):
-                for j in range(x, min(x + entity.width * self.__scaling, self.__cols)):
-                    self.__world_entity_matrix[i][j] = entity.token
+            token = entity.token
+            width = entity.width
+            height = entity.height
+            x = state[1] - ((width * self.__scaling) // 2)
+            y = state[0] - ((height * self.__scaling) // 2)
+            for i in range(y, min(y + height * self.__scaling, self.__rows)):
+                for j in range(x, min(x + width * self.__scaling, self.__cols)):
+                    self.__world_entity_matrix[i][j] = token
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
