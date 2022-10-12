@@ -38,18 +38,16 @@ def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_ent
     return True
 
 
-def filter_states(states: Dict[Tuple[int, int], WorldEntity],
-                  scaling: int,
-                  min_line: int,
-                  max_line: int,
-                  min_col: int,
-                  max_col: int
-                  ) -> Dict[Tuple[int, int], WorldEntity]:
-    filtered_states = {}
-    for state in states.keys():
-        for position in get_positions(state, states[state], scaling):
-            if min_line <= position[0] < max_line and min_col <= position[1] < max_col:
-                filtered_states[position] = states[state]
-    return filtered_states
-    # return dict(filter(lambda state: min_line <= state[0][0] < max_line and min_col <= state[0][1] < max_col,
-    #                    states.items()))
+# def filter_states(states: Dict[Tuple[int, int], WorldEntity],
+#                   scaling: int,
+#                   min_line: int,
+#                   max_line: int,
+#                   min_col: int,
+#                   max_col: int
+#                   ) -> Dict[Tuple[int, int], WorldEntity]:
+#     filtered_states = {}
+#     for state in states.keys():
+#         for position in get_positions(state, states[state], scaling):
+#             if min_line <= position[0] < max_line and min_col <= position[1] < max_col:
+#                 filtered_states[position] = states[state]
+#     return filtered_states

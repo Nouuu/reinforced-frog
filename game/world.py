@@ -3,7 +3,7 @@ from typing import Tuple
 import xxhash
 
 from conf.config import *
-from game.utils import get_collisions, is_in_safe_zone_on_water, filter_states
+from game.utils import get_collisions, is_in_safe_zone_on_water
 
 
 class World:
@@ -85,24 +85,11 @@ class World:
         max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + cols_arround, self.__cols)
-        world_str = ''
-        # print(f"current_line: {current_state[0]}, min_line: {min_line}, max_line: {max_line}")
-        filtered_world_states = filter_states(self.__world_states, self.__scaling, min_line, max_line, min_col, max_col)
-        filtered_world_entities_states = filter_states(self.__world_entities_states, self.__scaling, min_line, max_line,
-                                                       min_col, max_col)
-        for row in range(min_line, max_line, self.__scaling):
-            for col in range(min_col, max_col):
-                if (row, col) in filtered_world_states:
-                    world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_states[(row, col)].token]
-                else:
-                    world_str += AGENT_ENVIRONMENT_TOKENS[EMPTY_TOKEN]
-                if (row, col) in filtered_world_entities_states:
-                    world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_entities_states[(row, col)].token]
-                else:
-                    world_str += AGENT_ENVIRONMENT_TOKENS[EMPTY_TOKEN]
-            world_str += '\n'
-        # print(world_str)
-        return world_str
+        return '\n'.join(
+            ''.join(
+                [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]] for col in range(min_col, max_col)])
+            for row in
+            range(min_line, max_line, self.__scaling))
 
     def __hash_world_states(self, history: int) -> bytes:
         if len(self.__history) > history:
