@@ -27,10 +27,10 @@ if __name__ == '__main__':
 
     if os.path.exists(env['AGENT_LEARNING_FILE']):
         agent.load(env['AGENT_LEARNING_FILE'])
-        qtable_files = get_qtable_files('qtable')
-        if len(qtable_files) > 1:
-            print('Merging qtables...')
-            agent.set_qtable(merge_qtables(qtable_files))
+    qtable_files = get_qtable_files('qtable')
+    if len(qtable_files) > 1:
+        print('Merging qtables...')
+        agent.set_qtable(merge_qtables(qtable_files))
 
     players = [agent]
     if not env['LEARNING_MODE']:

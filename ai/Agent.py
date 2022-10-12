@@ -72,6 +72,10 @@ class Agent(Player):
     def set_qtable(self, qtable: Dict[bytes, Dict[str, float]]):
         self.__qtable = qtable
 
+    def update_state(self, new_state, new_environment):
+        self.__state = new_state
+        self.__current_environment = new_environment
+
     @property
     def sprite(self) -> Sprite:
         return ENTITIES[FROG_IA_TOKEN].sprite

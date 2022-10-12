@@ -1,11 +1,9 @@
-from typing import Dict, Tuple, List, Type
-import copy
-from typing import Dict
+from typing import Tuple
 
 import xxhash
 
 from conf.config import *
-from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water, filter_states
+from game.utils import get_collisions, is_in_safe_zone_on_water, filter_states
 
 
 class World:
@@ -92,8 +90,7 @@ class World:
         filtered_world_states = filter_states(self.__world_states, self.__scaling, min_line, max_line, min_col, max_col)
         filtered_world_entities_states = filter_states(self.__world_entities_states, self.__scaling, min_line, max_line,
                                                        min_col, max_col)
-
-        for row in range(min_line, max_line):
+        for row in range(min_line, max_line, self.__scaling):
             for col in range(min_col, max_col):
                 if (row, col) in filtered_world_states:
                     world_str += AGENT_ENVIRONMENT_TOKENS[filtered_world_states[(row, col)].token]
@@ -115,28 +112,6 @@ class World:
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
         return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
 
-    def print(self):
-        pass
-        # print('Player position: {}'.format(self.__player_state))
-        # print('Player collisions :')
-        # print('From ground :\n-------------------')
-        # for state in get_collisions(self.__player, self.__player_state, self.__world_states,
-        #                             self.__world_entities_states,
-        #                             self.__scaling):
-        #     if state in self.__world_states:
-        #         print(state, '->', self.__world_states[state].token)
-        #
-        # print('-------------------\nFrom entities :')
-        # for state in get_collisions(self.__player, self.__player_state, self.__world_states,
-        #                             self.__world_entities_states,
-        #                             self.__scaling):
-        #     if state in self.__world_entities_states:
-        #         print(state, '->', self.__world_entities_states[state].token)
-        #
-        # print('-------------------\nIs in safe zone :')
-        # print(
-        #     is_in_safe_zone_on_water(self.__player, self.__player_state, self.__world_entities_states, self.__scaling))
-
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
             return self.__world_states[state]
@@ -146,6 +121,9 @@ class World:
         if state in self.__world_entities_states:
             return self.__world_entities_states[state]
         return None
+
+    def get_world_line(self, state: (int, int)) -> WorldLine:
+        return self.__world_lines[state[0] // self.__scaling]
 
     def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
         float,
@@ -190,7 +168,7 @@ class World:
 
     @property
     def world_entities_states(self):
-        return list(self.__world_entities_states.keys())
+        return self.__world_entities_states
 
     @property
     def height(self):

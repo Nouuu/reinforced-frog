@@ -1,4 +1,5 @@
 from typing import Tuple, Dict
+
 from arcade import Sprite
 
 from display.entity.world_entity import WorldEntity
@@ -19,6 +20,9 @@ class Player:
         pass
 
     def save_score(self):
+        pass
+
+    def update_state(self, new_state, new_environment):
         pass
 
     @property

@@ -1,12 +1,14 @@
 from random import Random
 from typing import Dict, List
+
 from display.entity.world_entity import WorldEntity
 
 
 class WorldLine:
     def __init__(self, width: int, scaling: int, line_type: WorldEntity, entities_min_spacing: int,
-            speed: float, direction: int, spawn_rate: float, entities: List[WorldEntity], random: Random):
+                 speed: float, direction: int, spawn_rate: float, entities: List[WorldEntity], random: Random):
         self.__speed_counter = 0
+        self.__move_factor = 0
         self.__spawned_entities: Dict[int, WorldEntity] = {}
         self.__line_type = line_type
         self.__entities_min_spacing = entities_min_spacing
@@ -36,7 +38,9 @@ class WorldLine:
     def move_entities(self):
         if self.__speed_counter < self.__speed:
             self.__speed_counter += 1
+            self.__move_factor = 0
             return
+        self.__move_factor = self.__direction
         self.__speed_counter = 0
         new_entities_positions = {}
         for (pos_x, entity) in self.__spawned_entities.items():
@@ -74,3 +78,7 @@ class WorldLine:
     @property
     def spawned_entities(self):
         return self.__spawned_entities
+
+    @property
+    def move_factor(self):
+        return self.__move_factor

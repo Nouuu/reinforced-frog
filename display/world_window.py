@@ -40,7 +40,7 @@ class WorldWindow(arcade.Window):
 
     def setup_world_entities_state(self):
         self.__entities_sprites = arcade.SpriteList()
-        for state in self.__game.world.world_entities_states:
+        for state in self.__game.world.world_entities_states.keys():
             world_entity: WorldEntity = self.__game.world.get_world_entity(state)
             if world_entity is not None:
                 sprite = self.__get_environment_sprite(state, world_entity)

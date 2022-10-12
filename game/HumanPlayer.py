@@ -1,4 +1,5 @@
 from typing import Tuple
+
 from arcade import Sprite
 
 from conf.config import ACTION_NONE, ENTITIES, FROG_TOKEN
@@ -20,6 +21,9 @@ class HumanPlayer(Player):
         return ACTION_NONE
 
     def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):
+        self.__state = new_state
+
+    def update_state(self, new_state, new_environment):
         self.__state = new_state
 
     @property
