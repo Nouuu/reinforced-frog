@@ -1,4 +1,6 @@
-from typing import Tuple
+from typing import Dict, Tuple, List, Type
+import copy
+from typing import Dict
 
 import xxhash
 
@@ -15,7 +17,9 @@ class World:
         self.__env = env
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
-        self.__update_world_entities(world_lines)
+        self.__update_world_entities()
+        self.__setup_entity_matrix()
+        self.__update_entity_matrix()
 
     def __setup_world(self, width: int, height: int, scaling: int):
         self.__world_states: Dict[Tuple[int, int], WorldEntity] = {}
@@ -25,6 +29,25 @@ class World:
         self.__scaling = scaling
         self.__history: List[str] = []
 
+    def __setup_entity_matrix(self):
+        self.__world_line_matrix: list[list[str]] = []
+        self.__world_entity_matrix: list[list[str]] = []
+        for line in self.__world_lines:
+            for i in range(0, self.__scaling):
+                line_matrix = []
+                for j in range(0, self.width):
+                    line_matrix.append(line.line_type.token)
+                self.__world_line_matrix.append(line_matrix)
+
+    def __update_entity_matrix(self):
+        self.__world_entity_matrix: list[list[str]] = copy.deepcopy(self.__world_line_matrix)
+        for state, entity in self.__world_entities_states.items():
+            x = state[1] - ((entity.width * self.__scaling) // 2)
+            y = state[0] - ((entity.height * self.__scaling) // 2)
+            for i in range(y, min(y + entity.height * self.__scaling, self.__rows)):
+                for j in range(x, min(x + entity.width * self.__scaling, self.__cols)):
+                    self.__world_entity_matrix[i][j] = entity.token
+
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
@@ -32,38 +55,30 @@ class World:
                 state = (row, col)
                 self.__world_states[state] = world_lines[row // self.__scaling].line_type
 
-    def __update_world_entities(self, world_lines: List[WorldLine]):
-        self.__world_entities_states: Dict[Tuple[int, int], WorldEntity] = {}
-        for (index, world_line) in enumerate(world_lines):
+    def __update_world_entities(self):
+        self.__world_entities_states: {(int, int): WorldEntity} = {}
+        for (index, world_line) in enumerate(self.__world_lines):
             for (pos_x, entity) in world_line.spawned_entities.items():
                 self.__world_entities_states[((index * self.__scaling) + (self.__scaling // 2), pos_x)] = entity
 
     def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
-        for state in get_positions(new_state, world_entity, self.__scaling):
-            if not 0 <= state[0] < self.__rows or not 0 <= state[1] < self.__cols:
+        entity_min_y = new_state[0] - world_entity.height * self.__scaling // 2
+        entity_max_y = new_state[0] + world_entity.height * self.__scaling // 2
+        entity_min_x = new_state[1] - world_entity.width * self.__scaling // 2
+        entity_max_x = new_state[1] + world_entity.width * self.__scaling // 2
+        if entity_min_y < 0 or entity_max_y > self.height or entity_min_x < 0 or entity_max_x > self.width:
+            return True
+        for entity_token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
+            if entity_token in FORBIDDEN_STATES and (
+                entity_token != WATER_TOKEN or not is_in_safe_zone_on_water(world_entity, new_state,
+                                                                            self.__world_entities_states,
+                                                                            self.__scaling)):
                 return True
-        for state in get_collisions(world_entity, new_state, self.__world_states,
-                                    self.__world_entities_states,
-                                    self.__scaling):
-            if state in self.__world_states:
-                if self.__world_states[state].token in FORBIDDEN_STATES \
-                    and (
-                    self.__world_states[state].token != WATER_TOKEN
-                    or not is_in_safe_zone_on_water(world_entity, new_state, self.__world_entities_states,
-                                                    self.__scaling)
-                ):
-                    return True
-            if state in self.__world_entities_states:
-                if self.__world_entities_states[state].token in FORBIDDEN_STATES:
-                    return True
         return False
 
     def __is_on_ground(self, new_state: Tuple[int, int], world_entity: WorldEntity) -> bool:
-        for state in get_collisions(world_entity, new_state, self.__world_states,
-                                    self.__world_entities_states,
-                                    self.__scaling):
-            if state in self.__world_states and (
-                self.__world_states[state].token == GROUND_TOKEN or self.__world_states[state].token == START_TOKEN):
+        for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
+            if token == GROUND_TOKEN or token == START_TOKEN:
                 return True
         return False
 
@@ -146,7 +161,8 @@ class World:
         for world_line in self.__world_lines:
             world_line.spawn_entity()
             world_line.move_entities()
-        self.__update_world_entities(self.__world_lines)
+        self.__update_world_entities()
+        self.__update_entity_matrix()
 
     @property
     def world_states(self):
@@ -165,9 +181,7 @@ class World:
         return self.__cols
 
     def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
-        for state in get_collisions(world_entity, new_state, self.__world_states,
-                                    self.__world_entities_states,
-                                    self.__scaling):
-            if state in self.__world_states and self.__world_states[state].token in WIN_STATES:
+        for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
+            if token in WIN_STATES:
                 return True
         return False
