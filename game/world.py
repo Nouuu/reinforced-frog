@@ -100,28 +100,6 @@ class World:
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
         return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
 
-    def print(self):
-        pass
-        # print('Player position: {}'.format(self.__player_state))
-        # print('Player collisions :')
-        # print('From ground :\n-------------------')
-        # for state in get_collisions(self.__player, self.__player_state, self.__world_states,
-        #                             self.__world_entities_states,
-        #                             self.__scaling):
-        #     if state in self.__world_states:
-        #         print(state, '->', self.__world_states[state].token)
-        #
-        # print('-------------------\nFrom entities :')
-        # for state in get_collisions(self.__player, self.__player_state, self.__world_states,
-        #                             self.__world_entities_states,
-        #                             self.__scaling):
-        #     if state in self.__world_entities_states:
-        #         print(state, '->', self.__world_entities_states[state].token)
-        #
-        # print('-------------------\nIs in safe zone :')
-        # print(
-        #     is_in_safe_zone_on_water(self.__player, self.__player_state, self.__world_entities_states, self.__scaling))
-
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
             return self.__world_states[state]
