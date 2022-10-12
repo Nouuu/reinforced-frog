@@ -44,6 +44,7 @@ if __name__ == '__main__':
             if int(second_left - time.perf_counter()) % 60 == 0:
                 second_left -= 1
                 print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
+                agent.save(env['AGENT_LEARNING_FILE'])
             if player_loose:
                 pass
                 # print(f"Agent game over, {i} round left")
