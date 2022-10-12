@@ -69,7 +69,7 @@ class World:
         for entity_token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
             if entity_token in FORBIDDEN_STATES and (
                 entity_token != WATER_TOKEN or not is_in_safe_zone_on_water(world_entity, new_state,
-                                                                            self.__world_entities_states,
+                                                                            self.__world_entity_matrix,
                                                                             self.__scaling)):
                 return True
         return False
@@ -177,6 +177,10 @@ class World:
     @property
     def width(self):
         return self.__cols
+
+    @property
+    def world_entity_matrix(self):
+        return self.__world_entity_matrix
 
     def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
         for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
