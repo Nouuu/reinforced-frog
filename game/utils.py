@@ -14,21 +14,12 @@ def get_positions(state: tuple, entity: WorldEntity, scaling: int) -> [tuple]:
     return positions
 
 
-def get_collisions(entity: WorldEntity, entity_state: tuple, world_line_entities: {tuple: WorldEntity},
-                   world_entities: {tuple: WorldEntity},
-                   scaling: int) -> [tuple]:
+def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[list[str]], scaling: int) -> [tuple]:
     collisions = set()
-    state_positions = get_positions(entity_state, entity, scaling)
-
-    for entity_state in world_line_entities.keys():
-        entity_positions = get_positions(entity_state, world_line_entities[entity_state], scaling)
-        if any([any([pos in entity_positions for pos in state_positions])]):
-            collisions.add(entity_state)
-    for entity_state in world_entities.keys():
-        entity_positions = get_positions(entity_state, world_entities[entity_state], scaling)
-        if any([any([pos in entity_positions for pos in state_positions])]):
-            collisions.add(entity_state)
-
+    entity_min_x = state[1] - entity.width * scaling // 2
+    entity_max_x = state[1] + entity.width * scaling // 2
+    for i in range(entity_min_x, entity_max_x):
+        collisions.add(world_entity_matrix[state[0]][i])
     return collisions
 
 
