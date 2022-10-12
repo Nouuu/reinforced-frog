@@ -1,18 +1,16 @@
-from typing import Dict, Tuple, Set
-
 from conf.config import WATER_TOKEN, WATER_AUTHORISED_STATES
 from display.entity.world_entity import WorldEntity
 
 
-def get_positions(state: tuple, entity: WorldEntity, scaling: int) -> Set[tuple]:
-    positions = set()
-    for y in range((scaling * entity.height // 2 + scaling * entity.height % 2)):
-        for x in range((scaling * entity.width // 2 + scaling * entity.width % 2)):
-            positions.add((state[0] + y, state[1] + x))
-            positions.add((state[0] - y, state[1] + x))
-            positions.add((state[0] + y, state[1] - x))
-            positions.add((state[0] - y, state[1] - x))
-    return positions
+# def get_positions(state: tuple, entity: WorldEntity, scaling: int) -> Set[tuple]:
+#     positions = set()
+#     for y in range((scaling * entity.height // 2 + scaling * entity.height % 2)):
+#         for x in range((scaling * entity.width // 2 + scaling * entity.width % 2)):
+#             positions.add((state[0] + y, state[1] + x))
+#             positions.add((state[0] - y, state[1] + x))
+#             positions.add((state[0] + y, state[1] - x))
+#             positions.add((state[0] - y, state[1] - x))
+#     return positions
 
 
 def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[list[str]], scaling: int) -> [tuple]:
@@ -28,7 +26,6 @@ def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_ent
                              scaling: int) -> bool:
     collisions = get_collisions(entity, entity_state, world_entity_matrix, scaling)
     return not WATER_TOKEN in collisions and any(token in collisions for token in WATER_AUTHORISED_STATES)
-
 
 # def filter_states(states: Dict[Tuple[int, int], WorldEntity],
 #                   scaling: int,
