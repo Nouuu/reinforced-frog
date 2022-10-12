@@ -47,6 +47,21 @@ services:
     restart: no
     volumes:
       - qtable:/app/qtable
+  agent_4:
+    image: 'nospy/reinforced-frog:staging'
+    environment:
+      AGENT_LEARNING_FILE: 'qtable/qtable4.data'
+      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+      AGENT_GAMMA: ${AGENT_GAMMA}
+      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+      AGENT_QTABLE_HISTORY: ${AGENT_QTABLE_HISTORY}
+      LEARNING_MODE: ${LEARNING_MODE}
+      AGENT_DEBUG: ${AGENT_DEBUG}
+      LEARNING_TIME: ${LEARNING_TIME}
+    restart: no
+    volumes:
+      - qtable:/app/qtable
 
 volumes:
   qtable:
