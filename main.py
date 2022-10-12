@@ -2,7 +2,6 @@ import os
 import time
 
 import arcade
-import keyboard
 
 from ai.Agent import Agent
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
@@ -38,8 +37,8 @@ if __name__ == '__main__':
         second_left = int(time.perf_counter()) + env['LEARNING_TIME'] * 60
         print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
         while time.perf_counter() < second_left:
-            if keyboard.is_pressed('q'):
-                break
+            # if keyboard.is_pressed('q'):
+            #     break
             player_loose, game_over = game.step()
             # decrease second_left each second
             if int(second_left - time.perf_counter()) % 60 == 0:

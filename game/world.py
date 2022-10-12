@@ -62,7 +62,8 @@ class World:
         for state in get_collisions(world_entity, new_state, self.__world_states,
                                     self.__world_entities_states,
                                     self.__scaling):
-            if state in self.__world_states and self.__world_states[state].token == GROUND_TOKEN:
+            if state in self.__world_states and (
+                self.__world_states[state].token == GROUND_TOKEN or self.__world_states[state].token == START_TOKEN):
                 return True
         return False
 
@@ -134,7 +135,7 @@ class World:
     def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
         float, (int, int), bytes, bool):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
-        reward = -1 * (self.__rows / new_state[0])
+        reward = -1
         is_game_over = False
 
         if self.__is_forbidden_state(new_state, world_entity):

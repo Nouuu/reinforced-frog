@@ -18,7 +18,7 @@ class Agent(Player):
         self.__gamma = gamma
         self.__state = (0, 0)
         self.__current_environment = b''
-        self.__qtable: {bytes: {(int, int): float}} = {}
+        self.__qtable: {bytes: float} = {}
         self.__score = 0
         self.__score_history = []
         self.__world_height = 0
@@ -35,13 +35,11 @@ class Agent(Player):
     def save_score(self):
         self.__score_history.append([self.__state, self.__score])
 
-    def get_qtable_state(self, environment: bytes, state: (int, int)) -> {(int, int): float}:
+    def get_qtable_state(self, environment: bytes, _state: (int, int)) -> {(int, int): float}:
         if environment not in self.__qtable:
             self.__qtable[environment] = {}
-            self.__qtable[environment][state] = {action: 0 for action in ACTION_MOVES}
-        elif state not in self.__qtable[environment]:
-            self.__qtable[environment][state] = {action: 0 for action in ACTION_MOVES}
-        return self.__qtable[environment][state]
+            self.__qtable[environment] = {action: 0 for action in ACTION_MOVES}
+        return self.__qtable[environment]
 
     def best_move(self) -> str:
         actions = self.get_qtable_state(self.__current_environment, self.__state)
