@@ -40,7 +40,7 @@ class World:
                 self.__world_line_matrix.append(line_matrix)
 
     def __update_entity_matrix(self):
-        self.__world_entity_matrix: list[list[str]] = copy.deepcopy(self.__world_line_matrix)
+        self.__world_entity_matrix: list[list[str]] = [[value for value in line] for line in self.__world_line_matrix]
         for state, entity in self.__world_entities_states.items():
             x = state[1] - ((entity.width * self.__scaling) // 2)
             y = state[0] - ((entity.height * self.__scaling) // 2)
@@ -148,11 +148,11 @@ class World:
         return None
 
     def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
-            float,
-            Tuple[int, int],
-            bytes,
-            bool
-        ]:
+        float,
+        Tuple[int, int],
+        bytes,
+        bool
+    ]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
