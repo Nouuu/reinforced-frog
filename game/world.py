@@ -1,3 +1,5 @@
+import xxhash
+
 from conf.config import *
 from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water
 
@@ -18,6 +20,7 @@ class World:
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
+        self.__history: [str] = []
 
     def __parse_world_lines(self, world_lines: [WorldLine]):
         self.__world_lines = world_lines
@@ -30,11 +33,11 @@ class World:
         self.__world_entities_states: {(int, int): WorldEntity} = {}
         for (index, world_line) in enumerate(world_lines):
             for (pos_x, entity) in world_line.spawned_entities.items():
-                self.__world_entities_states[((index * self.__scaling) + self.__scaling // 2, pos_x)] = entity
+                self.__world_entities_states[((index * self.__scaling) + (self.__scaling // 2), pos_x)] = entity
 
     def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
         for state in get_positions(new_state, world_entity, self.__scaling):
-            if not 0 <= state[0] <= self.__rows or not 0 <= state[1] <= self.__cols:
+            if not 0 <= state[0] < self.__rows or not 0 <= state[1] < self.__cols:
                 return True
         for state in get_collisions(world_entity, new_state, self.__world_states,
                                     self.__world_entities_states,
@@ -51,6 +54,46 @@ class World:
                 if self.__world_entities_states[state].token in FORBIDDEN_STATES:
                     return True
         return False
+
+    def __filter_states(self, states: {(int, int): WorldEntity}, current_state: (int, int), number_of_lines: int,
+                        cols_arround: int) -> {
+        (int, int): WorldEntity}:
+        min_line = max(current_state[0] - 1 * self.__scaling - self.__scaling // 2, 0)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) + self.__scaling // 2, self.__rows - 1)
+        min_col = max(current_state[1] - cols_arround, 0)
+        max_col = min(current_state[1] + cols_arround, self.__cols - 1)
+        return dict(filter(lambda state: min_line <= state[0][0] < max_line and min_col <= state[0][1] < max_col,
+                           states.items()))
+
+    def __world_str(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> str:
+        min_line = max(current_state[0] - 1 * self.__scaling - self.__scaling // 2, 0)
+        max_line = min(current_state[0] + (number_of_lines * self.__scaling) + self.__scaling // 2, self.__rows - 1)
+        min_col = max(current_state[1] - cols_arround, 0)
+        max_col = min(current_state[1] + cols_arround, self.__cols - 1)
+        world_str = ''
+        # print(f"current_line: {current_state[0]}, min_line: {min_line}, max_line: {max_line}")
+        filtered_world_states = self.__filter_states(self.__world_states, current_state, number_of_lines,
+                                                     cols_arround)
+        filtered_world_entities_states = self.__filter_states(self.__world_entities_states, current_state,
+                                                              number_of_lines, cols_arround)
+        for row in range(min_line, max_line):
+            for col in range(min_col, max_col):
+                if (row, col) in filtered_world_states:
+                    world_str += filtered_world_states[(row, col)].token
+                else:
+                    world_str += ' '
+                if (row, col) in filtered_world_entities_states:
+                    world_str += filtered_world_entities_states[(row, col)].token
+                else:
+                    world_str += ' '
+            world_str += '\n'
+        return world_str
+
+    def __hash_world_states(self, history: int) -> bytes:
+        return xxhash.xxh3_64_digest('|'.join(self.__history[-history:]))
+
+    def get_current_environment(self, current_state: (int, int), number_of_lines: int, cols_arround: int) -> bytes:
+        return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
 
     def print(self):
         pass
@@ -84,12 +127,22 @@ class World:
             return self.__world_entities_states[state]
         return None
 
-    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (float, (int, int)):
-        self.update_entities()
+    def step(self, state: (int, int), action: (int, int), world_entity: WorldEntity) -> (
+        float, (int, int), bytes, bool):
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
+        reward = -1 * (self.__rows / new_state[0])
+        is_game_over = False
+
         if self.__is_forbidden_state(new_state, world_entity):
-            return -2 * self.__cols * self.__rows, state
-        return -1, new_state
+            new_state = state
+            reward = -2 * self.__cols * self.__rows * (new_state[0] / self.__rows)
+            is_game_over = True
+        elif self.__is_win_state(new_state, world_entity):
+            reward = self.__cols * self.__rows
+            is_game_over = True
+
+        self.__history.append(self.__world_str(new_state, AGENT_VISIBLE_LINES_ABOVE, AGENT_VISIBLE_COLS_ARROUND))
+        return reward, new_state, self.__hash_world_states(2), is_game_over
 
     def update_entities(self):
         for world_line in self.__world_lines:
@@ -112,3 +165,11 @@ class World:
     @property
     def width(self):
         return self.__cols
+
+    def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
+        for state in get_collisions(world_entity, new_state, self.__world_states,
+                                    self.__world_entities_states,
+                                    self.__scaling):
+            if state in self.__world_states and self.__world_states[state].token in WIN_STATES:
+                return True
+        return False
