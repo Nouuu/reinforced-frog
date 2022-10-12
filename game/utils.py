@@ -1,9 +1,9 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Set
 
 from display.entity.world_entity import WorldEntity
 
 
-def get_positions(state: tuple, entity: WorldEntity, scaling: int) -> [tuple]:
+def get_positions(state: tuple, entity: WorldEntity, scaling: int) -> Set[tuple]:
     positions = set()
     for y in range((scaling * entity.height // 2 + scaling * entity.height % 2)):
         for x in range((scaling * entity.width // 2 + scaling * entity.width % 2)):
@@ -23,7 +23,7 @@ def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[
     return collisions
 
 
-def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entities: {tuple: WorldEntity},
+def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entities: Dict[tuple, WorldEntity],
                              scaling: int) -> bool:
     state_positions = get_positions(entity_state, entity, scaling)
 
@@ -38,7 +38,7 @@ def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_ent
     return True
 
 
-def filter_states(states: {(int, int): WorldEntity},
+def filter_states(states: Dict[Tuple[int, int], WorldEntity],
                   scaling: int,
                   min_line: int,
                   max_line: int,

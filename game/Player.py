@@ -1,3 +1,4 @@
+from typing import Tuple, Dict
 from arcade import Sprite
 
 from display.entity.world_entity import WorldEntity
@@ -5,16 +6,16 @@ from game.world import World
 
 
 class Player:
-    def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
+    def init(self, world: World, intial_state: Tuple[int, int], _initial_environment: bytes):
         pass
 
     def best_move(self) -> str:
         pass
 
-    def get_qtable_state(self, environment: bytes, state: (int, int)) -> {(int, int): float}:
+    def get_qtable_state(self, environment: bytes, _state: Tuple[int, int]) -> Dict[Tuple[int, int], float]:
         pass
 
-    def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):
         pass
 
     def save_score(self):
@@ -37,7 +38,7 @@ class Player:
         pass
 
     @property
-    def state(self) -> (int, int):
+    def state(self) -> Tuple[int, int]:
         pass
 
     @property

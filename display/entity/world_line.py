@@ -1,13 +1,13 @@
-import random
-
+from random import Random
+from typing import Dict, List
 from display.entity.world_entity import WorldEntity
 
 
 class WorldLine:
     def __init__(self, width: int, scaling: int, line_type: WorldEntity, entities_min_spacing: int,
-                 speed: float, direction: int, spawn_rate: float, entities: [WorldEntity]):
+            speed: float, direction: int, spawn_rate: float, entities: List[WorldEntity], random: Random):
         self.__speed_counter = 0
-        self.__spawned_entities: {int: WorldEntity} = {}
+        self.__spawned_entities: Dict[int, WorldEntity] = {}
         self.__line_type = line_type
         self.__entities_min_spacing = entities_min_spacing
         self.__speed = speed
@@ -16,16 +16,17 @@ class WorldLine:
         self.__entities = entities
         self.__width = width
         self.__scaling = scaling
+        self.__random = random
         self.__spawn_initial_entities()
 
     def __spawn_initial_entities(self):
         if len(self.__entities) == 0:
             return
-        entity = random.choice(self.__entities)
+        entity = self.__random.choice(self.__entities)
         pos = -((self.__scaling * entity.width) // 2)
         while pos < self.__width + self.__scaling:
-            entity = random.choice(self.__entities)
-            rng = round(random.uniform(0, 1), 2)
+            entity = self.__random.choice(self.__entities)
+            rng = round(self.__random.uniform(0, 1), 2)
             if rng < self.__spawn_rate:
                 self.__spawned_entities[pos] = entity
                 pos += (self.__scaling * entity.width) + self.__entities_min_spacing
@@ -47,7 +48,7 @@ class WorldLine:
     def spawn_entity(self):
         if self.__direction == 0:
             return
-        entity = random.choice(self.__entities)
+        entity = self.__random.choice(self.__entities)
         if self.__direction < 0:
             pos = self.__width + ((entity.width * self.__scaling) // 2)
             if len(self.spawned_entities.keys()) > 0:
@@ -62,7 +63,7 @@ class WorldLine:
                 if previous_entity_pos - (self.spawned_entities[
                                               previous_entity_pos].width * self.__scaling) - self.__entities_min_spacing < pos:
                     return
-        rng = round(random.uniform(0, 1), 2)
+        rng = round(self.__random.uniform(0, 1), 2)
         if rng < self.__spawn_rate:
             self.__spawned_entities[pos] = entity
 
