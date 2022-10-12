@@ -40,7 +40,7 @@ class World:
                 self.__world_line_matrix.append(line_matrix)
 
     def __update_entity_matrix(self):
-        self.__world_entity_matrix: list[list[str]] = copy.deepcopy(self.__world_line_matrix)
+        self.__world_entity_matrix: list[list[str]] = [[value for value in line] for line in self.__world_line_matrix]
         for state, entity in self.__world_entities_states.items():
             x = state[1] - ((entity.width * self.__scaling) // 2)
             y = state[0] - ((entity.height * self.__scaling) // 2)
