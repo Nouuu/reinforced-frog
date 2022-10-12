@@ -1,5 +1,3 @@
-import random
-
 from arcade import Sprite
 
 from conf.config import *
@@ -17,7 +15,7 @@ class WorldWindow(arcade.Window):
         self.__players_sprites = None
         self.__world_sprites = None
         self.__entities_sprites = None
-        self.__random = random.Random()
+        self.__random = random
         self.__game = game
 
     def __rand(self, r: int):
