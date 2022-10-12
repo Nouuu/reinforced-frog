@@ -15,7 +15,9 @@ class World:
         self.__env = env
         self.__setup_world(width, height, scaling)
         self.__parse_world_lines(world_lines)
-        self.__update_world_entities(world_lines)
+        self.__update_world_entities()
+        self.__setup_entity_matrix()
+        self.__update_entity_matrix()
 
     def __setup_world(self, width: int, height: int, scaling: int):
         self.__world_states: {(int, int): WorldEntity} = {}
@@ -25,16 +27,38 @@ class World:
         self.__scaling = scaling
         self.__history: [str] = []
 
+    def __setup_entity_matrix(self):
+        self.__world_line_matrix: list[list[str]] = []
+        self.__world_entity_matrix: list[list[str]] = []
+        for line in self.__world_lines:
+            for i in range(0, self.__scaling):
+                line_matrix = []
+                for j in range(0, self.width):
+                    line_matrix.append(line.line_type.token)
+                self.__world_line_matrix.append(line_matrix)
+
+    def __update_entity_matrix(self):
+        self.__world_entity_matrix = self.__world_line_matrix
+        for position, entity in self.__world_entities_states.items():
+            x = position[0] - ((entity.width * self.__scaling) // 2)
+            y = position[0] - ((entity.height * self.__scaling) // 2)
+            for i in range(y, y + entity.height * self.__scaling):
+                for j in range(x, x + entity.width * self.__scaling):
+                    self.__world_entity_matrix[i][j] = entity.token
+        print(self.__world_entity_matrix)
+        for i in self.__world_entity_matrix:
+            print(len(i))
+
     def __parse_world_lines(self, world_lines: [WorldLine]):
-        self.__world_lines = world_lines
+        self.__world_lines: list[WorldLine] = world_lines
         for row in range(self.__scaling // 2, self.__rows, self.__scaling):
             for col in range(self.__scaling // 2, self.__cols, self.__scaling):
                 state = (row, col)
                 self.__world_states[state] = world_lines[row // self.__scaling].line_type
 
-    def __update_world_entities(self, world_lines: [WorldLine]):
+    def __update_world_entities(self):
         self.__world_entities_states: {(int, int): WorldEntity} = {}
-        for (index, world_line) in enumerate(world_lines):
+        for (index, world_line) in enumerate(self.__world_lines):
             for (pos_x, entity) in world_line.spawned_entities.items():
                 self.__world_entities_states[((index * self.__scaling) + (self.__scaling // 2), pos_x)] = entity
 
@@ -157,7 +181,8 @@ class World:
         for world_line in self.__world_lines:
             world_line.spawn_entity()
             world_line.move_entities()
-        self.__update_world_entities(self.__world_lines)
+        self.__update_world_entities()
+        #self.__update_entity_matrix()
 
     @property
     def world_states(self):
