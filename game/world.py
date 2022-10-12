@@ -87,8 +87,8 @@ class World:
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
         max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows)
-        min_col = max(current_state[1] - cols_arround, 0)
-        max_col = min(current_state[1] + cols_arround, self.__cols)
+        min_col = max(current_state[1] - self.__scaling // 2 - cols_arround, 0)
+        max_col = min(current_state[1] + self.__scaling // 2 + cols_arround, self.__cols)
         return '\n'.join(
             ''.join(
                 [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]] for col in range(min_col, max_col)])

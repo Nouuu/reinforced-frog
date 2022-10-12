@@ -12,7 +12,7 @@ services:
       LEARNING_MODE: ${LEARNING_MODE}
       AGENT_DEBUG: ${AGENT_DEBUG}
       LEARNING_TIME: ${LEARNING_TIME}
-    restart: no
+    restart: 'no'
     volumes:
       - qtable:/app/qtable
 
@@ -28,7 +28,7 @@ services:
       LEARNING_MODE: ${LEARNING_MODE}
       AGENT_DEBUG: ${AGENT_DEBUG}
       LEARNING_TIME: ${LEARNING_TIME}
-    restart: no
+    restart: 'no'
     volumes:
       - qtable:/app/qtable
 
@@ -44,7 +44,7 @@ services:
       LEARNING_MODE: ${LEARNING_MODE}
       AGENT_DEBUG: ${AGENT_DEBUG}
       LEARNING_TIME: ${LEARNING_TIME}
-    restart: no
+    restart: 'no'
     volumes:
       - qtable:/app/qtable
   agent_4:
@@ -59,7 +59,7 @@ services:
       LEARNING_MODE: ${LEARNING_MODE}
       AGENT_DEBUG: ${AGENT_DEBUG}
       LEARNING_TIME: ${LEARNING_TIME}
-    restart: no
+    restart: 'no'
     volumes:
       - qtable:/app/qtable
 
