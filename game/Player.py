@@ -20,6 +20,9 @@ class Player:
     def save_score(self):
         pass
 
+    def update_state(self, new_state, new_environment):
+        pass
+
     @property
     def sprite(self) -> Sprite:
         pass
