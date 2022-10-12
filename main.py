@@ -23,7 +23,7 @@ if __name__ == '__main__':
         env=env)
 
     player = HumanPlayer()
-    agent = Agent(env['AGENT_LEARNING_RATE'], env['AGENT_GAMMA'])
+    agent = Agent(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']))
 
     if os.path.exists(env['AGENT_LEARNING_FILE']):
         agent.load(env['AGENT_LEARNING_FILE'])
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     game.start()
 
     if env['LEARNING_MODE']:
-        second_left = int(time.perf_counter()) + env['LEARNING_TIME'] * 60
+        second_left = int(time.perf_counter()) + int(env['LEARNING_TIME']) * 60
         print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
         while time.perf_counter() < second_left:
             # if keyboard.is_pressed('q'):
