@@ -1,0 +1,5 @@
+version: '3'
+services:
+  agent_1:
+    image: 'nospy/reinforced-frog:staging'
+
