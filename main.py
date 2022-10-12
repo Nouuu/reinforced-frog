@@ -19,7 +19,7 @@ if __name__ == '__main__':
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
-        world_lines=WORLD_LINES,
+        world_lines=WORLD_LINES[env['WORLD_TYPE']],
         env=env)
 
     player = HumanPlayer()

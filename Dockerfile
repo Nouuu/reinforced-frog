@@ -27,6 +27,7 @@ ENV AGENT_LEARNING_FILE='qtable/qtable.data' \
     AGENT_QTABLE_HISTORY=2 \
     LEARNING_MODE=True \
     AGENT_DEBUG=False \
-    LEARNING_TIME=20
+    LEARNING_TIME=20 \
+    WORLD_TYPE=0
 
 CMD [ "python","-u", "./main.py" ]

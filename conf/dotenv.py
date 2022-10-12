@@ -24,6 +24,8 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['LEARNING_MODE'] = os.getenv('LEARNING_MODE', 'true')
     if 'AGENT_DEBUG' not in env:
         env['AGENT_DEBUG'] = os.getenv('AGENT_DEBUG', 'false')
+    if 'WORLD_TYPE' not in env:
+        env['WORLD_TYPE'] = os.getenv('WORLD_TYPE', 0)
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -31,6 +33,7 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['AGENT_VISIBLE_COLS_ARROUND'] = int(env['AGENT_VISIBLE_COLS_ARROUND'])
     env['AGENT_QTABLE_HISTORY'] = int(env['AGENT_QTABLE_HISTORY'])
     env['LEARNING_TIME'] = int(env['LEARNING_TIME'])
+    env['WORLD_TYPE'] = int(env['WORLD_TYPE'])
     env['LEARNING_MODE'] = env['LEARNING_MODE'].lower() == 'true'
     env['AGENT_DEBUG'] = env['AGENT_DEBUG'].lower() == 'true'
     print(env)
