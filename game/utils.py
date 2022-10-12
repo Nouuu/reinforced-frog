@@ -1,5 +1,6 @@
 from typing import Dict, Tuple, Set
 
+from conf.config import WATER_TOKEN, WATER_AUTHORISED_STATES
 from display.entity.world_entity import WorldEntity
 
 
@@ -23,19 +24,10 @@ def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[
     return collisions
 
 
-def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entities: Dict[tuple, WorldEntity],
+def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entity_matrix: list[list[str]],
                              scaling: int) -> bool:
-    state_positions = get_positions(entity_state, entity, scaling)
-
-    entities_positions = set()
-    for entity_state in world_entities.keys():
-        for state in get_positions(entity_state, world_entities[entity_state], scaling):
-            entities_positions.add(state)
-
-    for pos in state_positions:
-        if pos not in entities_positions:
-            return False
-    return True
+    collisions = get_collisions(entity, entity_state, world_entity_matrix, scaling)
+    return not WATER_TOKEN in collisions and any(token in collisions for token in WATER_AUTHORISED_STATES)
 
 
 # def filter_states(states: Dict[Tuple[int, int], WorldEntity],
