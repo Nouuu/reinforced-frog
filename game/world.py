@@ -125,6 +125,8 @@ class World:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
+        if action[0] == -1:
+            reward = 1
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
