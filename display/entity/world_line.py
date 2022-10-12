@@ -1,11 +1,12 @@
 from random import Random
 from typing import Dict, List
+
 from display.entity.world_entity import WorldEntity
 
 
 class WorldLine:
     def __init__(self, width: int, scaling: int, line_type: WorldEntity, entities_min_spacing: int,
-            speed: float, direction: int, spawn_rate: float, entities: List[WorldEntity], random: Random):
+                 speed: float, direction: int, spawn_rate: float, entities: List[WorldEntity], random: Random):
         self.__speed_counter = 0
         self.__move_factor = 0
         self.__spawned_entities: Dict[int, WorldEntity] = {}

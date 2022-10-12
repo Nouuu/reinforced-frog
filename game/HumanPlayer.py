@@ -1,4 +1,5 @@
 from typing import Tuple
+
 from arcade import Sprite
 
 from conf.config import ACTION_NONE, ENTITIES, FROG_TOKEN

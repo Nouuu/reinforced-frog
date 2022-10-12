@@ -1,4 +1,5 @@
 from typing import Tuple, Dict
+
 from arcade import Sprite
 
 from display.entity.world_entity import WorldEntity

@@ -1,11 +1,9 @@
-from typing import Dict, Tuple, List, Type
-import copy
-from typing import Dict
+from typing import Tuple
 
 import xxhash
 
 from conf.config import *
-from game.utils import get_positions, get_collisions, is_in_safe_zone_on_water, filter_states
+from game.utils import get_collisions, is_in_safe_zone_on_water, filter_states
 
 
 class World:
