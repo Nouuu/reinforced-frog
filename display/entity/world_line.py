@@ -25,7 +25,7 @@ class WorldLine:
         if len(self.__entities) == 0:
             return
         entity = self.__random.choice(self.__entities)
-        pos = -((self.__scaling * entity.width) // 2)
+        pos = -(self.__scaling * entity.width)
         while pos < self.__width + self.__scaling:
             entity = self.__random.choice(self.__entities)
             rng = round(self.__random.uniform(0, 1), 2)
@@ -54,14 +54,14 @@ class WorldLine:
             return
         entity = self.__random.choice(self.__entities)
         if self.__direction < 0:
-            pos = self.__width + ((entity.width * self.__scaling) // 2)
+            pos = self.__width + (entity.width * self.__scaling)
             if len(self.spawned_entities.keys()) > 0:
                 previous_entity_pos = max(self.spawned_entities.keys())
                 if previous_entity_pos + (self.spawned_entities[
                                               previous_entity_pos].width * self.__scaling) + self.__entities_min_spacing > pos:
                     return
         else:
-            pos = -((entity.width * self.__scaling) // 2)
+            pos = -(entity.width * self.__scaling)
             if len(self.spawned_entities.keys()) > 0:
                 previous_entity_pos = min(self.spawned_entities.keys())
                 if previous_entity_pos - (self.spawned_entities[
