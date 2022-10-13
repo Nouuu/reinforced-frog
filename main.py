@@ -4,6 +4,7 @@ import time
 import arcade
 
 from ai.Agent import Agent
+from ai.qtable import get_qtable_files, merge_qtables
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
 from conf.dotenv import load_env
 from display.world_window import WorldWindow
@@ -12,19 +13,24 @@ from game.game import Game
 from game.world import World
 
 if __name__ == '__main__':
+
     env = load_env()
     world = World(
         width=WORLD_WIDTH,
         height=WORLD_HEIGHT,
         scaling=WORLD_SCALING,
-        world_lines=WORLD_LINES,
+        world_lines=WORLD_LINES[env['WORLD_TYPE']],
         env=env)
 
     player = HumanPlayer()
-    agent = Agent(env['AGENT_LEARNING_RATE'], env['AGENT_GAMMA'])
+    agent = Agent(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']))
 
     if os.path.exists(env['AGENT_LEARNING_FILE']):
         agent.load(env['AGENT_LEARNING_FILE'])
+    qtable_files = get_qtable_files('qtable')
+    if len(qtable_files) > 1:
+        print('Merging qtables...')
+        agent.set_qtable(merge_qtables(qtable_files))
 
     players = [agent]
     if not env['LEARNING_MODE']:
@@ -34,8 +40,8 @@ if __name__ == '__main__':
     game.start()
 
     if env['LEARNING_MODE']:
-        second_left = int(time.perf_counter()) + env['LEARNING_TIME'] * 60
-        print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60} minutes left")
+        second_left = int(time.perf_counter()) + int(env['LEARNING_TIME']) * 60
+        print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
         while time.perf_counter() < second_left:
             # if keyboard.is_pressed('q'):
             #     break
@@ -43,7 +49,8 @@ if __name__ == '__main__':
             # decrease second_left each second
             if int(second_left - time.perf_counter()) % 60 == 0:
                 second_left -= 1
-                print(f"{int(second_left - time.perf_counter()) // 60} minutes left")
+                print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
+                agent.save(env['AGENT_LEARNING_FILE'])
             if player_loose:
                 pass
                 # print(f"Agent game over, {i} round left")

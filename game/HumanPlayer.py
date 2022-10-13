@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from arcade import Sprite
 
 from conf.config import ACTION_NONE, ENTITIES, FROG_TOKEN
@@ -11,14 +13,14 @@ class HumanPlayer(Player):
         self.__state = (0, 0)
         pass
 
-    def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
+    def init(self, world: World, intial_state: Tuple[int, int], _initial_environment: bytes):
         self.__state = intial_state
         pass
 
     def best_move(self) -> str:
         return ACTION_NONE
 
-    def step(self, action: str, reward: float, new_state: (int, int), environment: bytes):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):
         self.__state = new_state
 
     def update_state(self, new_state, new_environment):
