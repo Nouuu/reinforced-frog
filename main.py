@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if not env['LEARNING_MODE']:
         players.append(player)
 
-    game = Game(world, players, (112, 95), auto_start=True, debug=False, env=env)
+    game = Game(world, players, (112, 95), auto_start=True, debug=env['AGENT_DEBUG'], env=env)
     game.start()
 
     if env['LEARNING_MODE']:

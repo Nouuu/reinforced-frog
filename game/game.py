@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple
 
-from conf.config import ACTION_MOVES, WORLD_SCALING
+from conf.config import ACTION_MOVES, WORLD_SCALING, random
 from game.Player import Player
 from game.utils import is_in_safe_zone_on_water
 from game.world import World
@@ -23,14 +23,16 @@ class Game:
 
     def init_player(self, player):
         self.__i = 0
+        init_state = (self.__player_init_state[0],
+                      random.randint(0 + self.__world.scaling, self.__world.width - 1 - self.__world.scaling))
         current_env = self.__world.get_current_environment(
-            self.__player_init_state,
+            init_state,
             int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
             int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])
         )
         player.init(
             self.__world,
-            self.__player_init_state,
+            init_state,
             current_env
         )
 
@@ -51,7 +53,7 @@ class Game:
             #         f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
 
             game_over = game_over or is_game_over
-            if is_game_over:
+            if is_game_over and not player.is_human:
                 if self.__debug:
                     print(
                         f"{'WIN' if player.score > 0 else 'LOSE'} ! Score : {round(player.score, 4)},\t\tlast state : {new_state}")

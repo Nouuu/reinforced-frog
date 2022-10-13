@@ -98,10 +98,10 @@ class World:
     def __hash_world_states(self, history: int) -> bytes:
         if len(self.__history) > history:
             self.__history = self.__history[-history:]
-        return xxhash.xxh3_64_digest('|'.join(self.__history))
+        return xxhash.xxh32_digest('|'.join(self.__history))
 
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
-        return xxhash.xxh3_64_digest(self.__world_str(current_state, number_of_lines, cols_arround))
+        return xxhash.xxh32_digest(self.__world_str(current_state, number_of_lines, cols_arround))
 
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
@@ -125,8 +125,6 @@ class World:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
-        if action[0] == -1:
-            reward = 1
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
@@ -135,9 +133,9 @@ class World:
         elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
             is_game_over = True
-        elif self.__is_on_ground(new_state, world_entity) and self.__is_on_ground(state, world_entity) \
-            and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
-            reward -= 1
+        # elif self.__is_on_ground(new_state, world_entity) and self.__is_on_ground(state, world_entity) \
+        #     and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
+        #     reward -= 1
 
         self.__history.append(
             self.__world_str(
@@ -174,6 +172,10 @@ class World:
     @property
     def world_entity_matrix(self):
         return self.__world_entity_matrix
+
+    @property
+    def scaling(self):
+        return self.__scaling
 
     def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
         for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
