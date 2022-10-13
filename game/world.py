@@ -175,6 +175,10 @@ class World:
     def world_entity_matrix(self):
         return self.__world_entity_matrix
 
+    @property
+    def scaling(self):
+        return self.__scaling
+
     def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
         for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
             if token in WIN_STATES:
