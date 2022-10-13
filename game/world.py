@@ -25,7 +25,7 @@ class World:
         self.__rows = height
         self.__cols = width
         self.__scaling = scaling
-        self.__history: List[str] = []
+        # self.__history: List[str] = []
 
     def __setup_entity_matrix(self):
         self.__world_line_matrix: list[list[str]] = []
@@ -95,10 +95,10 @@ class World:
             for row in
             range(min_line, max_line, self.__scaling))
 
-    def __hash_world_states(self, history: int) -> bytes:
-        if len(self.__history) > history:
-            self.__history = self.__history[-history:]
-        return xxhash.xxh32_digest('|'.join(self.__history))
+    # def __hash_world_states(self, history: int) -> bytes:
+    #     if len(self.__history) > history:
+    #         self.__history = self.__history[-history:]
+    #     return xxhash.xxh32_digest('|'.join(self.__history))
 
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
         return xxhash.xxh32_digest(self.__world_str(current_state, number_of_lines, cols_arround))
@@ -137,14 +137,18 @@ class World:
         #     and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
         #     reward -= 1
 
-        self.__history.append(
-            self.__world_str(
-                new_state,
-                int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
-                int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])
-            )
-        )
-        return reward, new_state, self.__hash_world_states(int(self.__env['AGENT_QTABLE_HISTORY'])), is_game_over
+        # self.__history.append(
+        #     self.__world_str(
+        #         new_state,
+        #         int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+        #         int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])
+        #     )
+        # )
+        return reward, \
+               new_state, \
+               self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                                            int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])), \
+               is_game_over
 
     def update_entities(self):
         for world_line in self.__world_lines:
