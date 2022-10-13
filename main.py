@@ -46,20 +46,19 @@ if __name__ == '__main__':
             # if keyboard.is_pressed('q'):
             #     break
             player_loose, game_over = game.step()
-            # decrease second_left each second
             if int(second_left - time.perf_counter()) % 60 == 0:
                 second_left -= 1
                 print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
+                print(
+                    f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
                 agent.save(env['AGENT_LEARNING_FILE'])
-            if player_loose:
-                pass
-                # print(f"Agent game over, {i} round left")
-
-        best_score = sorted(agent.score_history, key=lambda score: score[1], reverse=True)[0]
-        print(f"Agent best score is : {best_score}")
+                print("---")
     else:
         window = WorldWindow(game)
         window.setup()
         arcade.run()
 
+    print(
+        f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
     agent.save(env['AGENT_LEARNING_FILE'])
+    print("---")
