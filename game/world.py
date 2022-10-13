@@ -125,8 +125,6 @@ class World:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
         reward = -1
         is_game_over = False
-        if action[0] == -1:
-            reward = 1
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
@@ -135,9 +133,9 @@ class World:
         elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
             is_game_over = True
-        elif self.__is_on_ground(new_state, world_entity) and self.__is_on_ground(state, world_entity) \
-            and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
-            reward -= 1
+        # elif self.__is_on_ground(new_state, world_entity) and self.__is_on_ground(state, world_entity) \
+        #     and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
+        #     reward -= 1
 
         self.__history.append(
             self.__world_str(
