@@ -44,16 +44,16 @@ class World:
             token = entity.token
             width = entity.width
             height = entity.height
-            x = state[1] - ((width * self.__scaling) // 2)
-            y = state[0] - ((height * self.__scaling) // 2)
+            x = state[1]
+            y = state[0]
             for i in range(y, min(y + height * self.__scaling, self.__rows)):
                 for j in range(x, min(x + width * self.__scaling, self.__cols)):
                     self.__world_entity_matrix[i][j] = token
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
-        for row in range(self.__scaling // 2, self.__rows, self.__scaling):
-            for col in range(self.__scaling // 2, self.__cols, self.__scaling):
+        for row in range(0, self.__rows, self.__scaling):
+            for col in range(0, self.__cols, self.__scaling):
                 state = (row, col)
                 self.__world_states[state] = world_lines[row // self.__scaling].line_type
 
@@ -61,13 +61,13 @@ class World:
         self.__world_entities_states: {(int, int): WorldEntity} = {}
         for (index, world_line) in enumerate(self.__world_lines):
             for (pos_x, entity) in world_line.spawned_entities.items():
-                self.__world_entities_states[((index * self.__scaling) + (self.__scaling // 2), pos_x)] = entity
+                self.__world_entities_states[(index * self.__scaling, pos_x)] = entity
 
     def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
-        entity_min_y = new_state[0] - world_entity.height * self.__scaling // 2
-        entity_max_y = new_state[0] + world_entity.height * self.__scaling // 2
-        entity_min_x = new_state[1] - world_entity.width * self.__scaling // 2
-        entity_max_x = new_state[1] + world_entity.width * self.__scaling // 2
+        entity_min_y = new_state[0]
+        entity_max_y = new_state[0] + world_entity.height * self.__scaling
+        entity_min_x = new_state[1]
+        entity_max_x = new_state[1] + world_entity.width * self.__scaling
         if entity_min_y < 0 or entity_max_y > self.height or entity_min_x < 0 or entity_max_x > self.width:
             return True
         for entity_token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
@@ -85,10 +85,10 @@ class World:
         return False
 
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
-        min_line = max(current_state[0] - (number_of_lines * self.__scaling) - self.__scaling // 2, 0)
-        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling // 2, self.__rows)
-        min_col = max(current_state[1] - self.__scaling // 2 - cols_arround, 0)
-        max_col = min(current_state[1] + self.__scaling // 2 + cols_arround, self.__cols)
+        min_line = max(current_state[0] - (number_of_lines * self.__scaling), 0)
+        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling, self.__rows)
+        min_col = max(current_state[1] - cols_arround, 0)
+        max_col = min(current_state[1] + self.__scaling + cols_arround, self.__cols)
         return '\n'.join(
             ''.join(
                 [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]] for col in range(min_col, max_col)])
