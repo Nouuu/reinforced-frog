@@ -3,7 +3,7 @@ from typing import Dict, List
 
 from arcade import Sprite
 
-from conf.config import ACTION_MOVES, FROG_IA_TOKEN, ENTITIES
+from conf.config import ACTION_MOVES, FROG_IA_TOKEN, ENTITIES, random, ACTIONS
 from display.entity.world_entity import WorldEntity
 from game.Player import Player
 from game.world import World
@@ -14,6 +14,7 @@ class Agent(Player):
     def __init__(self,
                  alpha: float = 1,
                  gamma: float = 0.8,
+                 exploration_rate: float = 0.1,
                  ):
         self.__alpha = alpha
         self.__gamma = gamma
@@ -26,6 +27,7 @@ class Agent(Player):
         self.__world_height = 0
         self.__world_width = 0
         self.__qtable_load_count = 0
+        self.__exploration_rate = exploration_rate
 
     def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
         self.__state = intial_state
@@ -44,6 +46,8 @@ class Agent(Player):
         return self.__qtable[environment]
 
     def best_move(self) -> str:
+        if random.random() <= self.__exploration_rate:
+            return random.choice(ACTIONS)
         actions = self.get_qtable_state(self.__current_environment, self.__state)
         action = max(actions, key=actions.get)
         return action
