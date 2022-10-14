@@ -15,6 +15,7 @@ class Agent(Player):
                  alpha: float = 1,
                  gamma: float = 0.8,
                  exploration_rate: float = 0.1,
+                 learning: bool = True,
                  ):
         self.__alpha = alpha
         self.__gamma = gamma
@@ -29,6 +30,7 @@ class Agent(Player):
         self.__qtable_load_count = 0
         self.__exploration_rate = exploration_rate
         self.__last_history_index = 0
+        self.__learning = learning
 
     def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
         self.__state = intial_state
@@ -54,11 +56,12 @@ class Agent(Player):
         return action
 
     def step(self, action: str, reward: float, new_state: (int, int), new_environment: bytes):
-        max_q = max(self.get_qtable_state(new_environment, new_state).values())
-        self.get_qtable_state(self.__current_environment, self.__state)[action] += \
-            self.__alpha * (
-                reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
-                action])
+        if self.__learning:
+            max_q = max(self.get_qtable_state(new_environment, new_state).values())
+            self.get_qtable_state(self.__current_environment, self.__state)[action] += \
+                self.__alpha * (
+                    reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
+                    action])
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward

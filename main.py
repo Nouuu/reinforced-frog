@@ -37,7 +37,8 @@ def main():
         learn_mode(agent, env, game, start_time)
     else:
         arcade_mode(game)
-    save_qtable(agent, env, start_time)
+    if env['LEARNING_MODE']:
+        save_qtable(agent, env)
 
 
 def load_qtable(agent, env):
@@ -49,8 +50,7 @@ def load_qtable(agent, env):
         agent.set_qtable(merge_qtables(qtable_files))
 
 
-def save_qtable(agent, env, start_time):
-    agent.print_stats(int(time.perf_counter() - start_time))
+def save_qtable(agent, env):
     agent.save(env['AGENT_LEARNING_FILE'])
 
 
