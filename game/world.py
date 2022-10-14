@@ -102,7 +102,8 @@ class World:
     #     return xxhash.xxh32_digest('|'.join(self.__history))
 
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
-        return xxhash.xxh32_digest(self.__world_str(current_state, number_of_lines, cols_arround))
+        return xxhash.xxh32_digest(self.__world_str(current_state, number_of_lines, cols_arround)) \
+            if self.__env['HASH_QTABLE'] else self.__world_str(current_state, number_of_lines, cols_arround)
 
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:

@@ -15,6 +15,7 @@ class Agent(Player):
                  alpha: float = 1,
                  gamma: float = 0.8,
                  exploration_rate: float = 0.1,
+                 learning: bool = True,
                  ):
         self.__alpha = alpha
         self.__gamma = gamma
@@ -28,6 +29,8 @@ class Agent(Player):
         self.__world_width = 0
         self.__qtable_load_count = 0
         self.__exploration_rate = exploration_rate
+        self.__last_history_index = 0
+        self.__learning = learning
 
     def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
         self.__state = intial_state
@@ -46,18 +49,19 @@ class Agent(Player):
         return self.__qtable[environment]
 
     def best_move(self) -> str:
-        if random.random() <= self.__exploration_rate:
+        if random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
         actions = self.get_qtable_state(self.__current_environment, self.__state)
         action = max(actions, key=actions.get)
         return action
 
     def step(self, action: str, reward: float, new_state: (int, int), new_environment: bytes):
-        max_q = max(self.get_qtable_state(new_environment, new_state).values())
-        self.get_qtable_state(self.__current_environment, self.__state)[action] += \
-            self.__alpha * (
-                reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
-                action])
+        if self.__learning:
+            max_q = max(self.get_qtable_state(new_environment, new_state).values())
+            self.get_qtable_state(self.__current_environment, self.__state)[action] += \
+                self.__alpha * (
+                    reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
+                    action])
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward
@@ -69,15 +73,25 @@ class Agent(Player):
             print(f'New states since previous save: {len(self.__qtable) - self.__qtable_load_count}')
             self.__qtable_load_count = len(self.__qtable)
         with open(filename, 'wb') as file:
-            pickle.dump(self.__qtable, file)
+            pickle.dump((self.__qtable, self.__score_history), file)
 
     def load(self, filename: str):
         with open(filename, 'rb') as file:
-            self.__qtable = pickle.load(file)
+            (self.__qtable, self.__score_history) = pickle.load(file)
             self.__qtable_load_count = len(self.__qtable)
+            self.__last_history_index = len(self.__score_history)
 
     def set_qtable(self, qtable: Dict[bytes, Dict[str, float]]):
         self.__qtable = qtable
+
+    def print_stats(self, time_elapsed: int):
+        print("--------------------------------")
+        print(
+            f"Agent win average is : {round(self.win_average(self.__last_history_index) * 100, 3)}% "
+            f"({self.win_count(self.__last_history_index)} wins / {self.loose_count(self.__last_history_index)} looses)")
+        print(f"Speed : {round(self.step_count / time_elapsed, 1)} step/s")
+        print("--------------------------------")
+        self.__last_history_index = len(self.__score_history)
 
     def update_state(self, new_state, new_environment):
         self.__state = new_state
@@ -106,14 +120,14 @@ class Agent(Player):
     def best_score(self) -> float:
         return max(self.__score_history)
 
-    def win_average(self) -> float:
-        return self.win_count() / len(self.__score_history)
+    def win_average(self, start_index: int) -> float:
+        return self.win_count(start_index) / len(self.__score_history[start_index:])
 
-    def loose_count(self) -> int:
-        return sum(map(lambda score: score < 0, self.__score_history))
+    def loose_count(self, start_index: int) -> int:
+        return sum(map(lambda score: score < 0, self.__score_history[start_index:]))
 
-    def win_count(self) -> int:
-        return sum(map(lambda score: score >= 0, self.__score_history))
+    def win_count(self, start_index: int) -> int:
+        return sum(map(lambda score: score >= 0, self.__score_history[start_index:]))
 
     @property
     def score_history(self):
