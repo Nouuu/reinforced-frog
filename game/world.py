@@ -46,8 +46,9 @@ class World:
             height = entity.height
             x = state[1]
             y = state[0]
+            x_range = range(x, min(x + width * self.__scaling, self.__cols))
             for i in range(y, min(y + height * self.__scaling, self.__rows)):
-                for j in range(x, min(x + width * self.__scaling, self.__cols)):
+                for j in x_range:
                     self.__world_entity_matrix[i][j] = token
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):

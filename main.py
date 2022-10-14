@@ -23,7 +23,7 @@ if __name__ == '__main__':
         env=env)
 
     player = HumanPlayer()
-    agent = Agent(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']))
+    agent = Agent(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), float(env['EXPLORE_RATE']))
 
     if os.path.exists(env['AGENT_LEARNING_FILE']):
         agent.load(env['AGENT_LEARNING_FILE'])
