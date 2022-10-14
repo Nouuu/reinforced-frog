@@ -87,7 +87,7 @@ class World:
 
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
-        max_line = current_state[0] + self.__scaling + self.__scaling
+        max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
         return '\n'.join(
@@ -137,17 +137,7 @@ class World:
         elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
             is_game_over = True
-        # elif self.__is_on_ground(new_state, world_entity) and self.__is_on_ground(state, world_entity) \
-        #     and action == (0, 0):  # punir plus s'il RESTE sur une zone safe
-        #     reward -= 1
 
-        # self.__history.append(
-        #     self.__world_str(
-        #         new_state,
-        #         int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
-        #         int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])
-        #     )
-        # )
         return reward, \
                new_state, \
                self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),

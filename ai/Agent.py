@@ -52,7 +52,6 @@ class Agent(Player):
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward
-        self.__qtable.increment_step_count()
 
     def update_state(self, new_state, new_environment):
         self.__state = new_state

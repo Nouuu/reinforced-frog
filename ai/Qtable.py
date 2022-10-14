@@ -41,6 +41,7 @@ class Qtable:
                             action: str):
         self.get_qtable_state(environment)[action] += \
             self.__alpha * (reward + self.__gamma * max_q - self.get_qtable_state(environment)[action])
+        self.increment_step_count()
 
     def print_stats(self, time_elapsed: int):
         print("--------------------------------")
