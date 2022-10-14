@@ -41,6 +41,7 @@ if __name__ == '__main__':
 
     if env['LEARNING_MODE']:
         second_left = int(time.perf_counter()) + int(env['LEARNING_TIME']) * 60
+        start_time = time.perf_counter()
         print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
         while time.perf_counter() < second_left:
             # if keyboard.is_pressed('q'):
@@ -51,6 +52,7 @@ if __name__ == '__main__':
                 print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
                 print(
                     f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
+                print(f"Speed : {round(len(agent.score_history) / (time.perf_counter() - start_time), 1)} round/s")
                 agent.save(env['AGENT_LEARNING_FILE'])
                 print("---")
     else:
