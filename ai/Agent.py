@@ -79,6 +79,13 @@ class Agent(Player):
     def set_qtable(self, qtable: Dict[bytes, Dict[str, float]]):
         self.__qtable = qtable
 
+    def print_stats(self, time_elapsed: int):
+        print("--------------------------------")
+        print(
+            f"Agent win average is : {round(self.win_average() * 100, 3)}% ({self.win_count()} wins / {self.loose_count()} looses)")
+        print(f"Speed : {round(self.step_count / time_elapsed, 1)} step/s")
+        print("--------------------------------")
+
     def update_state(self, new_state, new_environment):
         self.__state = new_state
         self.__current_environment = new_environment
