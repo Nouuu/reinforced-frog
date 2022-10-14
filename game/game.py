@@ -53,7 +53,7 @@ class Game:
             #         f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
 
             game_over = game_over or is_game_over
-            if is_game_over and not player.is_human:
+            if is_game_over:
                 if self.__debug:
                     print(
                         f"{'WIN' if player.score > 0 else 'LOSE'} ! Score : {round(player.score, 4)},\t\tlast state : {new_state}")
