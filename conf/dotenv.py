@@ -16,8 +16,6 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['AGENT_VISIBLE_LINES_ABOVE'] = os.getenv('AGENT_VISIBLE_LINES_ABOVE', 2)
     if 'AGENT_VISIBLE_COLS_ARROUND' not in env:
         env['AGENT_VISIBLE_COLS_ARROUND'] = os.getenv('AGENT_VISIBLE_COLS_ARROUND', 20)
-    if 'AGENT_QTABLE_HISTORY' not in env:
-        env['AGENT_QTABLE_HISTORY'] = os.getenv('AGENT_QTABLE_HISTORY', 2)
     if 'LEARNING_TIME' not in env:
         env['LEARNING_TIME'] = os.getenv('LEARNING_TIME', 10)
     if 'LEARNING_MODE' not in env:
@@ -31,7 +29,6 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
     env['AGENT_VISIBLE_LINES_ABOVE'] = int(env['AGENT_VISIBLE_LINES_ABOVE'])
     env['AGENT_VISIBLE_COLS_ARROUND'] = int(env['AGENT_VISIBLE_COLS_ARROUND'])
-    env['AGENT_QTABLE_HISTORY'] = int(env['AGENT_QTABLE_HISTORY'])
     env['LEARNING_TIME'] = int(env['LEARNING_TIME'])
     env['WORLD_TYPE'] = int(env['WORLD_TYPE'])
     env['LEARNING_MODE'] = env['LEARNING_MODE'].lower() == 'true'

@@ -36,30 +36,31 @@ if __name__ == '__main__':
     if not env['LEARNING_MODE']:
         players.append(player)
 
-    game = Game(world, players, (112, 95), auto_start=True, debug=env['AGENT_DEBUG'], env=env)
+    game = Game(world, players, (108, 90), auto_start=True, debug=env['AGENT_DEBUG'], env=env)
     game.start()
 
     if env['LEARNING_MODE']:
         second_left = int(time.perf_counter()) + int(env['LEARNING_TIME']) * 60
+        start_time = time.perf_counter()
         print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
         while time.perf_counter() < second_left:
             # if keyboard.is_pressed('q'):
             #     break
             player_loose, game_over = game.step()
-            # decrease second_left each second
             if int(second_left - time.perf_counter()) % 60 == 0:
                 second_left -= 1
                 print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
+                print(
+                    f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
+                print(f"Speed : {round(len(agent.score_history) / (time.perf_counter() - start_time), 1)} round/s")
                 agent.save(env['AGENT_LEARNING_FILE'])
-            if player_loose:
-                pass
-                # print(f"Agent game over, {i} round left")
-
-        best_score = sorted(agent.score_history, key=lambda score: score[1], reverse=True)[0]
-        print(f"Agent best score is : {best_score}")
+                print("---")
     else:
         window = WorldWindow(game)
         window.setup()
         arcade.run()
 
+    print(
+        f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
     agent.save(env['AGENT_LEARNING_FILE'])
+    print("---")

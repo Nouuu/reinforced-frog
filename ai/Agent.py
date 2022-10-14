@@ -1,5 +1,5 @@
 import pickle
-from typing import Dict
+from typing import Dict, List
 
 from arcade import Sprite
 
@@ -21,7 +21,7 @@ class Agent(Player):
         self.__current_environment = b''
         self.__qtable: Dict[bytes, Dict[str, float]] = {}
         self.__score = 0
-        self.__score_history = []
+        self.__score_history: List[int] = []
         self.__world_height = 0
         self.__world_width = 0
         self.__qtable_load_count = 0
@@ -34,7 +34,7 @@ class Agent(Player):
         self.__score = 0
 
     def save_score(self):
-        self.__score_history.append([self.__state, self.__score])
+        self.__score_history.append(self.__score)
 
     def get_qtable_state(self, environment: bytes, _state: (int, int)) -> Dict[str, float]:
         if environment not in self.__qtable:
@@ -60,7 +60,8 @@ class Agent(Player):
     def save(self, filename: str):
         print(f'Qtable entries : {len(self.__qtable)}')
         if self.__qtable_load_count is not None:
-            print(f'New states since previous load: {len(self.__qtable) - self.__qtable_load_count}')
+            print(f'New states since previous save: {len(self.__qtable) - self.__qtable_load_count}')
+            self.__qtable_load_count = len(self.__qtable)
         with open(filename, 'wb') as file:
             pickle.dump(self.__qtable, file)
 
@@ -95,6 +96,18 @@ class Agent(Player):
     @property
     def score(self) -> int:
         return self.__score
+
+    def best_score(self) -> float:
+        return max(self.__score_history)
+
+    def win_average(self) -> float:
+        return self.win_count() / len(self.__score_history)
+
+    def loose_count(self) -> int:
+        return sum(map(lambda score: score < 0, self.__score_history))
+
+    def win_count(self) -> int:
+        return sum(map(lambda score: score >= 0, self.__score_history))
 
     @property
     def score_history(self):

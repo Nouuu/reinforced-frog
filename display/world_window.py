@@ -24,13 +24,18 @@ class WorldWindow(arcade.Window):
 
     def __get_environment_sprite(self, state: tuple, world_entity: WorldEntity) -> Sprite:
         sprite = world_entity.sprite
-        sprite.center_x, sprite.center_y = self.__get_xy_state(state)
+        sprite.left, sprite.top = self.__get_xy_state(state)
+        return sprite
+
+    def __get_entity_sprite(self, state: tuple, world_entity: WorldEntity) -> Sprite:
+        sprite = world_entity.sprite
+        sprite.left, sprite.center_y = self.__get_xy_state((state[0] + WORLD_SCALING // 2, state[1]))
         return sprite
 
     def __get_xy_state(self, state: tuple) -> tuple:
         return (
-            (state[1] + 0.5) / WORLD_SCALING * SPRITE_SIZE,
-            (self.__game.world.height - state[0] - 0.5) / WORLD_SCALING * SPRITE_SIZE
+            (state[1]) / WORLD_SCALING * SPRITE_SIZE,
+            (self.__game.world.height - state[0]) / WORLD_SCALING * SPRITE_SIZE
         )
 
     def setup(self):
@@ -43,7 +48,7 @@ class WorldWindow(arcade.Window):
         for state in self.__game.world.world_entities_states.keys():
             world_entity: WorldEntity = self.__game.world.get_world_entity(state)
             if world_entity is not None:
-                sprite = self.__get_environment_sprite(state, world_entity)
+                sprite = self.__get_entity_sprite(state, world_entity)
                 self.__entities_sprites.append(sprite)
 
     def setup_world_states(self):
@@ -58,24 +63,26 @@ class WorldWindow(arcade.Window):
         self.__players_sprites = arcade.SpriteList()
         for player in self.__game.players:
             sprite = player.sprite
-            sprite.center_x, sprite.center_y = self.__get_xy_state(player.state)
+            sprite.center_x, sprite.center_y = (self.__get_xy_state((player.state[0] + WORLD_SCALING // 2, player.state[1] + WORLD_SCALING // 2)))
             self.__players_sprites.append(sprite)
 
     def __draw_debug(self):
         self.__players_sprites = arcade.SpriteList()
         for player in self.__game.players:
             state = self.__get_xy_state(player.state)
-            arcade.draw_rectangle_outline(state[0], state[1], SPRITE_SIZE,
-                                          SPRITE_SIZE,
-                                          arcade.color.BLUE, 5)
+            arcade.draw_lrtb_rectangle_outline(state[0],
+                                               state[0] + SPRITE_SIZE,
+                                               state[1],
+                                               state[1] - SPRITE_SIZE,
+                                               arcade.color.BLUE, 5)
         for entity_state in self.__game.world.world_entities_states:
             state = self.__get_xy_state(entity_state)
             entity: WorldEntity = self.__game.world.get_world_entity(entity_state)
-            arcade.draw_rectangle_outline(state[0],
-                                          state[1],
-                                          entity.width * SPRITE_SIZE,
-                                          entity.height * SPRITE_SIZE,
-                                          arcade.color.RED, 5)
+            arcade.draw_lrtb_rectangle_outline(state[0],
+                                               state[0] + entity.width * SPRITE_SIZE,
+                                               state[1],
+                                               state[1] - entity.height * SPRITE_SIZE,
+                                               arcade.color.RED, 5)
 
     def on_draw(self):
         arcade.start_render()
