@@ -13,7 +13,7 @@ class Player:
     def best_move(self) -> str:
         pass
 
-    def get_qtable_state(self, environment: bytes, _state: Tuple[int, int]) -> Dict[Tuple[int, int], float]:
+    def get_qtable_state(self, environment: bytes) -> Dict[Tuple[int, int], float]:
         pass
 
     def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):

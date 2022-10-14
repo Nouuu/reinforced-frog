@@ -16,7 +16,7 @@ from display.entity.world_entity import WorldEntity
 def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[list[str]], scaling: int) -> [tuple]:
     collisions = set()
     entity_min_x = state[1]
-    entity_max_x = state[1] + entity.width * scaling
+    entity_max_x = min(state[1] + entity.width * scaling, len(world_entity_matrix[0]))
     for i in range(entity_min_x, entity_max_x):
         collisions.add(world_entity_matrix[state[0]][i])
     return collisions

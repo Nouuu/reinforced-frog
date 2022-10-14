@@ -4,7 +4,7 @@ import time
 import arcade
 
 from ai.Agent import Agent
-from ai.qtable import get_qtable_files, merge_qtables
+from ai.utils import get_qtable_files, merge_qtables
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
 from conf.dotenv import load_env
 from display.world_window import WorldWindow

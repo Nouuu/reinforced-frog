@@ -42,7 +42,7 @@ class Agent(Player):
     def save_score(self):
         self.__score_history.append(self.__score)
 
-    def get_qtable_state(self, environment: bytes, _state: (int, int)) -> Dict[str, float]:
+    def get_qtable_state(self, environment: bytes) -> Dict[str, float]:
         if environment not in self.__qtable:
             self.__qtable[environment] = {}
             self.__qtable[environment] = {action: 0 for action in ACTION_MOVES}
@@ -51,17 +51,18 @@ class Agent(Player):
     def best_move(self) -> str:
         if random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
-        actions = self.get_qtable_state(self.__current_environment, self.__state)
+        actions = self.get_qtable_state(self.__current_environment)
         action = max(actions, key=actions.get)
         return action
 
     def step(self, action: str, reward: float, new_state: (int, int), new_environment: bytes):
         if self.__learning:
-            max_q = max(self.get_qtable_state(new_environment, new_state).values())
-            self.get_qtable_state(self.__current_environment, self.__state)[action] += \
+            max_q = max(self.get_qtable_state(new_environment).values())
+            self.get_qtable_state(self.__current_environment)[action] += \
                 self.__alpha * (
-                    reward + self.__gamma * max_q - self.get_qtable_state(self.__current_environment, self.__state)[
-                    action])
+                    reward + self.__gamma * max_q -
+                    self.get_qtable_state(self.__current_environment)[action]
+                )
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward

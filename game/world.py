@@ -66,9 +66,9 @@ class World:
 
     def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
         entity_min_y = new_state[0]
-        entity_max_y = new_state[0] + world_entity.height * self.__scaling
+        entity_max_y = new_state[0] + world_entity.height * self.__scaling - 1
         entity_min_x = new_state[1]
-        entity_max_x = new_state[1] + world_entity.width * self.__scaling
+        entity_max_x = new_state[1] + world_entity.width * self.__scaling - 1
         if entity_min_y < 0 or entity_max_y > self.height or entity_min_x < 0 or entity_max_x > self.width:
             return True
         for entity_token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
@@ -86,13 +86,15 @@ class World:
         return False
 
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
-        min_line = max(current_state[0] - (number_of_lines * self.__scaling), 0)
-        max_line = min(current_state[0] + self.__scaling + self.__scaling, self.__rows)
-        min_col = max(current_state[1] - cols_arround, 0)
-        max_col = min(current_state[1] + self.__scaling + cols_arround, self.__cols)
+        min_line = current_state[0] - (number_of_lines * self.__scaling)
+        max_line = current_state[0] + self.__scaling + self.__scaling
+        min_col = current_state[1] - cols_arround
+        max_col = current_state[1] + self.__scaling + cols_arround
         return '\n'.join(
             ''.join(
-                [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]] for col in range(min_col, max_col)])
+                [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][
+                    col]] if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN for col in
+                 range(min_col, max_col)])
             for row in
             range(min_line, max_line, self.__scaling))
 
@@ -124,13 +126,13 @@ class World:
         bytes,
         bool
     ]:
-        new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * self.__scaling // 3)
+        new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * (self.__scaling // 3))
         reward = -1
         is_game_over = False
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
-            reward = -2 * self.__cols * self.__rows  # * (new_state[0] / self.__rows)
+            reward = -self.__cols * self.__rows  # * (new_state[0] / self.__rows)
             is_game_over = True
         elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
