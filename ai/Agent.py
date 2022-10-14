@@ -22,6 +22,7 @@ class Agent(Player):
         self.__qtable: Dict[bytes, Dict[str, float]] = {}
         self.__score = 0
         self.__score_history: List[int] = []
+        self.__step_count = 0
         self.__world_height = 0
         self.__world_width = 0
         self.__qtable_load_count = 0
@@ -56,6 +57,7 @@ class Agent(Player):
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward
+        self.__step_count += 1
 
     def save(self, filename: str):
         print(f'Qtable entries : {len(self.__qtable)}')
@@ -112,3 +114,7 @@ class Agent(Player):
     @property
     def score_history(self):
         return self.__score_history
+
+    @property
+    def step_count(self) -> int:
+        return self.__step_count

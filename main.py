@@ -52,7 +52,7 @@ if __name__ == '__main__':
                 print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
                 print(
                     f"---\nAgent win average is : {round(agent.win_average() * 100, 3)}% ({agent.win_count()} wins / {agent.loose_count()} looses)")
-                print(f"Speed : {round(len(agent.score_history) / (time.perf_counter() - start_time), 1)} round/s")
+                print(f"Speed : {round(agent.step_count / int(time.perf_counter() - start_time), 1)} step/s")
                 agent.save(env['AGENT_LEARNING_FILE'])
                 print("---")
     else:
