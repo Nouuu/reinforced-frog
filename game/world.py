@@ -132,7 +132,7 @@ class World:
         is_game_over = False
         environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
                                                    int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
-        current_environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+        current_environment = self.get_current_environment(state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
                                                            int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
 
         if self.__is_forbidden_state(new_state, world_entity):
