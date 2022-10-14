@@ -86,7 +86,7 @@ class World:
 
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
         min_line = max(current_state[0] - (number_of_lines * self.__scaling), 0)
-        max_line = min(current_state[0] + 1 * self.__scaling + self.__scaling, self.__rows)
+        max_line = min(current_state[0] + self.__scaling + self.__scaling, self.__rows)
         min_col = max(current_state[1] - cols_arround, 0)
         max_col = min(current_state[1] + self.__scaling + cols_arround, self.__cols)
         return '\n'.join(
