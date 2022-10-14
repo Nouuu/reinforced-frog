@@ -124,11 +124,16 @@ class World:
         float,
         Tuple[int, int],
         bytes,
+        bytes,
         bool
     ]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * (self.__scaling // 3))
         reward = -1
         is_game_over = False
+        environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                                                   int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
+        current_environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                                                           int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
 
         if self.__is_forbidden_state(new_state, world_entity):
             new_state = state
@@ -137,11 +142,10 @@ class World:
         elif self.__is_win_state(new_state, world_entity):
             reward = self.__cols * self.__rows
             is_game_over = True
-
         return reward, \
                new_state, \
-               self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
-                                            int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])), \
+               environment, \
+               current_environment,\
                is_game_over
 
     def update_entities(self):
