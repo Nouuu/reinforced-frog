@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 
 from conf.config import ACTION_MOVES, WORLD_SCALING, random
 from game.Player import Player
-from game.utils import is_in_safe_zone_on_water
+from game.utils import is_in_safe_zone_on_water, get_collisions
 from game.world import World
 
 
@@ -67,8 +67,8 @@ class Game:
                 self.init_player(player)
 
     def __water_entity_move(self, player):
-        if is_in_safe_zone_on_water(player.world_entity, player.state, self.__world.world_entity_matrix,
-                                    WORLD_SCALING):
+        collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix, WORLD_SCALING)
+        if is_in_safe_zone_on_water(collisions):
             new_state = (player.state[0], player.state[1] + self.__world.get_world_line(player.state).move_factor)
             player.update_state(new_state,
                                 self.__world.get_current_environment(new_state, self.__env['AGENT_VISIBLE_LINES_ABOVE'],

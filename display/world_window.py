@@ -10,7 +10,7 @@ class WorldWindow(arcade.Window):
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG',
-            update_rate=1 / 60000
+            update_rate=1 / 60
         )
         self.__debug = False
         self.__players_sprites = None
