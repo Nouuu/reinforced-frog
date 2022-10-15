@@ -79,11 +79,11 @@ class World:
                 return True
         return False
 
-    def __is_on_ground(self, new_state: Tuple[int, int], world_entity: WorldEntity) -> bool:
-        for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
-            if token == GROUND_TOKEN or token == START_TOKEN:
-                return True
-        return False
+    # def __is_on_ground(self, new_state: Tuple[int, int], world_entity: WorldEntity) -> bool:
+    #     for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
+    #         if token == GROUND_TOKEN or token == START_TOKEN:
+    #             return True
+    #     return False
 
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
