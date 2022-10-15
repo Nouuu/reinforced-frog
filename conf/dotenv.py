@@ -26,6 +26,10 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['WORLD_TYPE'] = os.getenv('WORLD_TYPE', 0)
     if 'EXPLORE_RATE' not in env:
         env['EXPLORE_RATE'] = os.getenv('EXPLORE_RATE', 0)
+    if 'HASH_QTABLE' not in env:
+        env['HASH_QTABLE'] = os.getenv('HASH_QTABLE', 'true')
+    if 'AGENT_COUNT' not in env:
+        env['AGENT_COUNT'] = os.getenv('AGENT_COUNT', 1)
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -36,5 +40,7 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['LEARNING_MODE'] = env['LEARNING_MODE'].lower() == 'true'
     env['AGENT_DEBUG'] = env['AGENT_DEBUG'].lower() == 'true'
     env['EXPLORE_RATE'] = float(env['EXPLORE_RATE'])
+    env['HASH_QTABLE'] = env['HASH_QTABLE'].lower() == 'true'
+    env['AGENT_COUNT'] = int(env['AGENT_COUNT'])
     print(env)
     return env

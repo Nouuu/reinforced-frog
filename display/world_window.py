@@ -10,7 +10,7 @@ class WorldWindow(arcade.Window):
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG',
-            update_rate=1 / 60000
+            update_rate=1 / 60
         )
         self.__debug = False
         self.__players_sprites = None
@@ -101,12 +101,12 @@ class WorldWindow(arcade.Window):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.LEFT:
-            self.__game.human_step(ACTION_MOVES[ACTION_LEFT])
+            self.__game.human_step(ACTION_LEFT)
         elif symbol == arcade.key.RIGHT:
-            self.__game.human_step(ACTION_MOVES[ACTION_RIGHT])
+            self.__game.human_step(ACTION_RIGHT)
         elif symbol == arcade.key.UP:
-            self.__game.human_step(ACTION_MOVES[ACTION_UP])
+            self.__game.human_step(ACTION_UP)
         elif symbol == arcade.key.DOWN:
-            self.__game.human_step(ACTION_MOVES[ACTION_DOWN])
+            self.__game.human_step(ACTION_DOWN)
         elif symbol == arcade.key.D:
             self.__debug = not self.__debug

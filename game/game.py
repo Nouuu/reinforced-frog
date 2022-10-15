@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 
 from conf.config import ACTION_MOVES, WORLD_SCALING, random
 from game.Player import Player
-from game.utils import is_in_safe_zone_on_water
+from game.utils import is_in_safe_zone_on_water, get_collisions
 from game.world import World
 
 
@@ -36,45 +36,47 @@ class Game:
             current_env
         )
 
-    def step(self) -> Tuple[bool, bool]:
+    def step(self):
         self.__i += 1
         self.__world.update_entities()
-        game_over = False
         for player in self.__players:
-            self.__water_entity_move(player)
-            action = player.best_move()
-            reward, new_state, environment, is_game_over = self.__world.step(
-                player.state, ACTION_MOVES[action],
-                player.world_entity
-            )
-            player.step(action, reward, new_state, environment)
-            # if self.__i % 100 == 0 and not player.is_human and self.__debug:
-            #     print(
-            #         f"Score : {round(player.score, 4)}, \tlast state : {new_state}, q : {player.get_qtable_state(environment, new_state)}")
 
-            game_over = game_over or is_game_over
+            collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix,
+                                        WORLD_SCALING)
+            self.__water_entity_move(player, collisions)
+            action = player.best_move()
+            reward, new_state, environment, current_environment, is_game_over = self.__world.step(
+                player.state, ACTION_MOVES[action],
+                player.world_entity,
+                collisions
+            )
+            player.step(action, reward, new_state, current_environment, environment)
             if is_game_over:
                 if self.__debug:
                     print(
-                        f"{'WIN' if player.score > 0 else 'LOSE'} ! Score : {round(player.score, 4)},\t\tlast state : {new_state}")
+                        f"{'WIN' if player.score > 0 else 'LOSE'} ! "
+                        f"Score : {round(player.score, 4)},\t\tlast state : {new_state}")
                 player.save_score()
                 if self.__auto_start:
                     self.init_player(player)
                 else:
                     self.__game_over(player)
 
-        return game_over, len(self.__players) > 0  # Return if there is still player in game and if the game is over
-
-    def human_step(self, action: Tuple[int, int]):
+    def human_step(self, action: str):
         for player in filter(lambda player_f: player_f.is_human, self.__players):
-            reward, new_state, environment, is_game_over = self.__world.step(player.state, action, player.world_entity)
-            player.step(action, reward, new_state, environment)
+
+            collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix,
+                                        WORLD_SCALING)
+            reward, new_state, environment, current_environment, is_game_over = self.__world.step(player.state,
+                                                                                                  ACTION_MOVES[action],
+                                                                                                  player.world_entity,
+                                                                                                  collisions)
+            player.step(action, reward, new_state, current_environment, environment)
             if is_game_over:
                 self.init_player(player)
 
-    def __water_entity_move(self, player):
-        if is_in_safe_zone_on_water(player.world_entity, player.state, self.__world.world_entity_matrix,
-                                    WORLD_SCALING):
+    def __water_entity_move(self, player, collisions):
+        if is_in_safe_zone_on_water(collisions):
             new_state = (player.state[0], player.state[1] + self.__world.get_world_line(player.state).move_factor)
             player.update_state(new_state,
                                 self.__world.get_current_environment(new_state, self.__env['AGENT_VISIBLE_LINES_ABOVE'],
