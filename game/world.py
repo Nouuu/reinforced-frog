@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import xxhash
-from line_profiler_pycharm import profile
 
 from conf.config import *
 from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
@@ -53,8 +52,8 @@ class World:
             x = state[1]
             y = state[0]
             tokens = [token for _ in range(width * self.__scaling)]
-            for i in range(y, min(y + height * self.__scaling, self.__rows)):
-                self.__world_entity_matrix[i][x:min(x + width * self.__scaling, self.__cols)] = tokens
+            for i in range(max(0, y), min(y + height * self.__scaling, self.__rows)):
+                self.__world_entity_matrix[i][max(0, x):max(0, min(x + width * self.__scaling, self.__cols))] = tokens
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
