@@ -25,7 +25,7 @@ def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[
 def is_in_safe_zone_on_water(entity: WorldEntity, entity_state: tuple, world_entity_matrix: list[list[str]],
                              scaling: int) -> bool:
     collisions = get_collisions(entity, entity_state, world_entity_matrix, scaling)
-    return not WATER_TOKEN in collisions and any(token in collisions for token in WATER_AUTHORISED_STATES)
+    return WATER_TOKEN not in collisions #and any(token in collisions for token in WATER_AUTHORISED_STATES)
 
 # def filter_states(states: Dict[Tuple[int, int], WorldEntity],
 #                   scaling: int,
