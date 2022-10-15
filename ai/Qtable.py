@@ -1,8 +1,13 @@
+import lzma
 import pickle
 from typing import Dict
 
 from conf.config import ACTION_MOVES
 
+lzma_filters = [
+    {"id": lzma.FILTER_DELTA, "dist": 5},
+    {"id": lzma.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME},
+]
 
 class Qtable:
     def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
@@ -20,8 +25,8 @@ class Qtable:
         self.__loose_count = 0
 
     def load(self, filename: str):
-        with open(filename, 'rb') as file:
-            self.__qtable = pickle.load(file)
+        with lzma.LZMAFile(filename, "rb") as uncompressed:
+            self.__qtable = pickle.load(uncompressed)
             self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
 
     def save(self, qtable_filename: str, score_filename: str):
@@ -31,7 +36,7 @@ class Qtable:
                 f'New states since previous save: '
                 f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}')
             self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
-        with open(qtable_filename, 'wb') as file:
+        with lzma.open(qtable_filename, 'wb') as file:
             pickle.dump(self.__qtable, file)
         with open(score_filename, 'a') as file:
             history = "\n".join(map(str, self.__score_history))
