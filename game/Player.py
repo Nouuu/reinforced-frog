@@ -10,10 +10,10 @@ class Player:
     def init(self, world: World, intial_state: Tuple[int, int], _initial_environment: bytes):
         pass
 
-    def best_move(self) -> str:
+    def best_move(self, environment: [str]) -> str:
         pass
 
-    def step(self, action: str, reward: float, new_state: Tuple[int, int], current_environment: List[str], _environment: List[str]):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: List[str]):
         pass
 
     def save_score(self):

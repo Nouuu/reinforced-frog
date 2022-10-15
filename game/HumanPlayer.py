@@ -17,10 +17,10 @@ class HumanPlayer(Player):
         self.__state = intial_state
         pass
 
-    def best_move(self) -> str:
+    def best_move(self, environment) -> str:
         return ACTION_NONE
 
-    def step(self, action: str, reward: float, new_state: Tuple[int, int], current_environment: List[str], _environment: List[str]):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: List[str]):
         self.__state = new_state
 
     def update_state(self, new_state, new_environment):

@@ -33,7 +33,8 @@ class Agent(Player):
     def save_score(self):
         self.__qtable.save_score(self.__score)
 
-    def best_move(self) -> str:
+    def best_move(self, environment: [str]) -> str:
+        self.__current_environment = environment
         if random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
         actions = self.__qtable.get_qtable_state(self.__qtable.qtable, self.__current_environment,
@@ -41,13 +42,12 @@ class Agent(Player):
         action = max(actions, key=actions.get)
         return action
 
-    def step(self, action: str, reward: float, new_state: (int, int), current_environment: [str],
-             new_environment: bytes):
+    def step(self, action: str, reward: float, new_state: (int, int), new_environment: [str]):
         if self.__learning:
             max_q = max(self.__qtable.get_qtable_state(self.__qtable.qtable, new_environment,
                                                        self.__qtable.visible_lines_above).values())
             self.__qtable.update_qtable_state(
-                current_environment,
+                self.__current_environment,
                 max_q,
                 reward,
                 action

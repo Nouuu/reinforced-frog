@@ -42,11 +42,16 @@ class Game:
         for player in self.__players:
 
             self.__water_entity_move(player)
-            action = player.best_move()
-            reward, new_state, environment, current_environment, is_game_over = self.__world.step(
+            current_environment = self.__world.get_current_environment(
+                player.state,
+                self.__env['AGENT_VISIBLE_LINES_ABOVE'],
+                self.__env['AGENT_VISIBLE_COLS_ARROUND']
+            )
+            action = player.best_move(current_environment)
+            reward, new_state, new_environment, is_game_over = self.__world.step(
                 player.state, ACTION_MOVES[action],
                 player.world_entity)
-            player.step(action, reward, new_state, current_environment, environment)
+            player.step(action, reward, new_state, new_environment)
             if is_game_over:
                 if self.__debug:
                     print(
