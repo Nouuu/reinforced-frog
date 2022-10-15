@@ -40,13 +40,17 @@ class Game:
         self.__i += 1
         self.__world.update_entities()
         for player in self.__players:
-            self.__water_entity_move(player)
+
+            collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix,
+                                        WORLD_SCALING)
+            self.__water_entity_move(player, collisions)
             action = player.best_move()
-            reward, new_state, environment,current_environment, is_game_over = self.__world.step(
+            reward, new_state, environment, current_environment, is_game_over = self.__world.step(
                 player.state, ACTION_MOVES[action],
-                player.world_entity
+                player.world_entity,
+                collisions
             )
-            player.step(action, reward, new_state,current_environment, environment)
+            player.step(action, reward, new_state, current_environment, environment)
             if is_game_over:
                 if self.__debug:
                     print(
@@ -60,14 +64,18 @@ class Game:
 
     def human_step(self, action: str):
         for player in filter(lambda player_f: player_f.is_human, self.__players):
-            reward, new_state, environment,current_environment, is_game_over = self.__world.step(player.state, ACTION_MOVES[action],
-                                                                             player.world_entity)
-            player.step(action, reward, new_state,current_environment, environment)
+
+            collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix,
+                                        WORLD_SCALING)
+            reward, new_state, environment, current_environment, is_game_over = self.__world.step(player.state,
+                                                                                                  ACTION_MOVES[action],
+                                                                                                  player.world_entity,
+                                                                                                  collisions)
+            player.step(action, reward, new_state, current_environment, environment)
             if is_game_over:
                 self.init_player(player)
 
-    def __water_entity_move(self, player):
-        collisions = get_collisions(player.world_entity, player.state, self.__world.world_entity_matrix, WORLD_SCALING)
+    def __water_entity_move(self, player, collisions):
         if is_in_safe_zone_on_water(collisions):
             new_state = (player.state[0], player.state[1] + self.__world.get_world_line(player.state).move_factor)
             player.update_state(new_state,

@@ -118,7 +118,7 @@ class World:
     def get_world_line(self, state: (int, int)) -> WorldLine:
         return self.__world_lines[state[0] // self.__scaling]
 
-    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
+    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity, collisions: [tuple]) -> Tuple[
         float,
         Tuple[int, int],
         bytes,
@@ -132,7 +132,6 @@ class World:
                                                    int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
         current_environment = self.get_current_environment(state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
                                                            int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
-        collisions = get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling)
         if self.__is_forbidden_state(new_state, world_entity, collisions):
             new_state = state
             reward = -self.__cols * self.__rows  # * (new_state[0] / self.__rows)
