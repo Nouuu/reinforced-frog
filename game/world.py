@@ -39,7 +39,7 @@ class World:
                     line_matrix.append(token)
                 self.__world_line_matrix.append(line_matrix)
         limit_col = [WALL_TOKEN for _ in range(self.__cols)]
-        for _ in range(self.__scaling*2):
+        for _ in range(self.__scaling * 2):
             self.__world_line_matrix.append(limit_col)
             for row in self.__world_line_matrix:
                 row.append(WALL_TOKEN)
@@ -82,36 +82,19 @@ class World:
                 return True
         return False
 
-    # def __is_on_ground(self, new_state: Tuple[int, int], world_entity: WorldEntity) -> bool:
-    #     for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
-    #         if token == GROUND_TOKEN or token == START_TOKEN:
-    #             return True
-    #     return False
-    @profile
+
+    # @profile
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
-        world = ["".join([AGENT_ENVIRONMENT_TOKENS[token] for token in row[min_col:max_col]]) for row in
-                 self.__world_entity_matrix[min_line:max_line:self.__scaling]]
-        """
-        world = []
-        for row in range(min_line, max_line, self.__scaling):
-            str_line = ""
-            for col in range(min_col, max_col):
-                if 0 <= row < self.__rows and 0 <= col < self.__cols:
-                    str_line += AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
-                else:
-                    str_line += FORBIDDEN_ENTITY_TOKEN
-            world.append(str_line)
-        """
-        return world if self.__env['HASH_QTABLE'] else map(lambda x: xxhash.xxh32_digest(x), world)
+        world = [
+            ''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
+                     for col in range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)
+        ]
 
-    # def __hash_world_states(self, history: int) -> bytes:
-    #     if len(self.__history) > history:
-    #         self.__history = self.__history[-history:]
-    #     return xxhash.xxh32_digest('|'.join(self.__history))
+        return world if not self.__env['HASH_QTABLE'] else list(map(lambda x: xxhash.xxh32_digest(x), world))
 
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         return self.__world_str(current_state, number_of_lines, cols_arround)
