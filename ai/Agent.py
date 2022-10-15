@@ -40,11 +40,11 @@ class Agent(Player):
         action = max(actions, key=actions.get)
         return action
 
-    def step(self, action: str, reward: float, new_state: (int, int), new_environment: bytes):
+    def step(self, action: str, reward: float, new_state: (int, int), current_environment: bytes, new_environment: bytes):
         if self.__learning:
             max_q = max(self.__qtable.get_qtable_state(new_environment).values())
             self.__qtable.update_qtable_state(
-                self.__current_environment,
+                current_environment,
                 max_q,
                 reward,
                 action

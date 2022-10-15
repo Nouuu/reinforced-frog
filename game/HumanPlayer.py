@@ -20,7 +20,7 @@ class HumanPlayer(Player):
     def best_move(self) -> str:
         return ACTION_NONE
 
-    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], current_environment: bytes, _environment: bytes):
         self.__state = new_state
 
     def update_state(self, new_state, new_environment):

@@ -3,7 +3,7 @@ from typing import Tuple
 import xxhash
 
 from conf.config import *
-from game.utils import get_collisions, is_in_safe_zone_on_water
+from game.utils import get_collisions, is_in_safe_zone_on_water, is_win_state
 
 
 class World:
@@ -64,18 +64,16 @@ class World:
             for (pos_x, entity) in world_line.spawned_entities.items():
                 self.__world_entities_states[(index * self.__scaling, pos_x)] = entity
 
-    def __is_forbidden_state(self, new_state, world_entity: WorldEntity) -> bool:
+    def __is_forbidden_state(self, new_state, world_entity: WorldEntity, collisions: [tuple]) -> bool:
         entity_min_y = new_state[0]
         entity_max_y = new_state[0] + world_entity.height * self.__scaling - 1
         entity_min_x = new_state[1]
         entity_max_x = new_state[1] + world_entity.width * self.__scaling - 1
         if entity_min_y < 0 or entity_max_y > self.height or entity_min_x < 0 or entity_max_x > self.width:
             return True
-        for entity_token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
+        for entity_token in collisions:
             if entity_token in FORBIDDEN_STATES and (
-                entity_token != WATER_TOKEN or not is_in_safe_zone_on_water(world_entity, new_state,
-                                                                            self.__world_entity_matrix,
-                                                                            self.__scaling)):
+                entity_token != WATER_TOKEN or not is_in_safe_zone_on_water(collisions)):
                 return True
         return False
 
@@ -120,28 +118,31 @@ class World:
     def get_world_line(self, state: (int, int)) -> WorldLine:
         return self.__world_lines[state[0] // self.__scaling]
 
-    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> Tuple[
+    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity, collisions: [tuple]) -> Tuple[
         float,
         Tuple[int, int],
+        bytes,
         bytes,
         bool
     ]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * (self.__scaling // 3))
         reward = -1
         is_game_over = False
-
-        if self.__is_forbidden_state(new_state, world_entity):
+        environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                                                   int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
+        current_environment = self.get_current_environment(state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
+                                                           int(self.__env['AGENT_VISIBLE_COLS_ARROUND']))
+        if self.__is_forbidden_state(new_state, world_entity, collisions):
             new_state = state
             reward = -self.__cols * self.__rows  # * (new_state[0] / self.__rows)
             is_game_over = True
-        elif self.__is_win_state(new_state, world_entity):
+        elif is_win_state(collisions):
             reward = self.__cols * self.__rows
             is_game_over = True
-
         return reward, \
                new_state, \
-               self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
-                                            int(self.__env['AGENT_VISIBLE_COLS_ARROUND'])), \
+               environment, \
+               current_environment, \
                is_game_over
 
     def update_entities(self):
@@ -174,9 +175,3 @@ class World:
     @property
     def scaling(self):
         return self.__scaling
-
-    def __is_win_state(self, new_state, world_entity: WorldEntity) -> bool:
-        for token in get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling):
-            if token in WIN_STATES:
-                return True
-        return False
