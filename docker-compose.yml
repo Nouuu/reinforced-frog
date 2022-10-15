@@ -3,101 +3,103 @@ services:
   agent_1:
     image: 'nospy/reinforced-frog:staging'
     environment:
+      AGENT_COUNT: ${AGENT_COUNT}
+      AGENT_DEBUG: ${AGENT_DEBUG}
+      AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'qtable/qtable.data'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
-      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
       AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
-      LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
-      LEARNING_TIME: ${LEARNING_TIME}
-      EXPLORE_RATE: ${EXPLORE_RATE}
-      WORLD_TYPE: 0
-    restart: 'no'
-    volumes:
-      - qtable:/app/qtable
-
-  agent_2:
-    image: 'nospy/reinforced-frog:staging'
-    environment:
-      AGENT_LEARNING_FILE: 'qtable/qtable2.data'
-      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
-      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
-      LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
-      LEARNING_TIME: ${LEARNING_TIME}
       EXPLORE_RATE: ${EXPLORE_RATE}
-      WORLD_TYPE: 0
-    restart: 'no'
-    volumes:
-      - qtable:/app/qtable
-
-  agent_3:
-    image: 'nospy/reinforced-frog:staging'
-    environment:
-      AGENT_LEARNING_FILE: 'qtable/qtable3.data'
-      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
-      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
-      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+      HASH_QTABLE: ${HASH_QTABLE}
       LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
       LEARNING_TIME: ${LEARNING_TIME}
-      EXPLORE_RATE: ${EXPLORE_RATE}
       WORLD_TYPE: 1
     restart: 'no'
     volumes:
       - qtable:/app/qtable
-  agent_4:
-    image: 'nospy/reinforced-frog:staging'
-    environment:
-      AGENT_LEARNING_FILE: 'qtable/qtable4.data'
-      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
-      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
-      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
-      LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
-      LEARNING_TIME: ${LEARNING_TIME}
-      EXPLORE_RATE: ${EXPLORE_RATE}
-      WORLD_TYPE: 1
-    restart: 'no'
-    volumes:
-      - qtable:/app/qtable
-  agent_5:
-    image: 'nospy/reinforced-frog:staging'
-    environment:
-      AGENT_LEARNING_FILE: 'qtable/qtable5.data'
-      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
-      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
-      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
-      LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
-      LEARNING_TIME: ${LEARNING_TIME}
-      EXPLORE_RATE: ${EXPLORE_RATE}
-      WORLD_TYPE: 2
-    restart: 'no'
-    volumes:
-      - qtable:/app/qtable
-  agent_6:
-    image: 'nospy/reinforced-frog:staging'
-    environment:
-      AGENT_LEARNING_FILE: 'qtable/qtable6.data'
-      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
-      AGENT_GAMMA: ${AGENT_GAMMA}
-      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
-      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
-      LEARNING_MODE: ${LEARNING_MODE}
-      AGENT_DEBUG: ${AGENT_DEBUG}
-      LEARNING_TIME: ${LEARNING_TIME}
-      EXPLORE_RATE: ${EXPLORE_RATE}
-      WORLD_TYPE: 2
-    restart: 'no'
-    volumes:
-      - qtable:/app/qtable
+
+#  agent_2:
+#    image: 'nospy/reinforced-frog:staging'
+#    environment:
+#      AGENT_LEARNING_FILE: 'qtable/qtable2.data'
+#      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+#      AGENT_GAMMA: ${AGENT_GAMMA}
+#      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+#      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+#      LEARNING_MODE: ${LEARNING_MODE}
+#      AGENT_DEBUG: ${AGENT_DEBUG}
+#      LEARNING_TIME: ${LEARNING_TIME}
+#      EXPLORE_RATE: ${EXPLORE_RATE}
+#      WORLD_TYPE: 0
+#    restart: 'no'
+#    volumes:
+#      - qtable:/app/qtable
+#
+#  agent_3:
+#    image: 'nospy/reinforced-frog:staging'
+#    environment:
+#      AGENT_LEARNING_FILE: 'qtable/qtable3.data'
+#      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+#      AGENT_GAMMA: ${AGENT_GAMMA}
+#      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+#      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+#      LEARNING_MODE: ${LEARNING_MODE}
+#      AGENT_DEBUG: ${AGENT_DEBUG}
+#      LEARNING_TIME: ${LEARNING_TIME}
+#      EXPLORE_RATE: ${EXPLORE_RATE}
+#      WORLD_TYPE: 1
+#    restart: 'no'
+#    volumes:
+#      - qtable:/app/qtable
+#  agent_4:
+#    image: 'nospy/reinforced-frog:staging'
+#    environment:
+#      AGENT_LEARNING_FILE: 'qtable/qtable4.data'
+#      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+#      AGENT_GAMMA: ${AGENT_GAMMA}
+#      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+#      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+#      LEARNING_MODE: ${LEARNING_MODE}
+#      AGENT_DEBUG: ${AGENT_DEBUG}
+#      LEARNING_TIME: ${LEARNING_TIME}
+#      EXPLORE_RATE: ${EXPLORE_RATE}
+#      WORLD_TYPE: 1
+#    restart: 'no'
+#    volumes:
+#      - qtable:/app/qtable
+#  agent_5:
+#    image: 'nospy/reinforced-frog:staging'
+#    environment:
+#      AGENT_LEARNING_FILE: 'qtable/qtable5.data'
+#      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+#      AGENT_GAMMA: ${AGENT_GAMMA}
+#      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+#      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+#      LEARNING_MODE: ${LEARNING_MODE}
+#      AGENT_DEBUG: ${AGENT_DEBUG}
+#      LEARNING_TIME: ${LEARNING_TIME}
+#      EXPLORE_RATE: ${EXPLORE_RATE}
+#      WORLD_TYPE: 2
+#    restart: 'no'
+#    volumes:
+#      - qtable:/app/qtable
+#  agent_6:
+#    image: 'nospy/reinforced-frog:staging'
+#    environment:
+#      AGENT_LEARNING_FILE: 'qtable/qtable6.data'
+#      AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
+#      AGENT_GAMMA: ${AGENT_GAMMA}
+#      AGENT_VISIBLE_LINES_ABOVE: ${AGENT_VISIBLE_LINES_ABOVE}
+#      AGENT_VISIBLE_COLS_ARROUND: ${AGENT_VISIBLE_COLS_ARROUND}
+#      LEARNING_MODE: ${LEARNING_MODE}
+#      AGENT_DEBUG: ${AGENT_DEBUG}
+#      LEARNING_TIME: ${LEARNING_TIME}
+#      EXPLORE_RATE: ${EXPLORE_RATE}
+#      WORLD_TYPE: 2
+#    restart: 'no'
+#    volumes:
+#      - qtable:/app/qtable
 
 volumes:
   qtable:
