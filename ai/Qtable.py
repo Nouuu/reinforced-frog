@@ -1,8 +1,6 @@
 import pickle
 from typing import Dict
 
-from line_profiler_pycharm import profile
-
 from conf.config import ACTION_MOVES
 
 

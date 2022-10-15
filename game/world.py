@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import xxhash
+from line_profiler_pycharm import profile
 
 from conf.config import *
 from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
@@ -37,6 +38,11 @@ class World:
                 for j in range(0, self.width):
                     line_matrix.append(token)
                 self.__world_line_matrix.append(line_matrix)
+        limit_col = [WALL_TOKEN for _ in range(self.__cols)]
+        for _ in range(self.__scaling*2):
+            self.__world_line_matrix.append(limit_col)
+            for row in self.__world_line_matrix:
+                row.append(WALL_TOKEN)
 
     def __update_entity_matrix(self):
         self.__world_entity_matrix: list[list[str]] = [[value for value in line] for line in self.__world_line_matrix]
@@ -81,13 +87,15 @@ class World:
     #         if token == GROUND_TOKEN or token == START_TOKEN:
     #             return True
     #     return False
-
+    @profile
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
-
+        world = ["".join([AGENT_ENVIRONMENT_TOKENS[token] for token in row[min_col:max_col]]) for row in
+                 self.__world_entity_matrix[min_line:max_line:self.__scaling]]
+        """
         world = []
         for row in range(min_line, max_line, self.__scaling):
             str_line = ""
@@ -97,12 +105,7 @@ class World:
                 else:
                     str_line += FORBIDDEN_ENTITY_TOKEN
             world.append(str_line)
-
-        world = [''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
-                          if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN
-                          for col in
-                          range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)]
-
+        """
         return world if self.__env['HASH_QTABLE'] else map(lambda x: xxhash.xxh32_digest(x), world)
 
     # def __hash_world_states(self, history: int) -> bytes:
