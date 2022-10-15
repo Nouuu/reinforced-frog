@@ -1,4 +1,4 @@
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List
 
 from arcade import Sprite
 
@@ -13,7 +13,7 @@ class Player:
     def best_move(self) -> str:
         pass
 
-    def step(self, action: str, reward: float, new_state: Tuple[int, int], current_environment: bytes, _environment: bytes):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], current_environment: List[str], _environment: List[str]):
         pass
 
     def save_score(self):

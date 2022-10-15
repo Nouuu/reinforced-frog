@@ -14,9 +14,10 @@ from display.entity.world_entity import WorldEntity
 
 
 def get_collisions(entity: WorldEntity, state: tuple, world_entity_matrix: list[list[str]], scaling: int) -> [tuple]:
-    entity_min_x = state[1]
-    entity_max_x = min(state[1] + entity.width * scaling, len(world_entity_matrix[0]))
-    return set(world_entity_matrix[state[0]][entity_min_x:entity_max_x])
+    y = max(0, min(state[0], len(world_entity_matrix) - 1))
+    entity_min_x = max(0, state[1])
+    entity_max_x = min(state[1] + entity.width * scaling, len(world_entity_matrix[0]) - 1)
+    return set(world_entity_matrix[y][entity_min_x:entity_max_x])
 
 
 def is_in_safe_zone_on_water(collisions: [tuple]) -> bool:

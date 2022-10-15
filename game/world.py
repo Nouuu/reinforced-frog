@@ -3,7 +3,7 @@ from typing import Tuple
 import xxhash
 
 from conf.config import *
-from game.utils import is_in_safe_zone_on_water, is_win_state
+from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
 
 
 class World:
@@ -46,10 +46,9 @@ class World:
             height = entity.height
             x = state[1]
             y = state[0]
-            x_range = range(x, min(x + width * self.__scaling, self.__cols))
+            tokens = [token for _ in range(width * self.__scaling)]
             for i in range(y, min(y + height * self.__scaling, self.__rows)):
-                for j in x_range:
-                    self.__world_entity_matrix[i][j] = token
+                self.__world_entity_matrix[i][x:min(x + width * self.__scaling, self.__cols)] = tokens
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
@@ -88,9 +87,22 @@ class World:
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
+
+        world = []
+        for row in range(min_line, max_line, self.__scaling):
+            str_line = ""
+            for col in range(min_col, max_col):
+                if 0 <= row < self.__rows and 0 <= col < self.__cols:
+                    str_line += AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
+                else:
+                    str_line += FORBIDDEN_ENTITY_TOKEN
+            world.append(str_line)
+
         world = [''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
-                          if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN for col in
+                          if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN
+                          for col in
                           range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)]
+
         return world if self.__env['HASH_QTABLE'] else map(lambda x: xxhash.xxh32_digest(x), world)
 
     # def __hash_world_states(self, history: int) -> bytes:
@@ -114,9 +126,10 @@ class World:
     def get_world_line(self, state: (int, int)) -> WorldLine:
         return self.__world_lines[state[0] // self.__scaling]
 
-    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity, collisions: [tuple]) -> \
+    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity) -> \
         Tuple[float, Tuple[int, int], List[str], List[str], bool]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * (self.__scaling // 3))
+        collisions = get_collisions(world_entity, new_state, self.__world_entity_matrix, self.__scaling)
         reward = -1
         is_game_over = False
         environment = self.get_current_environment(new_state, int(self.__env['AGENT_VISIBLE_LINES_ABOVE']),
