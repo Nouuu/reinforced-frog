@@ -3,7 +3,7 @@ from typing import Tuple
 import xxhash
 
 from conf.config import *
-from game.utils import get_collisions, is_in_safe_zone_on_water, is_win_state
+from game.utils import is_in_safe_zone_on_water, is_win_state
 
 
 class World:
@@ -83,27 +83,23 @@ class World:
     #             return True
     #     return False
 
-    def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> str:
+    def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
-        return '\n'.join(
-            ''.join(
-                [AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][
-                    col]] if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN for col in
-                 range(min_col, max_col)])
-            for row in
-            range(min_line, max_line, self.__scaling))
+        world = [''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
+                          if 0 <= row < self.__rows and 0 <= col < self.__cols else FORBIDDEN_ENTITY_TOKEN for col in
+                          range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)]
+        return world if self.__env['HASH_QTABLE'] else map(lambda x: xxhash.xxh32_digest(x), world)
 
     # def __hash_world_states(self, history: int) -> bytes:
     #     if len(self.__history) > history:
     #         self.__history = self.__history[-history:]
     #     return xxhash.xxh32_digest('|'.join(self.__history))
 
-    def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> bytes:
-        return xxhash.xxh32_digest(self.__world_str(current_state, number_of_lines, cols_arround)) \
-            if self.__env['HASH_QTABLE'] else self.__world_str(current_state, number_of_lines, cols_arround)
+    def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
+        return self.__world_str(current_state, number_of_lines, cols_arround)
 
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
@@ -118,13 +114,8 @@ class World:
     def get_world_line(self, state: (int, int)) -> WorldLine:
         return self.__world_lines[state[0] // self.__scaling]
 
-    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity, collisions: [tuple]) -> Tuple[
-        float,
-        Tuple[int, int],
-        bytes,
-        bytes,
-        bool
-    ]:
+    def step(self, state: Tuple[int, int], action: Tuple[int, int], world_entity: WorldEntity, collisions: [tuple]) -> \
+        Tuple[float, Tuple[int, int], List[str], List[str], bool]:
         new_state = (state[0] + action[0] * self.__scaling, state[1] + action[1] * (self.__scaling // 3))
         reward = -1
         is_game_over = False

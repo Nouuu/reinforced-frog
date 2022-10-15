@@ -23,7 +23,7 @@ class Agent(Player):
         self.__exploration_rate = exploration_rate
         self.__learning = learning
 
-    def init(self, world: World, intial_state: (int, int), initial_environment: bytes):
+    def init(self, world: World, intial_state: (int, int), initial_environment: [str]):
         self.__state = intial_state
         self.__current_environment = initial_environment
         self.__world_height = world.height
@@ -36,13 +36,16 @@ class Agent(Player):
     def best_move(self) -> str:
         if random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
-        actions = self.__qtable.get_qtable_state(self.__current_environment)
+        actions = self.__qtable.get_qtable_state(self.__qtable.qtable, self.__current_environment,
+                                                 self.__qtable.visible_lines_above)
         action = max(actions, key=actions.get)
         return action
 
-    def step(self, action: str, reward: float, new_state: (int, int), current_environment: bytes, new_environment: bytes):
+    def step(self, action: str, reward: float, new_state: (int, int), current_environment: [str],
+             new_environment: bytes):
         if self.__learning:
-            max_q = max(self.__qtable.get_qtable_state(new_environment).values())
+            max_q = max(self.__qtable.get_qtable_state(self.__qtable.qtable, new_environment,
+                                                       self.__qtable.visible_lines_above).values())
             self.__qtable.update_qtable_state(
                 current_environment,
                 max_q,

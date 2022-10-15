@@ -5,50 +5,66 @@ from conf.config import ACTION_MOVES
 
 
 class Qtable:
-    def __init__(self, alpha: float, gamma: float):
-        self.__qtable: Dict[bytes, Dict[str, float]] = {}
+    def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
+        self.__visible_lines_above = visible_lines_above + 2
+        self.__qtable = {}
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_load_count = 0
         self.__last_history_index = 0
+        self.__qtable_history_packets = qtable_history_packets
         self.__score_history = []
+        self.__score_history_temp = []
         self.__step_count = 0
+        self.__win_count = 0
+        self.__loose_count = 0
 
     def load(self, filename: str):
         with open(filename, 'rb') as file:
-            (self.__qtable, self.__score_history) = pickle.load(file)
-            self.__qtable_load_count = len(self.__qtable)
-            self.__last_history_index = len(self.__score_history)
+            self.__qtable = pickle.load(file)
+            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
 
-    def save(self, filename: str):
-        print(f'Qtable entries : {len(self.__qtable)}')
+    def save(self, qtable_filename: str, score_filename: str):
+        print(f'Qtable entries : {self.qtable_count(self.__qtable, self.__visible_lines_above)}')
         if self.__qtable_load_count is not None:
-            print(f'New states since previous save: {len(self.__qtable) - self.__qtable_load_count}')
-            self.__qtable_load_count = len(self.__qtable)
-        with open(filename, 'wb') as file:
-            pickle.dump((self.__qtable, self.__score_history), file)
+            print(
+                f'New states since previous save: '
+                f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}')
+            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
+        with open(qtable_filename, 'wb') as file:
+            pickle.dump(self.__qtable, file)
+        with open(score_filename, 'a') as file:
+            history = "\n".join(map(str, self.__score_history))
+            file.write(f'{history}\n')
+            self.__score_history = []
 
-    def set_qtable(self, qtable: Dict[bytes, Dict[str, float]]):
+    def set_qtable(self, qtable: dict):
         self.__qtable = qtable
 
-    def get_qtable_state(self, environment: bytes) -> Dict[str, float]:
-        if environment not in self.__qtable:
-            self.__qtable[environment] = {}
-            self.__qtable[environment] = {action: 0 for action in ACTION_MOVES}
-        return self.__qtable[environment]
+    def get_qtable_state(self, qtable: dict, environment: [str], visible_lines_above: int) -> Dict[str, float]:
+        if visible_lines_above == 0:
+            if qtable == {}:
+                for action in ACTION_MOVES:
+                    qtable[action] = 0
+                # qtable = {action: 0 for action in ACTION_MOVES}
+            return qtable
+        if environment[0] not in qtable:
+            qtable[environment[0]] = {}
+        return self.get_qtable_state(qtable[environment[0]], environment[1:], visible_lines_above - 1)
 
-    def update_qtable_state(self, environment: bytes, max_q: float, reward: float,
+    def update_qtable_state(self, environment: [str], max_q: float,
+                            reward: float,
                             action: str):
-        self.get_qtable_state(environment)[action] += \
-            self.__alpha * (reward + self.__gamma * max_q - self.get_qtable_state(environment)[action])
+        qtable = self.get_qtable_state(self.__qtable, environment, self.__visible_lines_above)
+        qtable[action] += self.__alpha * (reward + self.__gamma * max_q - qtable[action])
         self.increment_step_count()
 
     def print_stats(self, time_elapsed: int):
         print("--------------------------------")
         print(
-            f"Agent win average is : {round(self.win_average(self.__last_history_index) * 100, 3)}% "
-            f"({self.win_count(self.__last_history_index)} wins /"
-            f" {self.loose_count(self.__last_history_index)} looses)")
+            f"Agent win average is : {round(self.win_average() * 100, 3)}% "
+            f"({self.__win_count} wins /"
+            f" {self.__loose_count} looses)")
         print(f"Speed : {round(self.step_count / time_elapsed, 1)} step/s")
         print("--------------------------------")
         self.__last_history_index = len(self.__score_history)
@@ -57,19 +73,31 @@ class Qtable:
         self.__step_count += 1
 
     def save_score(self, score: float):
-        self.__score_history.append(score)
+        self.__score_history_temp.append(score)
+        if score > 0:
+            self.__win_count += 1
+        else:
+            self.__loose_count += 1
+        if len(self.__score_history_temp) >= self.__qtable_history_packets:
+            self.__score_history.append(sum(self.__score_history_temp) / len(self.__score_history_temp))
+            self.__score_history_temp = []
 
-    def win_average(self, start_index: int) -> float:
-        return self.win_count(start_index) / len(self.__score_history[start_index:])
+    def win_average(self) -> float:
+        return float(self.__win_count) / (self.__win_count + self.__loose_count)
 
-    def loose_count(self, start_index: int) -> int:
-        return sum(map(lambda score: score < 0, self.__score_history[start_index:]))
+    def loose_count(self) -> int:
+        return self.__loose_count
 
-    def win_count(self, start_index: int) -> int:
-        return sum(map(lambda score: score >= 0, self.__score_history[start_index:]))
+    def win_count(self) -> int:
+        return self.__win_count
 
     def best_score(self) -> float:
         return max(self.__score_history)
+
+    def qtable_count(self, qtable: dict, line_above: int) -> int:
+        if line_above == 1:
+            return len(qtable)
+        return sum([self.qtable_count(qtable[key], line_above - 1) for key in qtable.keys()])
 
     @property
     def score_history(self):
@@ -78,3 +106,11 @@ class Qtable:
     @property
     def step_count(self) -> int:
         return self.__step_count
+
+    @property
+    def visible_lines_above(self) -> int:
+        return self.__visible_lines_above
+
+    @property
+    def qtable(self) -> {}:
+        return self.__qtable

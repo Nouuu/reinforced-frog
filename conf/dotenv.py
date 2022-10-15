@@ -30,6 +30,10 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['HASH_QTABLE'] = os.getenv('HASH_QTABLE', 'true')
     if 'AGENT_COUNT' not in env:
         env['AGENT_COUNT'] = os.getenv('AGENT_COUNT', 1)
+    if 'QTABLE_HISTORY_PACKETS' not in env:
+        env['QTABLE_HISTORY_PACKETS'] = os.getenv('QTABLE_HISTORY_PACKETS', 10)
+    if 'QTABLE_HISTORY_FILE' not in env:
+        env['QTABLE_HISTORY_FILE'] = os.getenv('QTABLE_HISTORY_FILE', 'qtable/qtable_history')
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -42,5 +46,7 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['EXPLORE_RATE'] = float(env['EXPLORE_RATE'])
     env['HASH_QTABLE'] = env['HASH_QTABLE'].lower() == 'true'
     env['AGENT_COUNT'] = int(env['AGENT_COUNT'])
+    env['QTABLE_HISTORY_PACKETS'] = int(env['QTABLE_HISTORY_PACKETS'])
+    env['QTABLE_HISTORY_FILE'] = str(env['QTABLE_HISTORY_FILE'])
     print(env)
     return env

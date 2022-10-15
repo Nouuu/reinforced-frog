@@ -5,7 +5,6 @@ import arcade
 
 from ai.Agent import Agent
 from ai.Qtable import Qtable
-from ai.utils import get_qtable_files, merge_qtables
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
 from conf.dotenv import load_env
 from display.world_window import WorldWindow
@@ -23,7 +22,8 @@ def main():
         world_lines=WORLD_LINES[env['WORLD_TYPE']],
         env=env)
 
-    qtable = Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']))
+    qtable = Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
+                    env['AGENT_VISIBLE_LINES_ABOVE'])
 
     player = HumanPlayer()
     players = []
@@ -50,14 +50,14 @@ def main():
 def load_qtable(qtable: Qtable, env):
     if os.path.exists(env['AGENT_LEARNING_FILE']):
         qtable.load(env['AGENT_LEARNING_FILE'])
-    qtable_files = get_qtable_files('qtable')
-    if len(qtable_files) > 1:
-        print('Merging qtables...')
-        qtable.set_qtable(merge_qtables(qtable_files))
+    # qtable_files = get_qtable_files('qtable')
+    # if len(qtable_files) > 1:
+    #     print('Merging qtables...')
+    #     qtable.set_qtable(merge_qtables(qtable_files))
 
 
 def save_qtable(qtable: Qtable, env):
-    qtable.save(env['AGENT_LEARNING_FILE'])
+    qtable.save(env['AGENT_LEARNING_FILE'], env['QTABLE_HISTORY_FILE'])
 
 
 def arcade_mode(game):
@@ -75,7 +75,7 @@ def learn_mode(qtable: Qtable, env, game, start_time):
             second_left -= 1
             print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
             qtable.print_stats(int(time.perf_counter() - start_time))
-            qtable.save(env['AGENT_LEARNING_FILE'])
+            save_qtable(qtable, env)
 
 
 if __name__ == '__main__':
