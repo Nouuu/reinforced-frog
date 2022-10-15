@@ -33,7 +33,7 @@ def main():
 
     load_qtable(qtable, env)
     if not env['LEARNING_MODE']:
-        # players.append(player)
+        players.append(player)
         pass
     game = Game(world, players, (108, 90), auto_start=True, debug=env['AGENT_DEBUG'], env=env)
     game.start()
