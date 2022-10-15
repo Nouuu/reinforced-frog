@@ -49,13 +49,12 @@ class Agent(Player):
                 reward,
                 action
             )
+        self.update_state(new_state, new_environment, reward)
+
+    def update_state(self, new_state, new_environment, reward=0.):
         self.__state = new_state
         self.__current_environment = new_environment
         self.__score += reward
-
-    def update_state(self, new_state, new_environment):
-        self.__state = new_state
-        self.__current_environment = new_environment
 
     @property
     def sprite(self) -> Sprite:
