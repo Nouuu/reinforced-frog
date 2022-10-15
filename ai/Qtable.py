@@ -38,7 +38,7 @@ class Qtable:
             self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
         with lzma.open(qtable_filename, 'wb') as file:
             pickle.dump(self.__qtable, file)
-        with open(score_filename, 'a') as file:
+        with open(score_filename, 'a+') as file:
             history = "\n".join(map(str, self.__score_history))
             file.write(f'{history}\n')
             self.__score_history = []
