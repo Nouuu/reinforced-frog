@@ -1,3 +1,4 @@
+import arcade.color
 from arcade import Sprite
 
 from conf.config import *
@@ -10,9 +11,9 @@ class WorldWindow(arcade.Window):
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG',
-            update_rate=1/60
+            update_rate=1 / 60
         )
-        self.__debug = False
+        self.__debug = 0
         self.__players_sprites = None
         self.__world_sprites = None
         self.__entities_sprites = None
@@ -63,7 +64,8 @@ class WorldWindow(arcade.Window):
         self.__players_sprites = arcade.SpriteList()
         for player in self.__game.players:
             sprite = player.sprite
-            sprite.center_x, sprite.center_y = (self.__get_xy_state((player.state[0] + WORLD_SCALING // 2, player.state[1] + WORLD_SCALING // 2)))
+            sprite.center_x, sprite.center_y = (
+                self.__get_xy_state((player.state[0] + WORLD_SCALING // 2, player.state[1] + WORLD_SCALING // 2)))
             self.__players_sprites.append(sprite)
 
     def __draw_debug(self):
@@ -84,13 +86,26 @@ class WorldWindow(arcade.Window):
                                                state[1] - entity.height * SPRITE_SIZE,
                                                arcade.color.RED, 5)
 
+    def __draw_collisions_debug(self):
+        for index_line, line in enumerate(self.__game.world.world_entity_matrix):
+            if index_line < WORLD_HEIGHT:
+                for index_col, entity in enumerate(line):
+                    if index_col < WORLD_WIDTH:
+                        if entity in FORBIDDEN_STATES:
+                            x,y=self.__get_xy_state((index_line,index_col))
+                            arcade.draw_lrtb_rectangle_filled(x, x + 1, y,
+                                                              y - 1,
+                                                              arcade.color.BLUE)
+
     def on_draw(self):
         arcade.start_render()
         self.__world_sprites.draw()
         self.__entities_sprites.draw()
         self.__players_sprites.draw()
-        if self.__debug:
+        if self.__debug == 1:
             self.__draw_debug()
+        elif self.__debug == 2:
+            self.__draw_collisions_debug()
 
     def on_update(self, delta_time: float):
         self.__game.step()
@@ -109,4 +124,4 @@ class WorldWindow(arcade.Window):
         elif symbol == arcade.key.DOWN:
             self.__game.human_step(ACTION_DOWN)
         elif symbol == arcade.key.D:
-            self.__debug = not self.__debug
+            self.__debug = (self.__debug + 1) % 3
