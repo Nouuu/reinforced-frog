@@ -34,7 +34,8 @@ class Qtable:
         if self.__qtable_load_count is not None:
             print(
                 f'New states since previous save: '
-                f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}')
+                f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}\n'
+                f'Saving stable...')
             self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
         with lzma.open(qtable_filename, 'wb') as file:
             pickle.dump(self.__qtable, file)
@@ -42,6 +43,7 @@ class Qtable:
             history = "\n".join(map(str, self.__score_history))
             file.write(f'{history}\n')
             self.__score_history = []
+        print("Qtable saved")
 
     def set_qtable(self, qtable: dict):
         self.__qtable = qtable
