@@ -51,7 +51,7 @@ class World:
             height = entity.height
             x = state[1]
             y = state[0]
-            tokens = [token for _ in range(width * self.__scaling)]
+            tokens = [token for _ in range(max(0,x), x + width * self.__scaling)]
             for i in range(max(0, y), min(y + height * self.__scaling, self.__rows)):
                 self.__world_entity_matrix[i][max(0, x):max(0, min(x + width * self.__scaling, self.__cols))] = tokens
 
