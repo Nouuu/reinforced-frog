@@ -77,6 +77,7 @@ def learn_mode(qtable: Qtable, env, game, start_time):
             print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
             qtable.print_stats(int(time.perf_counter() - start_time))
             save_qtable(qtable, env)
+            start_time += time.perf_counter() - save_time
             second_left += time.perf_counter() - save_time
 
 
