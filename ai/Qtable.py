@@ -9,6 +9,7 @@ lzma_filters = [
     {"id": lzma.FILTER_LZMA2, "preset": 7 | lzma.PRESET_EXTREME},
 ]
 
+
 class Qtable:
     def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
         self.__visible_lines_above = visible_lines_above + 2
@@ -16,7 +17,6 @@ class Qtable:
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_load_count = 0
-        self.__last_history_index = 0
         self.__qtable_history_packets = qtable_history_packets
         self.__score_history = []
         self.__score_history_temp = []
@@ -74,7 +74,8 @@ class Qtable:
             f" {self.__loose_count} looses)")
         print(f"Speed : {round(self.step_count / time_elapsed, 1)} step/s")
         print("--------------------------------")
-        self.__last_history_index = len(self.__score_history)
+        self.__win_count = 0
+        self.__loose_count = 0
 
     def increment_step_count(self):
         self.__step_count += 1
