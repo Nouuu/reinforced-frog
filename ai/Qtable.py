@@ -1,5 +1,6 @@
 import lzma
 import pickle
+import shutil
 from typing import Dict
 
 from conf.config import ACTION_MOVES
@@ -37,8 +38,9 @@ class Qtable:
                 f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}\n'
                 f'Saving stable...')
             self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
-        with lzma.open(qtable_filename, 'wb') as file:
+        with lzma.open(qtable_filename + ".tmp", 'wb') as file:
             pickle.dump(self.__qtable, file)
+        shutil.move(qtable_filename + ".tmp", qtable_filename)
         with open(score_filename, 'a+') as file:
             history = "\n".join(map(str, self.__score_history))
             file.write(f'{history}\n')
@@ -91,6 +93,8 @@ class Qtable:
             self.__score_history_temp = []
 
     def win_average(self) -> float:
+        if self.__win_count + self.__loose_count == 0:
+            return 0
         return float(self.__win_count) / (self.__win_count + self.__loose_count)
 
     def loose_count(self) -> int:
