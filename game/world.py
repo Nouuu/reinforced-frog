@@ -93,7 +93,7 @@ class World:
                      for col in range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)
         ]
 
-        return world if not self.__env['HASH_QTABLE'] else list(map(lambda x: xxhash.xxh32_digest(x), world))
+        return world if not self.__env['HASH_QTABLE'] else list(map(xxhash.xxh32_digest, world))
 
     def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         return self.__world_str(current_state, number_of_lines, cols_arround)
