@@ -71,14 +71,18 @@ def learn_mode(qtable: Qtable, env, game, start_time):
     print(f"Agent start learning...\n{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
     while time.perf_counter() < second_left:
         game.step()
-        if int(second_left - time.perf_counter()) % 60 == 0:
-            save_time = time.perf_counter()
-            second_left -= 1
-            print(f"{int(second_left - time.perf_counter()) // 60 + 1} minutes left")
+        remove_sec = 0
+        if int(second_left - time.perf_counter()) % env['LEARNING_PRINT_STATS_EVERY'] == 0:
+            print(f"{int(second_left - time.perf_counter()) // 60} minutes left")
             qtable.print_stats(int(time.perf_counter() - start_time))
+            remove_sec = 1
+        if int(second_left - time.perf_counter()) % env['LEARNING_SAVE_QTABLE_EVERY'] == 0:
+            save_time = time.perf_counter()
             save_qtable(qtable, env)
             start_time += time.perf_counter() - save_time
             second_left += time.perf_counter() - save_time
+            remove_sec = 1
+        second_left -= remove_sec
 
 
 if __name__ == '__main__':

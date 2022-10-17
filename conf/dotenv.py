@@ -34,6 +34,10 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['QTABLE_HISTORY_PACKETS'] = os.getenv('QTABLE_HISTORY_PACKETS', 10)
     if 'QTABLE_HISTORY_FILE' not in env:
         env['QTABLE_HISTORY_FILE'] = os.getenv('QTABLE_HISTORY_FILE', 'qtable/qtable_history')
+    if 'LEARNING_PRINT_STATS_EVERY' not in env:
+        env['LEARNING_PRINT_STATS_EVERY'] = os.getenv('LEARNING_PRINT_STATS_EVERY', 60)
+    if 'LEARNING_SAVE_QTABLE_EVERY' not in env:
+        env['LEARNING_SAVE_QTABLE_EVERY'] = os.getenv('LEARNING_SAVE_QTABLE_EVERY', 60)
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -48,5 +52,7 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['AGENT_COUNT'] = int(env['AGENT_COUNT'])
     env['QTABLE_HISTORY_PACKETS'] = int(env['QTABLE_HISTORY_PACKETS'])
     env['QTABLE_HISTORY_FILE'] = str(env['QTABLE_HISTORY_FILE'])
+    env['LEARNING_PRINT_STATS_EVERY'] = int(env['LEARNING_PRINT_STATS_EVERY'])
+    env['LEARNING_SAVE_QTABLE_EVERY'] = int(env['LEARNING_SAVE_QTABLE_EVERY'])
     print(env)
     return env
