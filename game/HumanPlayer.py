@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 from arcade import Sprite
 
@@ -17,10 +17,10 @@ class HumanPlayer(Player):
         self.__state = intial_state
         pass
 
-    def best_move(self) -> str:
+    def best_move(self, environment) -> str:
         return ACTION_NONE
 
-    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: bytes):
+    def step(self, action: str, reward: float, new_state: Tuple[int, int], _environment: List[str]):
         self.__state = new_state
 
     def update_state(self, new_state, new_environment):

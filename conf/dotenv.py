@@ -26,6 +26,18 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['WORLD_TYPE'] = os.getenv('WORLD_TYPE', 0)
     if 'EXPLORE_RATE' not in env:
         env['EXPLORE_RATE'] = os.getenv('EXPLORE_RATE', 0)
+    if 'HASH_QTABLE' not in env:
+        env['HASH_QTABLE'] = os.getenv('HASH_QTABLE', 'true')
+    if 'AGENT_COUNT' not in env:
+        env['AGENT_COUNT'] = os.getenv('AGENT_COUNT', 1)
+    if 'QTABLE_HISTORY_PACKETS' not in env:
+        env['QTABLE_HISTORY_PACKETS'] = os.getenv('QTABLE_HISTORY_PACKETS', 10)
+    if 'QTABLE_HISTORY_FILE' not in env:
+        env['QTABLE_HISTORY_FILE'] = os.getenv('QTABLE_HISTORY_FILE', 'qtable/qtable_history')
+    if 'LEARNING_PRINT_STATS_EVERY' not in env:
+        env['LEARNING_PRINT_STATS_EVERY'] = os.getenv('LEARNING_PRINT_STATS_EVERY', 60)
+    if 'LEARNING_SAVE_QTABLE_EVERY' not in env:
+        env['LEARNING_SAVE_QTABLE_EVERY'] = os.getenv('LEARNING_SAVE_QTABLE_EVERY', 60)
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -36,5 +48,11 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['LEARNING_MODE'] = env['LEARNING_MODE'].lower() == 'true'
     env['AGENT_DEBUG'] = env['AGENT_DEBUG'].lower() == 'true'
     env['EXPLORE_RATE'] = float(env['EXPLORE_RATE'])
+    env['HASH_QTABLE'] = env['HASH_QTABLE'].lower() == 'true'
+    env['AGENT_COUNT'] = int(env['AGENT_COUNT'])
+    env['QTABLE_HISTORY_PACKETS'] = int(env['QTABLE_HISTORY_PACKETS'])
+    env['QTABLE_HISTORY_FILE'] = str(env['QTABLE_HISTORY_FILE'])
+    env['LEARNING_PRINT_STATS_EVERY'] = int(env['LEARNING_PRINT_STATS_EVERY'])
+    env['LEARNING_SAVE_QTABLE_EVERY'] = int(env['LEARNING_SAVE_QTABLE_EVERY'])
     print(env)
     return env

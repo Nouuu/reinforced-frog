@@ -50,7 +50,7 @@ class WorldLine:
         self.__spawned_entities = new_entities_positions
 
     def spawn_entity(self):
-        if self.__direction == 0:
+        if self.__direction == 0 or self.__speed_counter < self.__speed:
             return
         entity = self.__random.choice(self.__entities)
         if self.__direction < 0:

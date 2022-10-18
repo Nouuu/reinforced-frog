@@ -33,4 +33,4 @@ class WorldEntity:
         Return the sprite of the entity\n
         Return (sprite: Sprite)
         """
-        return copy.deepcopy(self.__sprite)
+        return Sprite(texture=self.__sprite.texture, scale=self.__sprite.scale)
