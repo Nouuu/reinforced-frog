@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import xxhash
+from line_profiler_pycharm import profile
 
 from conf.config import *
 from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
@@ -43,17 +44,20 @@ class World:
             for row in self.__world_line_matrix:
                 row.append(WALL_TOKEN)
 
+    @profile
     def __update_entity_matrix(self):
-        self.__world_entity_matrix: list[list[str]] = [[value for value in line] for line in self.__world_line_matrix]
+        self.__world_entity_matrix: list[list[str]] = [line[:] for line in self.__world_line_matrix]
         for state, entity in self.__world_entities_states.items():
             token = entity.token
             width = entity.width
             height = entity.height
-            x = state[1]
-            y = state[0]
-            tokens = [token for _ in range(max(0,x), x + width * self.__scaling)]
-            for i in range(max(0, y), min(y + height * self.__scaling, self.__rows)):
-                self.__world_entity_matrix[i][max(0, x):max(0, min(x + width * self.__scaling, self.__cols))] = tokens
+            x = max(0, state[1])
+            x_max = max(0, min(x + width * self.__scaling, self.__cols))
+            y = max(0, state[0])
+            y_max = min(y + height * self.__scaling, self.__rows)
+            tokens = [token] * (x_max - x)
+            for i in range(y, y_max):
+                self.__world_entity_matrix[i][x:x_max] = tokens
 
     def __parse_world_lines(self, world_lines: List[WorldLine]):
         self.__world_lines = world_lines
@@ -80,7 +84,6 @@ class World:
                 entity_token != WATER_TOKEN or not is_in_safe_zone_on_water(collisions)):
                 return True
         return False
-
 
     # @profile
     def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:

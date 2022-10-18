@@ -33,6 +33,7 @@ class Qtable:
     def save(self, qtable_filename: str, score_filename: str):
         print(f'Qtable entries : {self.qtable_count(self.__qtable, self.__visible_lines_above)}')
         if self.__qtable_load_count is not None:
+            self.qtable_clear_empty(self.__qtable, self.__visible_lines_above)
             print(
                 f'New states since previous save: '
                 f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}\n'
@@ -110,6 +111,17 @@ class Qtable:
         if line_above == 1:
             return len(qtable)
         return sum([self.qtable_count(qtable[key], line_above - 1) for key in qtable.keys()])
+
+    def qtable_clear_empty(self, qtable: dict, line_above: int):
+        if line_above == 1:
+            to_delete = []
+            for key, state in qtable.items():
+                if all(action == 0 for action in state.values()):
+                    to_delete.append(key)
+            for key in to_delete:
+                qtable.pop(key)
+            return
+        [self.qtable_clear_empty(qtable[key], line_above - 1) for key in qtable.keys()]
 
     @property
     def score_history(self):
