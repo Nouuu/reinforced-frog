@@ -5,6 +5,7 @@ import arcade
 
 from ai.Agent import Agent
 from ai.Qtable import Qtable
+from ai.graph_exporter import extract_history
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
 from conf.dotenv import load_env
 from display.world_window import WorldWindow
@@ -45,6 +46,8 @@ def main():
         arcade_mode(game)
     if env['LEARNING_MODE']:
         save_qtable(qtable, env)
+        if env['GENERATE_HISTORY_GRAPH']:
+            extract_history(env['QTABLE_HISTORY_FILE'], env)
 
 
 def load_qtable(qtable: Qtable, env):
@@ -79,6 +82,8 @@ def learn_mode(qtable: Qtable, env, game, start_time):
         if int(second_left - time.perf_counter()) % env['LEARNING_SAVE_QTABLE_EVERY'] == 0:
             save_time = time.perf_counter()
             save_qtable(qtable, env)
+            if env['GENERATE_HISTORY_GRAPH']:
+                extract_history(env['QTABLE_HISTORY_FILE'], env)
             start_time += time.perf_counter() - save_time
             second_left += time.perf_counter() - save_time
             remove_sec = 1
