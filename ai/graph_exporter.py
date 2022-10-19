@@ -26,20 +26,22 @@ def extract_history(history_file_path: str, env):
     print(f"History read, {len(complete_history)} values")
 
     fragment_count = len(complete_history) // 500
-    history = []
-    for i in range(0, len(complete_history), fragment_count):
-        history.append(complete_history[i:i + fragment_count])
+    if fragment_count > 0:
+        history = []
+        for i in range(0, len(complete_history), fragment_count):
+            history.append(complete_history[i:i + fragment_count])
 
-    plt.plot(list(map(avg, history)), label="Score average")
-    plt.xlabel(f"Iteration (x{env['QTABLE_HISTORY_PACKETS'] * fragment_count})")
-    plt.ylabel("Score average")
-    plt.title(get_title(len(complete_history), env))
-    plt.gcf().set_size_inches(20, 11)
-    plt.tight_layout()
+        plt.plot(list(map(avg, history)), label="Score average")
+        plt.xlabel(f"Iteration (x{env['QTABLE_HISTORY_PACKETS'] * fragment_count})")
+        plt.ylabel("Score average")
+        plt.title(get_title(len(complete_history), env))
+        plt.gcf().set_size_inches(20, 11)
+        plt.tight_layout()
 
-    filename = find_available_filename(history_file_path)
-    plt.savefig(filename, dpi=300, pil_kwargs={'quality': 100})
-    print(f"History saved to {filename}")
+        filename = find_available_filename(history_file_path)
+        plt.savefig(filename, dpi=300, pil_kwargs={'quality': 100})
+        plt.close()
+        print(f"History saved to {filename}")
 
 
 def avg(l: List[float]) -> float:
