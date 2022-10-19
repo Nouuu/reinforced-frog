@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import xxhash
-from line_profiler_pycharm import profile
 
 from conf.config import *
 from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
@@ -44,7 +43,6 @@ class World:
             for row in self.__world_line_matrix:
                 row.append(WALL_TOKEN)
 
-    @profile
     def __update_entity_matrix(self):
         self.__world_entity_matrix: list[list[str]] = [line[:] for line in self.__world_line_matrix]
         for state, entity in self.__world_entities_states.items():
