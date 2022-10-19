@@ -13,7 +13,7 @@ lzma_filters = [
 
 class Qtable:
     def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
-        self.__visible_lines_above = visible_lines_above + 2
+        self.__visible_lines = visible_lines_above + 2
         self.__qtable = {}
         self.__alpha = alpha
         self.__gamma = gamma
@@ -28,16 +28,17 @@ class Qtable:
     def load(self, filename: str):
         with lzma.LZMAFile(filename, "rb") as uncompressed:
             self.__qtable = pickle.load(uncompressed)
-            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
+            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines)
 
     def save(self, qtable_filename: str, score_filename: str):
-        print(f'Qtable entries : {self.qtable_count(self.__qtable, self.__visible_lines_above)}')
+        print(f'Qtable entries : {self.qtable_count(self.__qtable, self.__visible_lines)}')
         if self.__qtable_load_count is not None:
+            self.qtable_clear_empty(self.__qtable, self.__visible_lines)
             print(
                 f'New states since previous save: '
-                f'{self.qtable_count(self.__qtable, self.__visible_lines_above) - self.__qtable_load_count}\n'
+                f'{self.qtable_count(self.__qtable, self.__visible_lines) - self.__qtable_load_count}\n'
                 f'Saving stable...')
-            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines_above)
+            self.__qtable_load_count = self.qtable_count(self.__qtable, self.__visible_lines)
         with lzma.open(qtable_filename + ".tmp", 'wb') as file:
             pickle.dump(self.__qtable, file)
         shutil.move(qtable_filename + ".tmp", qtable_filename)
@@ -64,7 +65,7 @@ class Qtable:
     def update_qtable_state(self, environment: [str], max_q: float,
                             reward: float,
                             action: str):
-        qtable = self.get_qtable_state(self.__qtable, environment, self.__visible_lines_above)
+        qtable = self.get_qtable_state(self.__qtable, environment, self.__visible_lines)
         qtable[action] += self.__alpha * (reward + self.__gamma * max_q - qtable[action])
         self.increment_step_count()
 
@@ -111,6 +112,17 @@ class Qtable:
             return len(qtable)
         return sum([self.qtable_count(qtable[key], line_above - 1) for key in qtable.keys()])
 
+    def qtable_clear_empty(self, qtable: dict, line_above: int):
+        if line_above == 1:
+            to_delete = []
+            for key, state in qtable.items():
+                if all(action == 0 for action in state.values()):
+                    to_delete.append(key)
+            for key in to_delete:
+                qtable.pop(key)
+            return
+        [self.qtable_clear_empty(qtable[key], line_above - 1) for key in qtable.keys()]
+
     @property
     def score_history(self):
         return self.__score_history
@@ -121,7 +133,7 @@ class Qtable:
 
     @property
     def visible_lines_above(self) -> int:
-        return self.__visible_lines_above
+        return self.__visible_lines
 
     @property
     def qtable(self) -> {}:

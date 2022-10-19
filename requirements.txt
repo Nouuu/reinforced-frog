@@ -3,3 +3,4 @@ xxhash
 refurb
 keyboard
 python-dotenv
+matplotlib
