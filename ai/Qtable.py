@@ -3,6 +3,7 @@ import pickle
 import shutil
 from typing import Dict
 
+from ai.Model import Model
 from conf.config import ACTION_MOVES
 
 lzma_filters = [
@@ -11,7 +12,7 @@ lzma_filters = [
 ]
 
 
-class Qtable:
+class Qtable(Model):
     def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
         self.__visible_lines = visible_lines_above + 2
         self.__qtable = {}
@@ -49,9 +50,6 @@ class Qtable:
             file.write(f'{history}\n')
             self.__score_history = []
         print("Qtable saved")
-
-    def set_qtable(self, qtable: dict):
-        self.__qtable = qtable
 
     def get_state_actions(self, state: [str]) -> Dict[str, float]:
         return self.__get_state_actions(self.__qtable, state, self.__visible_lines)

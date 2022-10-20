@@ -8,7 +8,7 @@ class Model:
     def save(self, qtable_filename: str, score_filename: str):
         pass
 
-    def get_state_actions(self, qtable: dict, state: [str]) -> Dict[str, float]:
+    def get_state_actions(self, state: [str]) -> Dict[str, float]:
         pass
 
     def update_state(self, state: [str], max_q: float, reward: float, action: str):
