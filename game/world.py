@@ -53,7 +53,7 @@ class World:
             x_max = max(0, min(x + width * self.__scaling, self.__cols))
             y = max(0, state[0])
             y_max = min(y + height * self.__scaling, self.__rows)
-            tokens = [AGENT_ENVIRONMENT_TOKENS[token]] * (x_max - x)
+            tokens = [token] * (x_max - x)
             for i in range(y, y_max):
                 self.__world_entity_matrix[i][x:x_max] = tokens
 
