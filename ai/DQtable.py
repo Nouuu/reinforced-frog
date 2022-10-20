@@ -1,14 +1,16 @@
 from typing import Dict
-import tensorflow as tf
-
 
 from ai.Model import Model
 
 
 class DeepQtable(Model):
 
-    def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int):
+    def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int,
+                 visible_cols_arround: int, agent_width: int):
         self.__visible_lines = visible_lines_above + 2
+        self.__visible_cols = visible_cols_arround * 2 + agent_width
+        self.__state_size = self.__visible_lines * self.__visible_cols
+        self.__action_size = 5  # U,D,L,R,N
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_history_packets = score_history_packets

@@ -4,4 +4,3 @@ refurb
 keyboard
 python-dotenv
 matplotlib
-tensorflow
