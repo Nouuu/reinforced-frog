@@ -83,8 +83,7 @@ class World:
                 return True
         return False
 
-    # @profile
-    def __world_str(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
+    def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
         min_line = current_state[0] - (number_of_lines * self.__scaling)
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
@@ -95,9 +94,6 @@ class World:
         ]
 
         return world if not self.__env['HASH_QTABLE'] else list(map(xxhash.xxh32_digest, world))
-
-    def get_current_environment(self, current_state: Tuple[int, int], number_of_lines: int, cols_arround: int) -> [str]:
-        return self.__world_str(current_state, number_of_lines, cols_arround)
 
     def get_world_line_entity(self, state: Tuple[int, int]) -> WorldEntity | None:
         if state in self.__world_states:
