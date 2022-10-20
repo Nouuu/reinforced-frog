@@ -13,13 +13,13 @@ lzma_filters = [
 
 
 class Qtable(Model):
-    def __init__(self, alpha: float, gamma: float, qtable_history_packets: int, visible_lines_above: int):
+    def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int):
         self.__visible_lines = visible_lines_above + 2
         self.__qtable = {}
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_load_count = 0
-        self.__qtable_history_packets = qtable_history_packets
+        self.__score_history_packets = score_history_packets
         self.__score_history = []
         self.__score_history_temp = []
         self.__step_count = 0
@@ -92,7 +92,7 @@ class Qtable(Model):
             self.__win_count += 1
         else:
             self.__loose_count += 1
-        if len(self.__score_history_temp) >= self.__qtable_history_packets:
+        if len(self.__score_history_temp) >= self.__score_history_packets:
             self.__score_history.append(sum(self.__score_history_temp) / len(self.__score_history_temp))
             self.__score_history_temp = []
 
