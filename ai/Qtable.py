@@ -52,15 +52,23 @@ class Qtable:
         self.__qtable = qtable
 
     def get_qtable_state(self, qtable: dict, environment: [str], visible_lines_above: int) -> Dict[str, float]:
-        if visible_lines_above == 0:
-            if len(qtable) == 0:
-                for action in ACTION_MOVES:
-                    qtable[action] = 0
-                # qtable = {action: 0 for action in ACTION_MOVES}
-            return qtable
-        elif environment[0] not in qtable:
-            qtable[environment[0]] = {}
-        return self.get_qtable_state(qtable[environment[0]], environment[1:], visible_lines_above - 1)
+        for i in range(visible_lines_above):
+            if environment[i] not in qtable:
+                qtable[environment[i]] = {}
+            qtable = qtable[environment[i]]
+        if len(qtable) <= 0:
+            for action in ACTION_MOVES:
+                qtable[action] = 0
+        return qtable
+        # if visible_lines_above == 0:
+        #     if len(qtable) == 0:
+        #         for action in ACTION_MOVES:
+        #             qtable[action] = 0
+        #         # qtable = {action: 0 for action in ACTION_MOVES}
+        #     return qtable
+        # elif environment[0] not in qtable:
+        #     qtable[environment[0]] = {}
+        # return self.get_qtable_state(qtable[environment[0]], environment[1:], visible_lines_above - 1)
 
     def update_qtable_state(self, environment: [str], max_q: float,
                             reward: float,
