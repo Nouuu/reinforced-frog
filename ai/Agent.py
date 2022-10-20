@@ -37,16 +37,14 @@ class Agent(Player):
         self.__current_environment = environment
         if random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
-        actions = self.__qtable.get_qtable_state(self.__qtable.qtable, self.__current_environment,
-                                                 self.__qtable.visible_lines_above)
+        actions = self.__qtable.get_state_actions(self.__current_environment)
         action = max(actions, key=actions.get)
         return action
 
     def step(self, action: str, reward: float, new_state: (int, int), new_environment: [str]):
         if self.__learning:
-            max_q = max(self.__qtable.get_qtable_state(self.__qtable.qtable, new_environment,
-                                                       self.__qtable.visible_lines_above).values())
-            self.__qtable.update_qtable_state(
+            max_q = max(self.__qtable.get_state_actions(new_environment).values())
+            self.__qtable.update_state(
                 self.__current_environment,
                 max_q,
                 reward,
