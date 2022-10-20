@@ -1,4 +1,6 @@
 from typing import Dict
+import tensorflow as tf
+
 
 from ai.Model import Model
 
