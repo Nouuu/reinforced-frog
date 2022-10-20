@@ -53,7 +53,7 @@ class World:
             x_max = max(0, min(x + width * self.__scaling, self.__cols))
             y = max(0, state[0])
             y_max = min(y + height * self.__scaling, self.__rows)
-            tokens = [token] * (x_max - x)
+            tokens = [AGENT_ENVIRONMENT_TOKENS[token]] * (x_max - x)
             for i in range(y, y_max):
                 self.__world_entity_matrix[i][x:x_max] = tokens
 
@@ -90,7 +90,7 @@ class World:
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
         world = [
-            ''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
+            ''.join([self.__world_entity_matrix[row][col]
                      for col in range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)
         ]
 
