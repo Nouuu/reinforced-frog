@@ -70,7 +70,7 @@ class Qtable(Model):
                      action: str):
         qtable = self.get_state_actions(state)
         qtable[action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
-        self.increment_step_count()
+        self.__increment_step_count()
 
     def print_stats(self, time_elapsed: int):
         print("--------------------------------")
