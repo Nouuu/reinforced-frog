@@ -37,7 +37,7 @@ class DeepQtable(Model):
 
     def __init_mlp(self):
         self.__mlp = MLPRegressor(
-            hidden_layer_sizes=2000,
+            hidden_layer_sizes=1000,
             activation='tanh',
             solver='sgd',
             learning_rate_init=self.__alpha,
