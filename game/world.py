@@ -89,7 +89,7 @@ class World:
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
         world = [
-            ''.join([self.__world_entity_matrix[row][col]
+            ''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
                      for col in range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)
         ]
 
