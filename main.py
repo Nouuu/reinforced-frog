@@ -24,8 +24,10 @@ def main():
         world_lines=WORLD_LINES[env['WORLD_TYPE']],
         env=env)
 
-    dqtable = DeepQtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
-                         env['AGENT_VISIBLE_LINES_ABOVE'], env['AGENT_VISIBLE_COLS_ARROUND'], 9)
+    dqtable = DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
+                         visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
+                         visible_cols_arround=env['AGENT_VISIBLE_COLS_ARROUND'],
+                         agent_width=9)
 
     qtable = Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
                     env['AGENT_VISIBLE_LINES_ABOVE'])

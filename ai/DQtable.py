@@ -1,12 +1,14 @@
 from typing import Dict
 
+from sklearn.neural_network import MLPRegressor
+
 from ai.Model import Model
 
 
 class DeepQtable(Model):
 
-    def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int,
-                 visible_cols_arround: int, agent_width: int):
+    def __init__(self, score_history_packets: int, visible_lines_above: int,
+                 visible_cols_arround: int, agent_width: int, alpha: float = 0.01, gamma: float = 1):
         self.__visible_lines = visible_lines_above + 2
         self.__visible_cols = visible_cols_arround * 2 + agent_width
         self.__state_size = self.__visible_lines * self.__visible_cols
@@ -19,6 +21,19 @@ class DeepQtable(Model):
         self.__step_count = 0
         self.__win_count = 0
         self.__loose_count = 0
+        self.__init_mlp()
+
+    def __init_mlp(self):
+        self.__mlp = MLPRegressor(
+            hidden_layer_sizes=2000,
+            activation='tanh',
+            solver='sgd',
+            learning_rate_init=self.__alpha,
+            max_iter=1,
+            warm_start=True
+        )
+
+        self.__mlp.fit([''])
 
     def load(self, filename: str):
         super().load(filename)
