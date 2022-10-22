@@ -89,10 +89,20 @@ class World:
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
         world = []
-        for row in slicer(self.__world_entity_matrix, min_line, max_line, self.__scaling):
+        for line_i, row in enumerate(slicer(self.__world_entity_matrix, min_line, max_line, self.__scaling)):
             line = ''
-            for col in slicer(row, min_col, max_col):
-                line += AGENT_ENVIRONMENT_TOKENS[col]
+            world_line = self.__world_lines[(min_line + line_i) // self.__scaling]
+            if world_line.line_type.token == WATER_TOKEN:
+                for col in slicer(row, min_col, max_col):
+                    if col in WATER_COMMONS_TOKENS:
+                        line += FORWARD_COMMON_TOKEN \
+                            if world_line.direction == DIRECTION_RIGHT else BACKWARD_COMMON_TOKEN
+                    else:
+                        line += FORWARD_FORBIDDEN_ENTITY_TOKEN if world_line.direction == DIRECTION_RIGHT \
+                            else BACKWARD_FORBIDDEN_ENTITY_TOKEN
+            else:
+                for col in slicer(row, min_col, max_col):
+                    line += AGENT_ENVIRONMENT_TOKENS[col]
             world.append(line)
 
         return world if not self.__env['HASH_QTABLE'] else list(map(xxhash.xxh32_digest, world))
