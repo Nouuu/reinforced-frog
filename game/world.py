@@ -3,7 +3,7 @@ from typing import Tuple
 import xxhash
 
 from conf.config import *
-from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions
+from game.utils import is_in_safe_zone_on_water, is_win_state, get_collisions, slicer
 
 
 class World:
@@ -88,10 +88,12 @@ class World:
         max_line = current_state[0] + self.__scaling + 1
         min_col = current_state[1] - cols_arround
         max_col = current_state[1] + self.__scaling + cols_arround
-        world = [
-            ''.join([AGENT_ENVIRONMENT_TOKENS[self.__world_entity_matrix[row][col]]
-                     for col in range(min_col, max_col)]) for row in range(min_line, max_line, self.__scaling)
-        ]
+        world = []
+        for row in slicer(self.__world_entity_matrix, min_line, max_line, self.__scaling):
+            line = ''
+            for col in slicer(row, min_col, max_col):
+                line += AGENT_ENVIRONMENT_TOKENS[col]
+            world.append(line)
 
         return world if not self.__env['HASH_QTABLE'] else list(map(xxhash.xxh32_digest, world))
 
