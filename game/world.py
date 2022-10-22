@@ -98,8 +98,8 @@ class World:
                         line += FORWARD_COMMON_TOKEN \
                             if world_line.direction == DIRECTION_RIGHT else BACKWARD_COMMON_TOKEN
                     else:
-                        line += FORWARD_FORBIDDEN_ENTITY_TOKEN if world_line.direction == DIRECTION_RIGHT \
-                            else BACKWARD_FORBIDDEN_ENTITY_TOKEN
+                        line += FORWARD_FORBIDDEN_ENTITY_TOKEN \
+                            if world_line.direction == DIRECTION_RIGHT else BACKWARD_FORBIDDEN_ENTITY_TOKEN
             else:
                 for col in slicer(row, min_col, max_col):
                     line += AGENT_ENVIRONMENT_TOKENS[col]
