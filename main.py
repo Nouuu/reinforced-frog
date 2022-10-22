@@ -4,7 +4,6 @@ import time
 import arcade
 
 from ai.Agent import Agent
-from ai.DQtable import DeepQtable
 from ai.Model import Model
 from ai.Qtable import Qtable
 from ai.graph_exporter import extract_history
@@ -25,11 +24,11 @@ def main():
         world_lines=WORLD_LINES[env['WORLD_TYPE']],
         env=env)
 
-    dqtable = DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
-                         visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
-                         visible_cols_arround=env['AGENT_VISIBLE_COLS_ARROUND'],
-                         agent_width=9,
-                         reward_divisor=WORLD_WIDTH * WORLD_HEIGHT)
+    # dqtable = DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
+    #                      visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
+    #                      visible_cols_arround=env['AGENT_VISIBLE_COLS_ARROUND'],
+    #                      agent_width=9,
+    #                      reward_divisor=WORLD_WIDTH * WORLD_HEIGHT)
     qtable = Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
                     env['AGENT_VISIBLE_LINES_ABOVE'])
 
@@ -37,9 +36,9 @@ def main():
     players = []
 
     for i in range(env['AGENT_COUNT']):
-        players.append(Agent(dqtable, float(env['EXPLORE_RATE'])))
+        players.append(Agent(qtable, float(env['EXPLORE_RATE'])))
 
-    load_model(dqtable, env)
+    load_model(qtable, env)
     if not env['LEARNING_MODE']:
         players.append(player)
         pass
@@ -48,11 +47,11 @@ def main():
 
     start_time = time.perf_counter()
     if env['LEARNING_MODE']:
-        learn_mode(dqtable, env, game, start_time)
+        learn_mode(qtable, env, game, start_time)
     else:
         arcade_mode(game)
     if env['LEARNING_MODE']:
-        save_model(dqtable, env)
+        save_model(qtable, env)
         if env['GENERATE_HISTORY_GRAPH']:
             extract_history(env['QTABLE_HISTORY_FILE'], env)
 
