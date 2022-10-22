@@ -35,7 +35,7 @@ class Agent(Player):
 
     def best_move(self, environment: [str]) -> str:
         self.__current_environment = environment
-        if random.random() < self.__exploration_rate:
+        if self.__exploration_rate > 0 and random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
         actions = self.__model.get_state_actions(self.__current_environment)
         action = max(actions, key=actions.get)
