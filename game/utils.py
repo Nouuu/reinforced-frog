@@ -1,3 +1,5 @@
+import itertools
+
 from conf.config import WATER_TOKEN, WATER_AUTHORISED_STATES, WIN_STATES
 from display.entity.world_entity import WorldEntity
 
@@ -29,6 +31,16 @@ def is_win_state(collisions: [tuple]) -> bool:
         if token in WIN_STATES:
             return True
     return False
+
+
+def slicer(a: list, lower: int, upper: int, step: int = 1) -> list:
+    if lower < 0:
+        lower += len(a)
+    if upper < 0:
+        upper += len(a)
+    if upper < lower:
+        return itertools.chain(a[lower::step], a[:upper:step])
+    return a[lower:upper:step]
 
 # def filter_states(states: Dict[Tuple[int, int], WorldEntity],
 #                   scaling: int,

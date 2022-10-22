@@ -24,3 +24,7 @@ def merge_qtables(qtable_files: Set[str]) -> Dict[bytes, Dict[str, float]]:
                         else:
                             qtable[key][action] = (qtable[key][action] + qvalue) / 2
     return qtable
+
+
+def state_to_vector(state: str) -> [float]:
+    return list(map(lambda char: float(ord(char)) / 255, [char for char in state]))

@@ -129,4 +129,6 @@ dmypy.json
 .pyre/
 
 .idea/
-qtable
+qtable/*.xz
+history/*.png
+history/*.history
