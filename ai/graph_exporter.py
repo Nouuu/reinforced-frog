@@ -8,7 +8,7 @@ plt.style.use('ggplot')
 
 
 def get_title(history_len, env) -> str:
-    return f"Learning mode : {env['LEARNING_TYPE']}" \
+    return f"Learning mode : {env['LEARNING_TYPE']}\n" \
            f"α={env['AGENT_LEARNING_RATE']}, γ={env['AGENT_GAMMA']}\n" \
            f"Visible lines above: {env['AGENT_VISIBLE_LINES_ABOVE']}, " \
            f"visible columns arround: {env['AGENT_VISIBLE_COLS_ARROUND']}\n" \
