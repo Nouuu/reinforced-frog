@@ -40,6 +40,8 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['LEARNING_SAVE_QTABLE_EVERY'] = os.getenv('LEARNING_SAVE_QTABLE_EVERY', 60)
     if 'GENERATE_HISTORY_GRAPH' not in env:
         env['GENERATE_HISTORY_GRAPH'] = os.getenv('GENERATE_HISTORY_GRAPH', 'false')
+    if 'LEARNING_TYPE' not in env:
+        env['LEARNING_TYPE'] = os.getenv('LEARNING_TYPE', 'QLEARNING')
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -57,5 +59,6 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['LEARNING_PRINT_STATS_EVERY'] = int(env['LEARNING_PRINT_STATS_EVERY'])
     env['LEARNING_SAVE_QTABLE_EVERY'] = int(env['LEARNING_SAVE_QTABLE_EVERY'])
     env['GENERATE_HISTORY_GRAPH'] = env['GENERATE_HISTORY_GRAPH'].lower() == 'true'
+    env['LEARNING_TYPE'] = str(env['LEARNING_TYPE']).upper()
     print(env)
     return env
