@@ -80,3 +80,7 @@ class WorldLine:
     @property
     def move_factor(self):
         return self.__move_factor
+
+    @property
+    def direction(self):
+        return self.__direction
