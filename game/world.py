@@ -50,7 +50,7 @@ class World:
             width = entity.width
             height = entity.height
             x = max(0, state[1])
-            x_max = max(0, min(x + width * self.__scaling, self.__cols))
+            x_max = max(0, min(state[1] + width * self.__scaling, self.__cols))
             y = max(0, state[0])
             y_max = min(y + height * self.__scaling, self.__rows)
             tokens = [token] * (x_max - x)
