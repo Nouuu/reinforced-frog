@@ -1,6 +1,6 @@
 from arcade import Sprite
 
-from ai.Qtable import Qtable
+from ai.Model import Model
 from conf.config import FROG_IA_TOKEN, ENTITIES, random, ACTIONS
 from display.entity.world_entity import WorldEntity
 from game.Player import Player
@@ -10,11 +10,11 @@ from game.world import World
 class Agent(Player):
 
     def __init__(self,
-                 qtable: Qtable,
+                 model: Model,
                  exploration_rate: float = 0.1,
                  learning: bool = True,
                  ):
-        self.__qtable = qtable
+        self.__model = model
         self.__state = (0, 0)
         self.__current_environment = b''
         self.__score = 0
@@ -31,22 +31,20 @@ class Agent(Player):
         self.__score = 0
 
     def save_score(self):
-        self.__qtable.save_score(self.__score)
+        self.__model.save_score(self.__score)
 
     def best_move(self, environment: [str]) -> str:
         self.__current_environment = environment
-        if random.random() < self.__exploration_rate:
+        if self.__exploration_rate > 0 and random.random() < self.__exploration_rate:
             return random.choice(ACTIONS)
-        actions = self.__qtable.get_qtable_state(self.__qtable.qtable, self.__current_environment,
-                                                 self.__qtable.visible_lines_above)
+        actions = self.__model.get_state_actions(self.__current_environment)
         action = max(actions, key=actions.get)
         return action
 
     def step(self, action: str, reward: float, new_state: (int, int), new_environment: [str]):
         if self.__learning:
-            max_q = max(self.__qtable.get_qtable_state(self.__qtable.qtable, new_environment,
-                                                       self.__qtable.visible_lines_above).values())
-            self.__qtable.update_qtable_state(
+            max_q = max(self.__model.get_state_actions(new_environment).values())
+            self.__model.update_state(
                 self.__current_environment,
                 max_q,
                 reward,
