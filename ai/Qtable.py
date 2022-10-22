@@ -52,13 +52,11 @@ class Qtable(Model):
         print("Qtable saved")
 
     def get_state_actions(self, state: [str]) -> Dict[str, float]:
-        return self.__get_state_actions(self.__qtable, state, self.__visible_lines)
-
-    def __get_state_actions(self, qtable: dict, state: [str], visible_lines_above: int) -> Dict[str, float]:
-        for i in range(visible_lines_above):
-            if environment[i] not in qtable:
-                qtable[environment[i]] = {}
-            qtable = qtable[environment[i]]
+        qtable = self.__qtable
+        for i in range(self.__visible_lines):
+            if state[i] not in qtable:
+                qtable[state[i]] = {}
+            qtable = qtable[state[i]]
         if len(qtable) <= 0:
             for action in ACTION_MOVES:
                 qtable[action] = 0
