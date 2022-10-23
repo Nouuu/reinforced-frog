@@ -1,4 +1,3 @@
-import os
 from typing import List
 
 import matplotlib
@@ -9,7 +8,8 @@ plt.style.use('ggplot')
 
 
 def get_title(history_len, env) -> str:
-    return f"α={env['AGENT_LEARNING_RATE']}, γ={env['AGENT_GAMMA']}\n" \
+    return f"Learning mode : {env['LEARNING_TYPE']}\n" \
+           f"α={env['AGENT_LEARNING_RATE']}, γ={env['AGENT_GAMMA']}\n" \
            f"Visible lines above: {env['AGENT_VISIBLE_LINES_ABOVE']}, " \
            f"visible columns arround: {env['AGENT_VISIBLE_COLS_ARROUND']}\n" \
            f"Total iterations: {history_len * env['QTABLE_HISTORY_PACKETS']}"
@@ -49,9 +49,10 @@ def avg(l: List[float]) -> float:
 
 
 def find_available_filename(filename: str) -> str:
-    if not os.path.exists(filename + ".png"):
-        return filename + ".png"
-    i = 1
-    while os.path.exists(filename + f" ({i}).png"):
-        i += 1
-    return filename + f" ({i}).png"
+    return filename + ".png"
+    # if not os.path.exists(filename + ".png"):
+    #     pass
+    # i = 1
+    # while os.path.exists(filename + f" ({i}).png"):
+    #     i += 1
+    # return filename + f" ({i}).png"
