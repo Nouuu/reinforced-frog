@@ -118,3 +118,19 @@ class DeepQtable(Model):
         if self.__win_count + self.__loose_count == 0:
             return 0
         return float(self.__win_count) / (self.__win_count + self.__loose_count)
+
+    @property
+    def win_rate(self) -> float:
+        return round(self.__win_average() * 100, 2)
+
+    @property
+    def game_count(self) -> int:
+        return self.__win_count + self.__loose_count
+
+    @property
+    def win_count(self) -> int:
+        return self.__win_count
+
+    @property
+    def loose_count(self) -> int:
+        return self.__loose_count

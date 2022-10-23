@@ -1,24 +1,29 @@
 import arcade.color
 from arcade import Sprite
 
+from ai.Model import Model
 from conf.config import *
 from game.game import Game
 
 
 class WorldWindow(arcade.Window):
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, env, model: Model):
         super().__init__(
             int(game.world.width / WORLD_SCALING * SPRITE_SIZE),
             int(game.world.height / WORLD_SCALING * SPRITE_SIZE),
             'REINFORCED FROG',
             update_rate=1 / 60
         )
+        self.__height = int(game.world.height / WORLD_SCALING * SPRITE_SIZE)
+        self.__width = int(game.world.width / WORLD_SCALING * SPRITE_SIZE)
         self.__debug = 0
         self.__players_sprites = None
         self.__world_sprites = None
         self.__entities_sprites = None
         self.__random = random
         self.__game = game
+        self.__env = env
+        self.__model = model
 
     def __rand(self, r: int):
         return self.__random.randrange(r, step=1)
@@ -92,7 +97,7 @@ class WorldWindow(arcade.Window):
                 for index_col, entity in enumerate(line):
                     if index_col < WORLD_WIDTH:
                         if entity in FORBIDDEN_STATES:
-                            x,y=self.__get_xy_state((index_line,index_col))
+                            x, y = self.__get_xy_state((index_line, index_col))
                             arcade.draw_lrtb_rectangle_filled(x, x + 1, y,
                                                               y - 1,
                                                               arcade.color.BLUE)
@@ -106,6 +111,34 @@ class WorldWindow(arcade.Window):
             self.__draw_debug()
         elif self.__debug == 2:
             self.__draw_collisions_debug()
+        if self.__env['ARCADE_INSIGHTS']:
+            self.__draw_model_insights()
+
+    def __draw_model_insights(self):
+        arcade.draw_text(f"Model : ", 10, 815, arcade.color.WHITE, 12)
+        arcade.draw_text(f"{self.__env['LEARNING_TYPE']}", 70, 815, arcade.color.WHITE, 12, bold=True)
+        arcade.draw_text(f"Learning rate : {self.__env['AGENT_LEARNING_RATE']}", 10, 795, arcade.color.WHITE, 12)
+        arcade.draw_text(f"Discount factor : {self.__env['AGENT_GAMMA']}", 10, 775, arcade.color.WHITE, 12)
+
+        arcade.draw_text(f"Episodes : {self.__model.game_count}", 200, 815, arcade.color.WHITE, 12)
+        arcade.draw_text(f"Win count :", 200, 795, arcade.color.WHITE, 12)
+        arcade.draw_text(f"{self.__model.win_count}", 285, 795, arcade.color.APPLE_GREEN, 12, bold=True)
+        arcade.draw_text(f"Loss count :", 200, 775, arcade.color.WHITE, 12)
+        arcade.draw_text(f"{self.__model.loose_count}", 290, 775, arcade.color.RED, 12, bold=True)
+
+        arcade.draw_text(f"Win average :", 350, 815, arcade.color.WHITE, 12)
+        arcade.draw_text(f"{self.__model.win_rate}%", 455, 815, self.__win_rate_color(self.__model.win_rate), 12,
+                         bold=True)
+        if self.__env['LEARNING_TYPE'] == 'QLEARNING':
+            arcade.draw_text(f"Qtable entries :", 350, 795, arcade.color.WHITE, 12)
+            arcade.draw_text(f"{'{:,}'.format(self.__model.entries_count)}", 465, 795, arcade.color.WHITE, 12)
+
+    def __win_rate_color(self, win_rate: float):
+        if win_rate < 35:
+            return arcade.color.RED
+        if win_rate < 75:
+            return arcade.color.YELLOW
+        return arcade.color.APPLE_GREEN
 
     def on_update(self, delta_time: float):
         self.__game.step()

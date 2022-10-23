@@ -56,3 +56,7 @@ def find_available_filename(filename: str) -> str:
     # while os.path.exists(filename + f" ({i}).png"):
     #     i += 1
     # return filename + f" ({i}).png"
+
+
+def rate(history: List[float]):
+    return len(list(filter(lambda x: x > 0, history))) / len(history) * 100

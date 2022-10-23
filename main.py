@@ -44,7 +44,7 @@ def main():
     if env['LEARNING_MODE']:
         learn_mode(model, env, game, start_time)
     else:
-        arcade_mode(game)
+        arcade_mode(game,env, model)
     if env['LEARNING_MODE']:
         save_model(model, env)
         if env['GENERATE_HISTORY_GRAPH']:
@@ -64,8 +64,8 @@ def save_model(model: Model, env):
     model.save(env['AGENT_LEARNING_FILE'], env['QTABLE_HISTORY_FILE'])
 
 
-def arcade_mode(game):
-    window = WorldWindow(game)
+def arcade_mode(game, env, model: Model):
+    window = WorldWindow(game, env, model)
     window.setup()
     arcade.run()
 
