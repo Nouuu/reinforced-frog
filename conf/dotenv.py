@@ -47,6 +47,8 @@ def load_env() -> Dict[str, str | float | int | bool]:
     if 'EXPLORE_RATE_DECAY' not in env:
         env['EXPLORE_RATE_DECAY'] = os.getenv('EXPLORE_RATE_DECAY', 0.999)
 
+    os.putenv('MPLBACKEND', 'TKAgg')
+
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
     env['AGENT_VISIBLE_LINES_ABOVE'] = int(env['AGENT_VISIBLE_LINES_ABOVE'])
