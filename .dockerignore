@@ -129,5 +129,9 @@ dmypy.json
 .pyre/
 
 .idea/
+.github
+.fleet
+.mypy_cache
 docker-compose.yml
+history
 qtable

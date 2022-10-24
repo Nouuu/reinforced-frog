@@ -17,17 +17,28 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-VOLUME /app/qtable
+VOLUME /app/save
 
-ENV AGENT_LEARNING_FILE='qtable/qtable.data' \
+ENV AGENT_COUNT=5 \
+    AGENT_DEBUG=false \
+    ARCADE_INSIGHTS=true \
+    AGENT_GAMMA=0.1 \
+    AGENT_LEARNING_FILE='save/qtable_l2c4.xz' \
     AGENT_LEARNING_RATE=0.6 \
-    AGENT_GAMMA=0.8 \
+    AGENT_VISIBLE_COLS_ARROUND=4 \
     AGENT_VISIBLE_LINES_ABOVE=2 \
-    AGENT_VISIBLE_COLS_ARROUND=20 \
-    AGENT_QTABLE_HISTORY=2 \
-    LEARNING_MODE=True \
-    AGENT_DEBUG=False \
-    LEARNING_TIME=20 \
+    EXPLORE_RATE=-1 \
+    EXPLORE_RATE_DECAY=0.999 \
+    GENERATE_HISTORY_GRAPH=true \
+    HASH_QTABLE=false \
+    LEARNING_MODE=true \
+    LEARNING_TYPE=QLEARNING \
+    LEARNING_TIME=600 \
+    LEARNING_PRINT_STATS_EVERY=60 \
+    LEARNING_SAVE_QTABLE_EVERY=300 \
+    QTABLE_HISTORY_FILE='save/qtable_l2c4.history' \
+    QTABLE_HISTORY_PACKETS=10 \
     WORLD_TYPE=0
+
 
 CMD [ "python","-u", "./main.py" ]
