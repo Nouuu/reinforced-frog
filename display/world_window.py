@@ -134,7 +134,7 @@ class WorldWindow(arcade.Window):
             arcade.draw_text(f"{'{:,}'.format(self.__model.entries_count)}", 465, 795, arcade.color.WHITE, 12)
 
         arcade.draw_text(f"Visible lines above : {self.__env['AGENT_VISIBLE_LINES_ABOVE']}", 550, 815, arcade.color.WHITE, 12)
-        arcade.draw_text(f"Visible cols arround : {self.__env['AGENT_VISIBLE_COLS_ARROUND']}", 550, 795, arcade.color.WHITE, 12)
+        arcade.draw_text(f"Visible columns arround : {self.__env['AGENT_VISIBLE_COLS_ARROUND']}", 550, 795, arcade.color.WHITE, 12)
 
     def __win_rate_color(self, win_rate: float):
         if win_rate < 35:
