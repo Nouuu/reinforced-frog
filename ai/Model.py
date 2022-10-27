@@ -19,3 +19,23 @@ class Model:
 
     def save_score(self, score: float):
         pass
+
+    @property
+    def win_rate(self) -> float:
+        pass
+
+    @property
+    def game_count(self) -> int:
+        pass
+
+    @property
+    def win_count(self) -> int:
+        pass
+
+    @property
+    def loose_count(self) -> int:
+        pass
+
+    @property
+    def entries_count(self) -> int:
+        pass

@@ -4,6 +4,7 @@ import shutil
 from typing import Dict
 
 from ai.Model import Model
+from ai.graph_exporter import rate
 from conf.config import ACTION_MOVES
 
 lzma_filters = [
@@ -25,12 +26,14 @@ class Qtable(Model):
         self.__step_count = 0
         self.__win_count = 0
         self.__loose_count = 0
+        self.__count = 0
 
     def load(self, filename: str):
         print(f'Loading Qtable from {filename}...')
         with lzma.LZMAFile(filename, "rb") as uncompressed:
             self.__qtable = pickle.load(uncompressed)
             self.__qtable_load_count = self.__qtable_count(self.__qtable, self.__visible_lines)
+            self.__count = self.__qtable_load_count
         print(f'Qtable loaded, {self.__qtable_load_count} entries')
 
     def save(self, qtable_filename: str, score_filename: str):
@@ -42,6 +45,7 @@ class Qtable(Model):
                 f'{self.__qtable_count(self.__qtable, self.__visible_lines) - self.__qtable_load_count}\n'
                 f'Saving stable...')
             self.__qtable_load_count = self.__qtable_count(self.__qtable, self.__visible_lines)
+            self.__count = self.__qtable_load_count
         with lzma.open(qtable_filename + ".tmp", 'wb') as file:
             pickle.dump(self.__qtable, file)
         shutil.move(qtable_filename + ".tmp", qtable_filename)
@@ -58,6 +62,7 @@ class Qtable(Model):
                 qtable[state[i]] = {}
             qtable = qtable[state[i]]
         if len(qtable) <= 0:
+            self.__count += 1
             for action in ACTION_MOVES:
                 qtable[action] = 0
         return qtable
@@ -90,7 +95,7 @@ class Qtable(Model):
         else:
             self.__loose_count += 1
         if len(self.__score_history_temp) >= self.__score_history_packets:
-            self.__score_history.append(sum(self.__score_history_temp) / len(self.__score_history_temp))
+            self.__score_history.append(rate(self.__score_history_temp))
             self.__score_history_temp = []
 
     def __win_average(self) -> float:
@@ -113,3 +118,23 @@ class Qtable(Model):
                 qtable.pop(key)
             return
         [self.__qtable_clear_empty(qtable[key], line_above - 1) for key in qtable.keys()]
+
+    @property
+    def win_rate(self) -> float:
+        return round(self.__win_average() * 100, 2)
+
+    @property
+    def game_count(self) -> int:
+        return self.__win_count + self.__loose_count
+
+    @property
+    def win_count(self) -> int:
+        return self.__win_count
+
+    @property
+    def loose_count(self) -> int:
+        return self.__loose_count
+
+    @property
+    def entries_count(self) -> int:
+        return self.__count
