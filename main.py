@@ -31,7 +31,7 @@ def main():
     players = []
 
     for i in range(env['AGENT_COUNT']):
-        players.append(Agent(model, float(env['EXPLORE_RATE'])))
+        players.append(Agent(model, float(env['EXPLORE_RATE']), float(env['EXPLORE_RATE_DECAY'])))
 
     load_model(model, env)
     if not env['LEARNING_MODE']:
@@ -44,7 +44,7 @@ def main():
     if env['LEARNING_MODE']:
         learn_mode(model, env, game, start_time)
     else:
-        arcade_mode(game,env, model)
+        arcade_mode(game, env, model)
     if env['LEARNING_MODE']:
         save_model(model, env)
         if env['GENERATE_HISTORY_GRAPH']:

@@ -1,15 +1,14 @@
 from typing import List
 
-import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.use('TkAgg')
 plt.style.use('ggplot')
 
 
 def get_title(history_len, env) -> str:
     return f"Learning mode : {env['LEARNING_TYPE']}\n" \
            f"α={env['AGENT_LEARNING_RATE']}, γ={env['AGENT_GAMMA']}\n" \
+           f"Initial exploration rate : {env['EXPLORE_RATE']}, decay : {env['EXPLORE_RATE_DECAY']}\n" \
            f"Visible lines above: {env['AGENT_VISIBLE_LINES_ABOVE']}, " \
            f"visible columns arround: {env['AGENT_VISIBLE_COLS_ARROUND']}\n" \
            f"Total iterations: {history_len * env['QTABLE_HISTORY_PACKETS']}"
