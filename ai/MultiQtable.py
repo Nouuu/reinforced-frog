@@ -57,15 +57,20 @@ class MultiQtable(Model):
 
     def get_state_actions(self, state: [str]) -> Dict[str, float]:
         actions = {}
-        if "\n".join(state[:self.__visible_lines_above]) not in self.__qtable["UP"]:
-            self.__qtable["UP"]["\n".join(state[:self.__visible_lines_above])] = {ACTION_UP: 0}
-        up = self.__qtable["UP"]["\n".join(state[:self.__visible_lines_above])]
-        if "\n".join(state[self.__visible_lines_above:self.__visible_lines_above+1]) not in self.__qtable["CENTER"]:
-            self.__qtable["CENTER"]["\n".join(state[self.__visible_lines_above:self.__visible_lines_above+1])] = {ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
-        center = self.__qtable["CENTER"]["\n".join(state[self.__visible_lines_above:self.__visible_lines_above+1])]
-        if "\n".join(state[self.__visible_lines_above+1:self.__visible_lines_above+2]) not in self.__qtable["DOWN"]:
-            self.__qtable["DOWN"]["\n".join(state[self.__visible_lines_above+1:self.__visible_lines_above+2])] = {ACTION_DOWN: 0}
-        down = self.__qtable["DOWN"]["\n".join(state[self.__visible_lines_above+1:self.__visible_lines_above+2])]
+        up_state = "\n".join(state[:self.__visible_lines_above])
+        center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+        down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+        if up_state not in self.__qtable["UP"]:
+            self.__qtable["UP"][up_state] = {ACTION_UP: 0}
+        up = self.__qtable["UP"][up_state]
+        if center_state not in self.__qtable["CENTER"]:
+            self.__qtable["CENTER"][center_state] = {
+                ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
+        center = self.__qtable["CENTER"][center_state]
+        if down_state not in self.__qtable["DOWN"]:
+            self.__qtable["DOWN"][down_state] = {
+                ACTION_DOWN: 0}
+        down = self.__qtable["DOWN"][down_state]
         actions.update(up)
         actions.update(center)
         actions.update(down)
@@ -75,7 +80,15 @@ class MultiQtable(Model):
                      reward: float,
                      action: str):
         qtable = self.get_state_actions(state)
-        qtable[action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+        up_state = "\n".join(state[:self.__visible_lines_above])
+        center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+        down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+        if action == ACTION_UP:
+            self.__qtable["UP"][up_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+        elif action == ACTION_DOWN:
+            self.__qtable["DOWN"][down_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+        else:
+            self.__qtable["CENTER"][center_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
 
         self.__increment_step_count()
 
