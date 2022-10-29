@@ -16,7 +16,7 @@ lzma_filters = [
 class MultiQtable(Model):
     def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int):
         self.__visible_lines_above = visible_lines_above
-        self.__qtable = {"UP": {}, "CENTER": {}, "DOWN": {}}
+        self.__qtable: Dict[str: Dict[str: float]] = {"UP": {}, "CENTER": {}, "DOWN": {}}
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_load_count = 0
@@ -122,7 +122,7 @@ class MultiQtable(Model):
         return float(self.__win_count) / (self.__win_count + self.__loose_count)
 
     def __qtable_count(self) -> int:
-        return sum([len(qtable) for qtable in self.__qtable])
+        return sum([len(qtable.items()) for qtable in self.__qtable.values()])
 
     def __qtable_clear_empty(self):
         to_delete = []
