@@ -80,15 +80,18 @@ class MultiQtable(Model):
                      reward: float,
                      action: str):
         qtable = self.get_state_actions(state)
-        up_state = "\n".join(state[:self.__visible_lines_above])
-        center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
-        down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
         if action == ACTION_UP:
-            self.__qtable["UP"][up_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+            up_state = "\n".join(state[:self.__visible_lines_above])
+            self.__qtable["UP"][up_state][action] = (1 - self.__alpha) * qtable[
+                action] + self.__alpha * (reward + self.__gamma * max_q)
         elif action == ACTION_DOWN:
-            self.__qtable["DOWN"][down_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+            down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+            self.__qtable["DOWN"][down_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (
+                    reward + self.__gamma * max_q)
         else:
-            self.__qtable["CENTER"][center_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+            center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+            self.__qtable["CENTER"][center_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (
+                    reward + self.__gamma * max_q)
 
         self.__increment_step_count()
 
@@ -122,7 +125,7 @@ class MultiQtable(Model):
         return float(self.__win_count) / (self.__win_count + self.__loose_count)
 
     def __qtable_count(self) -> int:
-        return sum([len(qtable.items()) for qtable in self.__qtable.values()])
+        return sum([len(qtable.keys()) for qtable in self.__qtable.values()])
 
     def __qtable_clear_empty(self):
         to_delete = []
