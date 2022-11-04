@@ -60,38 +60,42 @@ class MultiQtable(Model):
         up_state = "\n".join(state[:self.__visible_lines_above])
         center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
         down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+
         if up_state not in self.__qtable["UP"]:
             self.__qtable["UP"][up_state] = {ACTION_UP: 0}
         up = self.__qtable["UP"][up_state]
+
         if center_state not in self.__qtable["CENTER"]:
             self.__qtable["CENTER"][center_state] = {
                 ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
         center = self.__qtable["CENTER"][center_state]
+
         if down_state not in self.__qtable["DOWN"]:
             self.__qtable["DOWN"][down_state] = {
                 ACTION_DOWN: 0}
         down = self.__qtable["DOWN"][down_state]
+
         actions.update(up)
         actions.update(center)
         actions.update(down)
+
         return actions
 
     def update_state(self, state: [str], max_q: float,
                      reward: float,
                      action: str):
         qtable = self.get_state_actions(state)
+        new_q = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+
         if action == ACTION_UP:
             up_state = "\n".join(state[:self.__visible_lines_above])
-            self.__qtable["UP"][up_state][action] = (1 - self.__alpha) * qtable[
-                action] + self.__alpha * (reward + self.__gamma * max_q)
+            self.__qtable["UP"][up_state][action] = new_q
         elif action == ACTION_DOWN:
             down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
-            self.__qtable["DOWN"][down_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (
-                    reward + self.__gamma * max_q)
+            self.__qtable["DOWN"][down_state][action] = new_q
         else:
             center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
-            self.__qtable["CENTER"][center_state][action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (
-                    reward + self.__gamma * max_q)
+            self.__qtable["CENTER"][center_state][action] = new_q
 
         self.__increment_step_count()
 
