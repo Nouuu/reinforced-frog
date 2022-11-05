@@ -6,6 +6,7 @@ import arcade
 from ai.Agent import Agent
 from ai.DQtable import DeepQtable
 from ai.Model import Model
+from ai.MultiQtable import MultiQtable
 from ai.Qtable import Qtable
 from ai.graph_exporter import extract_history
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
@@ -74,6 +75,9 @@ def get_model(env) -> Model:
     if env['LEARNING_TYPE'] == 'QLEARNING':
         return Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
                       env['AGENT_VISIBLE_LINES_ABOVE'])
+    elif env['LEARNING_TYPE'] == 'MQLEARNING':
+        return MultiQtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
+                           env['AGENT_VISIBLE_LINES_ABOVE'])
     elif env['LEARNING_TYPE'] == 'DQLEARNING':
         return DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
                           visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
