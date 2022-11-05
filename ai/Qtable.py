@@ -138,3 +138,7 @@ class Qtable(Model):
     @property
     def entries_count(self) -> int:
         return self.__count
+
+    @property
+    def qtable(self) -> dict:
+        return self.__qtable
