@@ -361,9 +361,9 @@ Nous avoisinons un taux de réussite plus haut (~95%) avec une ligne visible dev
 Cependant, nous avont remarqué que les mouvements de la grenouille étaient plus fluides avec 2 lignes visibles, car une
 meilleure anticipation.
 
-![QLEARNING_L1_C4.history.png](./doc/README-1667660094458.png)
+![QLEARNING_L1_C4.history.png](./doc/README-1667662558450.png)
 
-![QLEARNING_L2_C4.history.png](./doc/README-1667660116524.png)
+![QLEARNING_L2_C4.history.png](./doc/README-1667662555562.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
@@ -468,6 +468,26 @@ class MultiQtable(Model):
 ```
 
 #### Apprentissage
+
+Nous avons testé différents hyper-paramètres pour l'apprentissage sur plusieurs heures.
+Les résultats les plus convaincants ont été obetnus avec les paramètres suivants :
+
+- `AGENT_GAMMA = 0.1`
+- `AGENT_LEARNING_RATE = 0.6`
+- `AGENT_VISIBLE_COLS_ARROUND = 4 # 6`
+- `AGENT_VISIBLE_LINES_ABOVE = 2 # 1`
+- `EXPLORE_RATE = 0.1`
+- `EXPLORE_RATE_DECAY = 0.9999`
+
+![MQLEARNING_L1_C4.history.png](./doc/README-1667662720436.png)
+
+![MQLEARNING_L1_C6.history.png](./doc/README-1667662741563.png)
+
+![MQLEARNING_L2_C4.history.png](./doc/README-1667662722157.png)
+
+![MQLEARNING_L2_C6.history.png](./doc/README-1667662723727.png)
+
+Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
 ### Deep Q-Learning
 
