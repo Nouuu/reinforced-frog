@@ -4,7 +4,6 @@ services:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/QLEARNING_L1_C4.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -21,13 +20,12 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
   QLEARNING_L2_C4:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/QLEARNING_L2_C4.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -44,13 +42,12 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
   MQLEARNING_L1_C4:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/MQLEARNING_L1_C4.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -67,13 +64,12 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
   MQLEARNING_L2_C4:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/MQLEARNING_L2_C4.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -90,13 +86,12 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
   MQLEARNING_L1_C6:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/MQLEARNING_L1_C6.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -113,13 +108,12 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
   MQLEARNING_L2_C6:
     image: 'nospy/reinforced-frog:latest'
     environment:
       AGENT_COUNT: ${AGENT_COUNT}
-      AGENT_DEBUG: false
       AGENT_GAMMA: ${AGENT_GAMMA}
       AGENT_LEARNING_FILE: 'save/MQLEARNING_L2_C6.xz'
       AGENT_LEARNING_RATE: ${AGENT_LEARNING_RATE}
@@ -136,7 +130,7 @@ services:
       QTABLE_HISTORY_PACKETS: ${QTABLE_HISTORY_PACKETS}
     restart: 'no'
     volumes:
-      - qtable:/app/qtable
+      - qtable:/app/save
 
 volumes:
   qtable:
