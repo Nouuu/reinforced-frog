@@ -395,6 +395,14 @@ L'implémentation du Multi Q-Learning est géré par la classe [`MultiQtable`](.
 permet de gérer les 3 Qtables, de mettre à jour les valeurs de la table, de récupérer la meilleure action à effectuer,
 de sauvegarder les tables de Q-Learning, ...
 
+![](./doc/README-1667662135336.png)
+
+![](./doc/README-1667662138576.png)
+
+![](./doc/README-1667662140907.png)
+
+![](./doc/README-1667662142763.png)
+
 Cette classe permet également (comme les autres méthodes d'apprentissage) de gérer l'exploration et l'exploitation,
 ainsi que l'historique de progression.
 
