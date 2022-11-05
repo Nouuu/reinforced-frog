@@ -27,4 +27,11 @@ def merge_qtables(qtable_files: Set[str]) -> Dict[bytes, Dict[str, float]]:
 
 
 def state_to_vector(state: str) -> [float]:
+    """
+    It converts a string into a list of floats, where each float is the ASCII value of the character divided by 255
+
+    :param state: The current state of the game
+    :type state: str
+    :return: A list of floats, where each float is the ASCII value of a character in the state string, divided by 255.
+    """
     return list(map(lambda char: float(ord(char)) / 255, [char for char in state]))
