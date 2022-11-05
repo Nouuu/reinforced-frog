@@ -5,7 +5,7 @@ from typing import Dict
 
 from ai.Model import Model
 from ai.graph_exporter import rate
-from conf.config import ACTION_MOVES
+from conf.config import ACTION_UP, ACTION_DOWN, ACTION_LEFT, ACTION_RIGHT, ACTION_NONE
 
 lzma_filters = [
     {"id": lzma.FILTER_DELTA, "dist": 5},
@@ -13,10 +13,10 @@ lzma_filters = [
 ]
 
 
-class Qtable(Model):
+class MultiQtable(Model):
     def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int):
-        self.__visible_lines = visible_lines_above + 2
-        self.__qtable = {}
+        self.__visible_lines_above = visible_lines_above
+        self.__qtable: Dict[str: Dict[str: float]] = {"UP": {}, "CENTER": {}, "DOWN": {}}
         self.__alpha = alpha
         self.__gamma = gamma
         self.__qtable_load_count = 0
@@ -32,19 +32,19 @@ class Qtable(Model):
         print(f'Loading Qtable from {filename}...')
         with lzma.LZMAFile(filename, "rb") as uncompressed:
             self.__qtable = pickle.load(uncompressed)
-            self.__qtable_load_count = self.__qtable_count(self.__qtable, self.__visible_lines)
+            self.__qtable_load_count = self.__qtable_count()
             self.__count = self.__qtable_load_count
         print(f'Qtable loaded, {self.__qtable_load_count} entries')
 
     def save(self, qtable_filename: str, score_filename: str):
-        print(f'Qtable entries : {self.__qtable_count(self.__qtable, self.__visible_lines)}')
+        print(f'Qtable entries : {self.__qtable_count()}')
         if self.__qtable_load_count is not None:
-            self.__qtable_clear_empty(self.__qtable, self.__visible_lines)
+            self.__qtable_clear_empty()
             print(
                 f'New states since previous save: '
-                f'{self.__qtable_count(self.__qtable, self.__visible_lines) - self.__qtable_load_count}\n'
+                f'{self.__qtable_count() - self.__qtable_load_count}\n'
                 f'Saving stable...')
-            self.__qtable_load_count = self.__qtable_count(self.__qtable, self.__visible_lines)
+            self.__qtable_load_count = self.__qtable_count()
             self.__count = self.__qtable_load_count
         with lzma.open(qtable_filename + ".tmp", 'wb') as file:
             pickle.dump(self.__qtable, file)
@@ -56,22 +56,47 @@ class Qtable(Model):
         print("Qtable saved")
 
     def get_state_actions(self, state: [str]) -> Dict[str, float]:
-        qtable = self.__qtable
-        for i in range(self.__visible_lines):
-            if state[i] not in qtable:
-                qtable[state[i]] = {}
-            qtable = qtable[state[i]]
-        if len(qtable) <= 0:
-            self.__count += 1
-            for action in ACTION_MOVES:
-                qtable[action] = 0
-        return qtable
+        actions = {}
+        up_state = "\n".join(state[:self.__visible_lines_above])
+        center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+        down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+
+        if up_state not in self.__qtable["UP"]:
+            self.__qtable["UP"][up_state] = {ACTION_UP: 0}
+        up = self.__qtable["UP"][up_state]
+
+        if center_state not in self.__qtable["CENTER"]:
+            self.__qtable["CENTER"][center_state] = {
+                ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
+        center = self.__qtable["CENTER"][center_state]
+
+        if down_state not in self.__qtable["DOWN"]:
+            self.__qtable["DOWN"][down_state] = {
+                ACTION_DOWN: 0}
+        down = self.__qtable["DOWN"][down_state]
+
+        actions.update(up)
+        actions.update(center)
+        actions.update(down)
+
+        return actions
 
     def update_state(self, state: [str], max_q: float,
                      reward: float,
                      action: str):
         qtable = self.get_state_actions(state)
-        qtable[action] = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+        new_q = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+
+        if action == ACTION_UP:
+            up_state = "\n".join(state[:self.__visible_lines_above])
+            self.__qtable["UP"][up_state][action] = new_q
+        elif action == ACTION_DOWN:
+            down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+            self.__qtable["DOWN"][down_state][action] = new_q
+        else:
+            center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+            self.__qtable["CENTER"][center_state][action] = new_q
+
         self.__increment_step_count()
 
     def print_stats(self, time_elapsed: int):
@@ -103,21 +128,16 @@ class Qtable(Model):
             return 0
         return float(self.__win_count) / (self.__win_count + self.__loose_count)
 
-    def __qtable_count(self, qtable: dict, line_above: int) -> int:
-        if line_above == 1:
-            return len(qtable)
-        return sum([self.__qtable_count(qtable[key], line_above - 1) for key in qtable.keys()])
+    def __qtable_count(self) -> int:
+        return sum([len(qtable.keys()) for qtable in self.__qtable.values()])
 
-    def __qtable_clear_empty(self, qtable: dict, line_above: int):
-        if line_above == 1:
-            to_delete = []
-            for key, state in qtable.items():
-                if all(action == 0 for action in state.values()):
-                    to_delete.append(key)
-            for key in to_delete:
-                qtable.pop(key)
-            return
-        [self.__qtable_clear_empty(qtable[key], line_above - 1) for key in qtable.keys()]
+    def __qtable_clear_empty(self):
+        to_delete = []
+        for key, state in self.__qtable.items():
+            if all(action == 0 for action in state.values()):
+                to_delete.append(key)
+        for key in to_delete:
+            self.__qtable.pop(key)
 
     @property
     def win_rate(self) -> float:

@@ -12,6 +12,7 @@ class Agent(Player):
     def __init__(self,
                  model: Model,
                  exploration_rate: float = 0.1,
+                 exploration_decay: float = 0.999,
                  learning: bool = True,
                  ):
         self.__model = model
@@ -21,6 +22,7 @@ class Agent(Player):
         self.__world_height = 0
         self.__world_width = 0
         self.__exploration_rate = exploration_rate
+        self.__exploration_decay = exploration_decay
         self.__learning = learning
 
     def init(self, world: World, intial_state: (int, int), initial_environment: [str]):
@@ -35,7 +37,8 @@ class Agent(Player):
 
     def best_move(self, environment: [str]) -> str:
         self.__current_environment = environment
-        if random.random() < self.__exploration_rate:
+        if self.__exploration_rate > 0.0005 and random.random() < self.__exploration_rate:
+            self.__exploration_rate *= self.__exploration_decay
             return random.choice(ACTIONS)
         actions = self.__model.get_state_actions(self.__current_environment)
         action = max(actions, key=actions.get)

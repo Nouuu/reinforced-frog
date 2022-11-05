@@ -40,6 +40,14 @@ def load_env() -> Dict[str, str | float | int | bool]:
         env['LEARNING_SAVE_QTABLE_EVERY'] = os.getenv('LEARNING_SAVE_QTABLE_EVERY', 60)
     if 'GENERATE_HISTORY_GRAPH' not in env:
         env['GENERATE_HISTORY_GRAPH'] = os.getenv('GENERATE_HISTORY_GRAPH', 'false')
+    if 'LEARNING_TYPE' not in env:
+        env['LEARNING_TYPE'] = os.getenv('LEARNING_TYPE', 'QLEARNING')
+    if 'ARCADE_INSIGHTS' not in env:
+        env['ARCADE_INSIGHTS'] = os.getenv('ARCADE_INSIGHTS', 'false')
+    if 'EXPLORE_RATE_DECAY' not in env:
+        env['EXPLORE_RATE_DECAY'] = os.getenv('EXPLORE_RATE_DECAY', 0.999)
+
+    os.putenv('MPLBACKEND', 'TKAgg')
 
     env['AGENT_LEARNING_RATE'] = float(env['AGENT_LEARNING_RATE'])
     env['AGENT_GAMMA'] = float(env['AGENT_GAMMA'])
@@ -57,5 +65,8 @@ def load_env() -> Dict[str, str | float | int | bool]:
     env['LEARNING_PRINT_STATS_EVERY'] = int(env['LEARNING_PRINT_STATS_EVERY'])
     env['LEARNING_SAVE_QTABLE_EVERY'] = int(env['LEARNING_SAVE_QTABLE_EVERY'])
     env['GENERATE_HISTORY_GRAPH'] = env['GENERATE_HISTORY_GRAPH'].lower() == 'true'
+    env['LEARNING_TYPE'] = str(env['LEARNING_TYPE']).upper()
+    env['ARCADE_INSIGHTS'] = env['ARCADE_INSIGHTS'].lower() == 'true'
+    env['EXPLORE_RATE_DECAY'] = float(env['EXPLORE_RATE_DECAY'])
     print(env)
     return env
