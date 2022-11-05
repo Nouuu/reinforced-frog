@@ -129,7 +129,7 @@ class WorldWindow(arcade.Window):
         arcade.draw_text(f"Win average :", 350, 815, arcade.color.WHITE, 12)
         arcade.draw_text(f"{self.__model.win_rate}%", 455, 815, self.__win_rate_color(self.__model.win_rate), 12,
                          bold=True)
-        if self.__env['LEARNING_TYPE'] == 'QLEARNING':
+        if 'QLEARNING' in self.__env['LEARNING_TYPE']:
             arcade.draw_text(f"Qtable entries :", 350, 795, arcade.color.WHITE, 12)
             arcade.draw_text(f"{'{:,}'.format(self.__model.entries_count)}", 465, 795, arcade.color.WHITE, 12)
 

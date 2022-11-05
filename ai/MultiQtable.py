@@ -62,15 +62,18 @@ class MultiQtable(Model):
         down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
 
         if up_state not in self.__qtable["UP"]:
+            self.__count += 1
             self.__qtable["UP"][up_state] = {ACTION_UP: 0}
         up = self.__qtable["UP"][up_state]
 
         if center_state not in self.__qtable["CENTER"]:
+            self.__count += 1
             self.__qtable["CENTER"][center_state] = {
                 ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
         center = self.__qtable["CENTER"][center_state]
 
         if down_state not in self.__qtable["DOWN"]:
+            self.__count += 1
             self.__qtable["DOWN"][down_state] = {
                 ACTION_DOWN: 0}
         down = self.__qtable["DOWN"][down_state]
