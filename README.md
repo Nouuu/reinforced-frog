@@ -336,11 +336,128 @@ Nous nous basons sur l'équation de Bellman pour mettre à jour la table de Q-Le
 
 ![0 EezURPNjW2U6EYpA.jpeg](./doc/README-1667658736226.png)
 
+La Qtable est formé sous forme de dictionnaire récursif de N+1 dimension, N étant le nombre total de ligne visible.
+L'idée est de fusionner ensemble les clés communes afin de ne pas consommer trop de mémoire vive (on peut avoir plus de
+5 millions de clés différentes). La première dimension représente la première ligne visible, la deuxième dimension la
+seconde, ... La dernière dimension représente les actions possibles.
+
+![Qtable](./doc/README-1667659666276.png)
+
+![Qtable](./doc/README-1667659673471.png)
+
 #### Apprentissage
+
+Nous avons testé différents hyper-paramètres pour l'apprentissage sur plusieurs heures.
+Les résultats les plus convaincants ont été obetnus avec les paramètres suivants :
+
+- `AGENT_GAMMA = 0.1`
+- `AGENT_LEARNING_RATE = 0.6`
+- `AGENT_VISIBLE_COLS_ARROUND = 4`
+- `AGENT_VISIBLE_LINES_ABOVE = 2 # 1`
+- `EXPLORE_RATE = 0.1`
+- `EXPLORE_RATE_DECAY = 0.9999`
+
+Nous avoisinons un taux de réussite plus haut (~95%) avec une ligne visible devant contre ~90% avec 2 lignes visibles.
+Cependant, nous avont remarqué que les mouvements de la grenouille étaient plus fluides avec 2 lignes visibles, car une
+meilleure anticipation.
+
+![QLEARNING_L1_C4.history.png](./doc/README-1667660094458.png)
+
+![QLEARNING_L2_C4.history.png](./doc/README-1667660116524.png)
+
+Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
 ### Multi Q-Learning
 
+Lors de l'apprentissage par le Q-Learning, nous avons remarqué que nous avions beaucoup d'états différents, plusieurs
+millions. Pourtant, beaucoup d'état sont similaires, ont des lignes identiques, mais sont consiédérés comme des états
+différents.
+
+Dans le cas où nous avons 4 lignes visibles, ainsi que 4 colonnes visibles.
+Pour 5 tokens différents, avec une grille de (17x4) 68 cases, nous avons en théorie 68^5 = 1,453,933,568 possibilités
+max, ce qui est GIGANTESQUE.
+
+Pour résoudre ce problème, nous avons implémenté le Multi Q-Learning. Cette méthode consiste à séparer notre unique
+Qtable en 3 :
+
+- Une Qtable pour les lignes du haut, ne gérant que l'action de monter
+- Une Qtable pour les lignes du bas, ne gérant que l'action de descendre
+- Une Qtable pour la ligne centrale, ne gérant que les actions de gauche, droite ou de rester
+
+À chaque itération, nous fusionnons la liste d'action possible en fonction de l'environnement donnée.
+
+Ainsi, nous réduisons le nombre d'états possible (pour la même configuration) à (2x17)^5 + 17^5 + 17^5 = 48,275,138
+possibilités max, ce qui est beaucoup plus raisonnable.
+
 #### Implémentation
+
+L'implémentation du Multi Q-Learning est géré par la classe [`MultiQtable`](./ai/MultiQtable.py). Cette dernière
+permet de gérer les 3 Qtables, de mettre à jour les valeurs de la table, de récupérer la meilleure action à effectuer,
+de sauvegarder les tables de Q-Learning, ...
+
+Cette classe permet également (comme les autres méthodes d'apprentissage) de gérer l'exploration et l'exploitation,
+ainsi que l'historique de progression.
+
+La classe est sensiblement la même que celle du Q-Learning, à la différence que nous avons 3 Qtables, que nous
+fusionnons au moment où il est nécéssaire et récupérer / mettre à jour le poids des actions selon un état donné.
+
+```python
+from typing import Dict
+
+from ai.Model import Model
+from conf.config import ACTION_UP, ACTION_DOWN, ACTION_LEFT, ACTION_RIGHT, ACTION_NONE
+
+
+class MultiQtable(Model):
+  def __init__(self, alpha: float, gamma: float, score_history_packets: int, visible_lines_above: int):
+    self.__visible_lines_above = visible_lines_above
+    self.__qtable: Dict[str: Dict[str: float]] = {"UP": {}, "CENTER": {}, "DOWN": {}}
+    # ...
+
+  def get_state_actions(self, state: [str]) -> Dict[str, float]:
+    actions = {}
+    up_state = "\n".join(state[:self.__visible_lines_above])
+    center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+    down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+
+    if up_state not in self.__qtable["UP"]:
+      self.__qtable["UP"][up_state] = {ACTION_UP: 0}
+    up = self.__qtable["UP"][up_state]
+
+    if center_state not in self.__qtable["CENTER"]:
+      self.__qtable["CENTER"][center_state] = {
+        ACTION_LEFT: 0, ACTION_RIGHT: 0, ACTION_NONE: 0}
+    center = self.__qtable["CENTER"][center_state]
+
+    if down_state not in self.__qtable["DOWN"]:
+      self.__qtable["DOWN"][down_state] = {
+        ACTION_DOWN: 0}
+    down = self.__qtable["DOWN"][down_state]
+
+    actions.update(up)
+    actions.update(center)
+    actions.update(down)
+
+    return actions
+
+  def update_state(self, state: [str], max_q: float,
+                   reward: float,
+                   action: str):
+    qtable = self.get_state_actions(state)
+    new_q = (1 - self.__alpha) * qtable[action] + self.__alpha * (reward + self.__gamma * max_q)
+
+    if action == ACTION_UP:
+      up_state = "\n".join(state[:self.__visible_lines_above])
+      self.__qtable["UP"][up_state][action] = new_q
+    elif action == ACTION_DOWN:
+      down_state = "\n".join(state[self.__visible_lines_above + 1:self.__visible_lines_above + 2])
+      self.__qtable["DOWN"][down_state][action] = new_q
+    else:
+      center_state = "\n".join(state[self.__visible_lines_above:self.__visible_lines_above + 1])
+      self.__qtable["CENTER"][center_state][action] = new_q
+
+    self.__increment_step_count()
+```
 
 #### Apprentissage
 
@@ -354,14 +471,16 @@ Nous nous basons sur l'équation de Bellman pour mettre à jour la table de Q-Le
 
 ## Apprentissage continu
 
+### Docker
+
 ## Problèmes rencontrés
 
 ### Implémentation du jeu
 
 ### Apprentissage
 
-#### Docker
-
 ### Performances
+
+### Taille des Qtables
 
 ## Conclusion
