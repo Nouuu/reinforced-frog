@@ -361,9 +361,9 @@ Nous avoisinons un taux de réussite plus haut (~95%) avec une ligne visible dev
 Cependant, nous avont remarqué que les mouvements de la grenouille étaient plus fluides avec 2 lignes visibles, car une
 meilleure anticipation.
 
-![QLEARNING_L1_C4.history.png](./doc/README-1667662558450.png)
+![QLEARNING_L1_C4.history.png](./doc/README-1667736022512.png)
 
-![QLEARNING_L2_C4.history.png](./doc/README-1667662555562.png)
+![QLEARNING_L2_C4.history.png](./doc/README-1667736019516.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
@@ -479,13 +479,13 @@ Les résultats les plus convaincants ont été obetnus avec les paramètres suiv
 - `EXPLORE_RATE = 0.1`
 - `EXPLORE_RATE_DECAY = 0.9999`
 
-![MQLEARNING_L1_C4.history.png](./doc/README-1667662720436.png)
+![MQLEARNING_L1_C4.history.png](./doc/README-1667736263139.png)
 
-![MQLEARNING_L1_C6.history.png](./doc/README-1667662741563.png)
+![MQLEARNING_L1_C6.history.png](./doc/README-1667736265073.png)
 
-![MQLEARNING_L2_C4.history.png](./doc/README-1667662722157.png)
+![MQLEARNING_L2_C4.history.png](./doc/README-1667736266885.png)
 
-![MQLEARNING_L2_C6.history.png](./doc/README-1667662723727.png)
+![MQLEARNING_L2_C6.history.png](./doc/README-1667736268641.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
@@ -499,7 +499,19 @@ Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
 ## Apprentissage continu
 
+Pour être capable d'apprendre toutes les possibilités, qui peuvent être nombreuses, nous avons besoin de laisser tourner
+l'apprentissage pendant plusieurs heures, voire plusieurs jours.
+
+Cela nous ralentit dans la recherche du bon algorithme, des bons paramètres...
+Nous avons donc mis en place tout un tas d'amélioration de performances pour pouvoir faire tourner l'apprentissage plus
+rapidement. Nous avons également mis en place un système permettant de faire tourner en mode non graphique (pour plus de
+performances) lors de l'apprentissage afin de laisser tourner ce dernier en arrière-plan.
+
 ### Docker
+
+Nous avons mis en place un environnement docker pour pouvoir faire tourner l'apprentissage dans un container.
+Cela nous donne une grande souplesse dans le lancement de nos apprentissages, il suffit juste de changer les avriables
+d'environnement.
 
 ## Problèmes rencontrés
 
