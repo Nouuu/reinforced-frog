@@ -405,9 +405,9 @@ Nous avoisinons un taux de réussite plus haut (~95%) avec une ligne visible dev
 Cependant, nous avont remarqué que les mouvements de la grenouille étaient plus fluides avec 2 lignes visibles, car une
 meilleure anticipation.
 
-![QLEARNING_L1_C4.history.png](./doc/README-1667736022512.png)
+![QLEARNING_L1_C4.history.png](./doc/README-1667746193714.png)
 
-![QLEARNING_L2_C4.history.png](./doc/README-1667736019516.png)
+![QLEARNING_L2_C4.history.png](./doc/README-1667746190518.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
