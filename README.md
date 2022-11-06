@@ -61,28 +61,28 @@ Avant de lancer le jeu, il faut créer le fichier `.env` à la racine du projet.
 d'environnement nécessaires au bon fonctionnement du jeu. Vous pouvez vous baser sur le
 fichier [`.env.example`](./.env.example) pour créer le fichier `.env`.
 
-| Variable                   | Description                                                                                       | Valeur conseillée                          |
-|----------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------|
-| AGENT_COUNT                | Nombre d'agent en simultané sur la carte                                                          | 1-10                                       |
-| AGENT_DEBUG                | Afficher les informations debugs en console des agents (WIN/LOOSE)                                | `false`                                    |
-| ARCADE_INSIGHTS            | Afficher les informations de l'agent sur le jeu `arcade`                                          | `true`                                     |
-| AGENT_GAMMA                | Taux de prise en compte de l'état futur                                                           | 0.1                                        |
-| AGENT_LEARNING_FILE        | Emplacement du fichier qtable                                                                     | qtable/**<nom-du-fichier>**.xz             |
-| AGENT_LEARNING_RATE        | Taux d'apprentissage de l'agent                                                                   | 0.6                                        |
-| AGENT_VISIBLE_COLS_ARROUND | Nombre de colonnes visible autour de l'agent dans son environnement                               | 4-6                                        |
-| AGENT_VISIBLE_LINES_ABOVE  | Nombre de lignes visible devant l'agent dans son environnement                                    | 1-2                                        |
-| EXPLORE_RATE               | Taux d'exploration sur les actions déterminés de l'agent                                          | 0.05-0.1                                   |
-| EXPLORE_RATE_DECAY         | Taux de diminution du taux d'exploration                                                          | 0.999                                      |
-| GENERATE_HISTORY_GRAPH     | Générer le graphique de progression d'apprentissage en même temps que la sauvegarde de la Q-Table | `true`                                     |
-| HASH_QTABLE                | Hash des lignes de l'environnement (permet de diminuer un peu la taille en mémoire)               | `false`                                    |
+| Variable                   | Description                                                                                       | Valeur conseillée                       |
+|----------------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------|
+| AGENT_COUNT                | Nombre d'agent en simultané sur la carte                                                          | 1-10                                    |
+| AGENT_DEBUG                | Afficher les informations debugs en console des agents (WIN/LOOSE)                                | `false`                                 |
+| ARCADE_INSIGHTS            | Afficher les informations de l'agent sur le jeu `arcade`                                          | `true`                                  |
+| AGENT_GAMMA                | Taux de prise en compte de l'état futur                                                           | 0.1                                     |
+| AGENT_LEARNING_FILE        | Emplacement du fichier qtable                                                                     | qtable/**nom-du-fichier**.xz            |
+| AGENT_LEARNING_RATE        | Taux d'apprentissage de l'agent                                                                   | 0.6                                     |
+| AGENT_VISIBLE_COLS_ARROUND | Nombre de colonnes visible autour de l'agent dans son environnement                               | 4-6                                     |
+| AGENT_VISIBLE_LINES_ABOVE  | Nombre de lignes visible devant l'agent dans son environnement                                    | 1-2                                     |
+| EXPLORE_RATE               | Taux d'exploration sur les actions déterminés de l'agent                                          | 0.05-0.1                                |
+| EXPLORE_RATE_DECAY         | Taux de diminution du taux d'exploration                                                          | 0.999                                   |
+| GENERATE_HISTORY_GRAPH     | Générer le graphique de progression d'apprentissage en même temps que la sauvegarde de la Q-Table | `true`                                  |
+| HASH_QTABLE                | Hash des lignes de l'environnement (permet de diminuer un peu la taille en mémoire)               | `false`                                 |
 | LEARNING_MODE              | Passer en mode apprentissage (console seulement) ou en mode graphique (arcade)                    | `true` pour apprendre un peu, puis `false` |
-| LEARNING_TYPE              | Type d'apprentissage (**QLEARNING**, **MQLEARNING**, **DQLEARNING**)                              | **QLEARNING**-**MQLEARNING**               |
-| LEARNING_TIME              | Temps de l'apprentissage en minute                                                                | 45                                         |
-| LEARNING_PRINT_STATS_EVERY | Afficher en console les stats d'appretissage toute les x secondes                                 | 30-60                                      |
-| LEARNING_SAVE_QTABLE_EVERY | Fréquence de sauvegarde de la Q-Table toute les x secondes (opération lourde)                     | 60-600                                     |
-| QTABLE_HISTORY_FILE        | Emplacement des fichiers d'historique                                                             | history/**<nom-du-fichier>**.history       |
-| QTABLE_HISTORY_PACKETS     | Paquets pour l'historique                                                                         | = au nombre d'agents (1-10)                |
-| WORLD_TYPE                 | Type de monde ( 0 -> Route + Eau, 1 -> Route seulement, 2 -> Eau seulement)                       | 0                                          |
+| LEARNING_TYPE              | Type d'apprentissage (**QLEARNING**, **MQLEARNING**, **DQLEARNING**)                              | **QLEARNING**-**MQLEARNING**            |
+| LEARNING_TIME              | Temps de l'apprentissage en minute                                                                | 45                                      |
+| LEARNING_PRINT_STATS_EVERY | Afficher en console les stats d'appretissage toute les x secondes                                 | 30-60                                   |
+| LEARNING_SAVE_QTABLE_EVERY | Fréquence de sauvegarde de la Q-Table toute les x secondes (opération lourde)                     | 60-600                                  |
+| QTABLE_HISTORY_FILE        | Emplacement des fichiers d'historique                                                             | history/**nom-du-fichier**.history      |
+| QTABLE_HISTORY_PACKETS     | Paquets pour l'historique                                                                         | = au nombre d'agents (1-10)             |
+| WORLD_TYPE                 | Type de monde ( 0 -> Route + Eau, 1 -> Route seulement, 2 -> Eau seulement)                       | 0                                       |
 
 Pour lancer le jeu, il faut lancer la commande suivante :
 
