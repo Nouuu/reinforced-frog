@@ -509,17 +509,101 @@ performances) lors de l'apprentissage afin de laisser tourner ce dernier en arri
 
 ### Docker
 
-Nous avons mis en place un environnement docker pour pouvoir faire tourner l'apprentissage dans un container.
+Nous avons mis en place un environnement docker pour pouvoir faire tourner l'apprentissage dans un conteneur.
 Cela nous donne une grande souplesse dans le lancement de nos apprentissages, il suffit juste de changer les avriables
 d'environnement.
 
+La difficulté principale a été de pouvoir faire tourner le jeu dans un conteneur docker, car il faut faire en sorte que
+le jeu se lance en mode `no-graphic` et ne tente pas d'utiliser la librairie `Arcade` afin de ne pas planter...
+
+Nous avons pu ainsi, grâce à un serveur et un script `docker-compose`, lancer plusieurs apprentissages en parallèle sur
+notre serveur.
+
+![](./doc/README-1667740782756.png)
+
+```dockerfile
+FROM python:3.10
+
+RUN apt-get update \
+  && apt-get install -y -qq --no-install-recommends \
+    libxext6 \
+    libx11-6 \
+    libglvnd0 \
+    libgl1 \
+    libglx0 \
+    libegl1 \
+    freeglut3-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+VOLUME /app/save
+
+ENV AGENT_COUNT=5 \
+    AGENT_DEBUG=false \
+    ARCADE_INSIGHTS=true \
+    AGENT_GAMMA=0.1 \
+    AGENT_LEARNING_FILE='save/qtable_l2c4.xz' \
+    AGENT_LEARNING_RATE=0.6 \
+    AGENT_VISIBLE_COLS_ARROUND=4 \
+    AGENT_VISIBLE_LINES_ABOVE=2 \
+    EXPLORE_RATE=-1 \
+    EXPLORE_RATE_DECAY=0.999 \
+    GENERATE_HISTORY_GRAPH=true \
+    HASH_QTABLE=false \
+    LEARNING_MODE=true \
+    LEARNING_TYPE=QLEARNING \
+    LEARNING_TIME=600 \
+    LEARNING_PRINT_STATS_EVERY=60 \
+    LEARNING_SAVE_QTABLE_EVERY=300 \
+    QTABLE_HISTORY_FILE='save/qtable_l2c4.history' \
+    QTABLE_HISTORY_PACKETS=10 \
+    WORLD_TYPE=0
+
+
+CMD [ "python","-u", "./main.py" ]
+```
+
 ## Problèmes rencontrés
+
+Pendant la réalisation de ce projet, nous avons rencontré plusieurs problèmes.
 
 ### Implémentation du jeu
 
+Le premier challenge était de développer le jeu, avec une librairie que nous ne connaissions pas, dans un langage que
+nous avons peu l'habitude d'utiliser.
+
+Nous sommes partis sur un développement en DDD (Domain Driven Design) avec des classes typés, afin de pouvoir facilement
+ajouter de nouvelles fonctionnalités (différents agents d'apprentissage, différents types de monde, différents types
+d'affichage, ...).
+
 ### Apprentissage
 
+Il fallait également mettre au point la façon dont nous allions faire apprendre notre agent, à un moment où nous
+découvrions tout juste le Q-Learning.
+
+Nous avons donc dû faire plusieurs tests pour trouver les bons paramètres, la façon de représenter notre environnement,
+à l'agent... Au début, nous étions frené car nous lassions une trop grosse visibilité à l'agent, ce qui faisait que
+l'apprentissage ne convergait pas.
+
+Nous avons fini par trouver les réglages optimaux après plusieurs éssais.
+
 ### Performances
+
+Nous avons également rencontré des problèmes de performances, notamment lors de l'apprentissage, qui nous ont obligé à
+mettre en place des améliorations de performances.
+
+Nous avons passé plusieurs dizaines d'heures à optimiser notre code, qui était fonctionnel, pour réduire au plus
+possible le nombre d'itérations, de boucles, etc...
+
+Nous avons également fait passer les librairies python au peigne fin pour trouver les méthodes les plus optimisés dans
+certains cas d'utilisation pour traiter des lots plus rapidement.
+Il faut savoir que certaines librairies de python sont plus optimisées que d'autres, notamment pour les opérations
+mathématiques. Certaines sont égalements compilées en C, ce qui les rend plus performantes.
 
 ### Taille des Qtables
 
