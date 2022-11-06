@@ -31,8 +31,8 @@ Ce projet a été réalisé dans le cadre du cours d'apprentissage par renforcem
 ### Objectif
 
 L'objectif est de faire apprendre à un agent à traverser la route et la rivière en évitant les voitures et l'eau.
-Pour cela, nuos allons utiliser l'algorithme `Q-Learning`. L'agent va apprendre à traverser la route et la rivière en
-apprenant à associer une action à un état. L'agent va donc apprendre à associer une action à un état.
+Pour cela, nous allons utiliser l'algorithme `Q-Learning`. L'agent va apprendre à traverser la route et la rivière en
+apprenant à associer une action à un état. L'agent va donc découvrir comment associer une action à un état.
 
 Pour cela, nous allons également devoir développer le jeu Frogger en utilisant la
 librairie [`arcade`](https://api.arcade.academy/en/latest/). Le seul langage
@@ -42,9 +42,53 @@ utilisé est le Python, nous n'utilisons pas de librairie externe mis à part ar
 
 ### Prérequis
 
+- Python 3.10 minimum
+- PIP3
+
+### Installation des dépendances
+
+Après avoir cloné le projet, il faut installer les dépendances avec la commande suivante :
+
+```bash
+pip3 install -r requirements.txt
+```
+
 ## Utilisation
 
 ### Environnement
+
+Avant de lancer le jeu, il faut créer le fichier `.env` à la racine du projet. Ce fichier contient les variables
+d'environnement nécessaires au bon fonctionnement du jeu. Vous pouvez vous baser sur le
+fichier [`.env.example`](./.env.example) pour créer le fichier `.env`.
+
+| Variable                   | Description                                                                                       | Valeur conseillée                          |
+|----------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------|
+| AGENT_COUNT                | Nombre d'agent en simultané sur la carte                                                          | 1-10                                       |
+| AGENT_DEBUG                | Afficher les informations debugs en console des agents (WIN/LOOSE)                                | `false`                                    |
+| ARCADE_INSIGHTS            | Afficher les informations de l'agent sur le jeu `arcade`                                          | `true`                                     |
+| AGENT_GAMMA                | Taux de prise en compte de l'état futur                                                           | 0.1                                        |
+| AGENT_LEARNING_FILE        | Emplacement du fichier qtable                                                                     | qtable/**<nom-du-fichier>**.xz             |
+| AGENT_LEARNING_RATE        | Taux d'apprentissage de l'agent                                                                   | 0.6                                        |
+| AGENT_VISIBLE_COLS_ARROUND | Nombre de colonnes visible autour de l'agent dans son environnement                               | 4-6                                        |
+| AGENT_VISIBLE_LINES_ABOVE  | Nombre de lignes visible devant l'agent dans son environnement                                    | 1-2                                        |
+| EXPLORE_RATE               | Taux d'exploration sur les actions déterminés de l'agent                                          | 0.05-0.1                                   |
+| EXPLORE_RATE_DECAY         | Taux de diminution du taux d'exploration                                                          | 0.999                                      |
+| GENERATE_HISTORY_GRAPH     | Générer le graphique de progression d'apprentissage en même temps que la sauvegarde de la Q-Table | `true`                                     |
+| HASH_QTABLE                | Hash des lignes de l'environnement (permet de diminuer un peu la taille en mémoire)               | `false`                                    |
+| LEARNING_MODE              | Passer en mode apprentissage (console seulement) ou en mode graphique (arcade)                    | `true` pour apprendre un peu, puis `false` |
+| LEARNING_TYPE              | Type d'apprentissage (**QLEARNING**, **MQLEARNING**, **DQLEARNING**)                              | **QLEARNING**-**MQLEARNING**               |
+| LEARNING_TIME              | Temps de l'apprentissage en minute                                                                | 45                                         |
+| LEARNING_PRINT_STATS_EVERY | Afficher en console les stats d'appretissage toute les x secondes                                 | 30-60                                      |
+| LEARNING_SAVE_QTABLE_EVERY | Fréquence de sauvegarde de la Q-Table toute les x secondes (opération lourde)                     | 60-600                                     |
+| QTABLE_HISTORY_FILE        | Emplacement des fichiers d'historique                                                             | history/**<nom-du-fichier>**.history       |
+| QTABLE_HISTORY_PACKETS     | Paquets pour l'historique                                                                         | = au nombre d'agents (1-10)                |
+| WORLD_TYPE                 | Type de monde ( 0 -> Route + Eau, 1 -> Route seulement, 2 -> Eau seulement)                       | 0                                          |
+
+Pour lancer le jeu, il faut lancer la commande suivante :
+
+```bash
+python3 main.py
+```
 
 ## Développement du jeu
 
@@ -314,8 +358,8 @@ class WorldWindow(arcade.Window):
 Pour l'IA, nous avons utilisé 3 méthodes principales :
 
 - Q-Learning
-- Deep Q-Learning
 - Multi-Q-Learning
+- Deep Q-Learning
 
 ### Q-Learning
 
@@ -491,11 +535,61 @@ Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
 ### Deep Q-Learning
 
-#### Implémentation
+Malgré tout nos efforts le problème auquel nous faisons face est un problème qui a un grand nombre de possiblité. Le
+deep Learning permet de s'abstraire de cette contrainte. De faire développer à la machine un instinct qui va lui
+permettre de choisir une action, qui ne dépendera pas du nombre de possibilités.
 
-#### Apprentissage
+Encore une fois la class est sensiblement la même que pour la QTable.
+
+Nous avons utilisé la librairy sklearn dans laquelle nous avons utilisé MLPRegressor.
+
+Nous avons pris le problème de manière que l'objectif soit de maximiser la meilleure decision. Nous avons donc favorisé
+l'utilisation de regression. Ce qui est cohérent avec notre système de récompense.
+
+Nous avons essayé plusieurs modèles :
+Des modèles avec 1, 2 ou 3 couches cachées de neurone.
+Nous avons aussi essayé d'entrainer le modèle avec différente fonction d'activation et différente solver. (RELU, tanh et
+sgd, adam)
+
+Nos résultats les plus probants viennent du modèle le plus simple à entraîner qui est le réseau à une couche de 1000
+neurones avec la fonction d'activation tanh, Le solver sgd (Stochastic Gradient Descent).
+
+Ayant passé beaucoup de temps sur l'apprentissage en Q-Learning, nous avons décidé de ne pas approfondir le Deep
+Q-Learning plus que ça.
+
+Version avec une seule couche cachée :
+
+```python
+self.__mlp = MLPRegressor(
+  hidden_layer_sizes=1000,
+  activation='tanh',
+  solver='sgd',
+  learning_rate_init=self.__alpha,
+  max_iter=1,
+  warm_start=True
+)
+```
+
+Version avec 3 couches cachées :
+
+```python
+self.__mlp = MLPRegressor(
+  hidden_layer_sizes=(1000, 1000, 1000),
+  activation='relu',
+  solver='adam',
+  learning_rate_init=self.__alpha,
+  max_iter=199,
+  warm_start=True
+)
+```
 
 #### Apprentissage avec modèle pré-entrainé (Q-Learning)
+
+Nous avons également tenté de transformer une Q-Table en modèle de Deep Q-Learning. Nous espérions que cela permettrait
+d'accélérer l'apprentissage. Nous avons donc entrainé un modèle avec la Q-Table et nous avons ensuite utilisé ce modèle
+pour entraîner le modèle Deep Q-Learning.
+
+Malheureusement, nous n'avons pas réussi à obtenir de résultats probants avec cette méthode.
 
 ## Apprentissage continu
 
@@ -607,4 +701,31 @@ mathématiques. Certaines sont égalements compilées en C, ce qui les rend plus
 
 ### Taille des Qtables
 
+Nous avons également rencontré des problèmes de taille de Qtable, qui nous ont obligé à mettre en place un système de
+compression des Qtables.
+
+Nous avons pu compresser le nombre d'entrées grâce à un système d'arbre regrouprant les préfixes communs de notre
+Q-table.
+
+Nous avons aussi fait en sorte que la taille de nos caractères représentant nos états soient le plus petit possible,
+afin
+d'utiliser le moins de caractères.
+
+Nous pouvons également activer la hashage de nos états, pour passer d'une ligne de 17 caractères (136 bits) à une ligne
+de 8 caractères (64 bits). Cela nous permet de garder un peu d'espace en mémoire et sur le disque.
+
+Lorsque nous sauvegardons nos Qtables, nous les compressons également (LZMA), afin de réduire leur taille.
+
 ## Conclusion
+
+Au départ, nous ne pensions pas que le sujet allait être si complexe pour un jeu dont les règles sont pourtant simples.
+Le simple fait de passer d'un environnement statique à un environnement stochastique, nous a obligé à repenser la façon
+dont l'agent perçoit son environnement et apprend de ce dernier.
+
+Nous avons également appris à utiliser une nouvelle librairie, et à développer en python.
+
+Ce projet nous a fait nous investir à fond, et nous a permis de découvrir de nouvelles choses.
+
+Nous avons pris plaisir sur la partie optimisation à découvrir comment rendre notre apprentissage encore plus rapide,
+afin d'obtenir des résultats satisfaisant encore plus rapidement. Pour ce faire, nous avons dû tout de même laisser
+tourner l'apprentissage pendant plusieurs jours sur un serveur dédié.
