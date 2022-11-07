@@ -9,6 +9,7 @@ from ai.Model import Model
 from ai.MultiQtable import MultiQtable
 from ai.Qtable import Qtable
 from ai.graph_exporter import extract_history
+from ai.utils import qtable_to_ml_model
 from conf.config import WORLD_WIDTH, WORLD_HEIGHT, WORLD_SCALING, WORLD_LINES
 from conf.dotenv import load_env
 from display.world_window import WorldWindow
@@ -79,11 +80,20 @@ def get_model(env) -> Model:
         return MultiQtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']), env['QTABLE_HISTORY_PACKETS'],
                            env['AGENT_VISIBLE_LINES_ABOVE'])
     elif env['LEARNING_TYPE'] == 'DQLEARNING':
-        return DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
-                          visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
-                          visible_cols_arround=env['AGENT_VISIBLE_COLS_ARROUND'],
-                          agent_width=9,
-                          reward_divisor=WORLD_WIDTH * WORLD_HEIGHT)
+        base_qtable = Qtable(float(env['AGENT_LEARNING_RATE']), float(env['AGENT_GAMMA']),
+                             env['QTABLE_HISTORY_PACKETS'],
+                             env['AGENT_VISIBLE_LINES_ABOVE'])
+        base_qtable.load(env['AGENT_LEARNING_FILE'].replace('dqtable', 'qtable'))
+        ml_model = qtable_to_ml_model(base_qtable)
+
+        deep_qtable = DeepQtable(score_history_packets=env['QTABLE_HISTORY_PACKETS'],
+                                 visible_lines_above=env['AGENT_VISIBLE_LINES_ABOVE'],
+                                 visible_cols_arround=env['AGENT_VISIBLE_COLS_ARROUND'],
+                                 agent_width=9,
+                                 reward_divisor=WORLD_WIDTH * WORLD_HEIGHT)
+        print('Learning model ...')
+        deep_qtable.fit(ml_model)
+        return deep_qtable
     print('Unknown learning type')
     exit(1)
 

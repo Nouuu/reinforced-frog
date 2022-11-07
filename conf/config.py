@@ -30,12 +30,12 @@ WOOD_XL_TOKEN = 'OXL'
 GROUND_TOKEN = 'G'
 EMPTY_TOKEN = ' '
 
-FORBIDDEN_ENTITY_TOKEN = chr(255)
-FORWARD_FORBIDDEN_ENTITY_TOKEN = chr(200)
-BACKWARD_FORBIDDEN_ENTITY_TOKEN = chr(150)
-COMMON_WORLD_TOKEN = chr(0)
-FORWARD_COMMON_TOKEN = chr(50)
-BACKWARD_COMMON_TOKEN = chr(100)
+FORBIDDEN_ENTITY_TOKEN = 'X'
+FORWARD_FORBIDDEN_ENTITY_TOKEN = '>'
+BACKWARD_FORBIDDEN_ENTITY_TOKEN = '<'
+COMMON_WORLD_TOKEN = ' '
+FORWARD_COMMON_TOKEN = 'F'
+BACKWARD_COMMON_TOKEN = 'B'
 
 # ACTIONS
 ACTION_UP = 'U'
@@ -105,30 +105,6 @@ FORBIDDEN_STATES = [WALL_TOKEN, CAR_TOKEN, TRUCK_TOKEN, WATER_TOKEN, REVERSED_CA
 WATER_AUTHORISED_STATES = [TURTLE_TOKEN, TURTLE_L_TOKEN, TURTLE_XL_TOKEN, REVERSED_TURTLE_TOKEN,
                            REVERSED_TURTLE_L_TOKEN, REVERSED_TURTLE_XL_TOKEN, WOOD_TOKEN, WOOD_L_TOKEN, WOOD_XL_TOKEN]
 WIN_STATES = [EXIT_TOKEN]
-
-
-class Rewards:
-    def __init__(self, maze_size: int):
-        self.__rewards = {
-            CAR_TOKEN: -2 * maze_size,
-            TRUCK_TOKEN: -2 * maze_size,
-            EXIT_TOKEN: maze_size,
-            ROAD_TOKEN: REWARD_DEFAULT,
-            START_TOKEN: REWARD_DEFAULT,
-            TURTLE_TOKEN: REWARD_DEFAULT,
-            WALL_TOKEN: -2 * maze_size,
-            WATER_TOKEN: -2 * maze_size,
-            WOOD_TOKEN: REWARD_DEFAULT,
-            GROUND_TOKEN: REWARD_DEFAULT,
-        }
-
-    @property
-    def get_rewards(self):
-        return self.__rewards
-
-    def get_reward(self, token):
-        return self.__rewards[token]
-
 
 # ARCADE
 

@@ -111,6 +111,9 @@ class DeepQtable(Model):
             self.__score_history.append(sum(self.__score_history_temp) / len(self.__score_history_temp))
             self.__score_history_temp = []
 
+    def fit(self, ml_model: ([[float]], [[float]])):
+        self.__mlp.fit(ml_model[0], ml_model[1])
+
     def __increment_step_count(self):
         self.__step_count += 1
 
