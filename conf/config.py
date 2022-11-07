@@ -1,71 +1,114 @@
 # WORLD
+import random
+from typing import Dict, List
+
 import arcade
+
+from display.entity.world_entity import WorldEntity
+from display.entity.world_line import WorldLine
 
 CAR_TOKEN = 'C'
 TRUCK_TOKEN = 'Z'
+TURTLE_TOKEN = 'T'
+TURTLE_L_TOKEN = 'TL'
+TURTLE_XL_TOKEN = 'TXL'
+REVERSED_CAR_TOKEN = 'RC'
+REVERSED_TRUCK_TOKEN = 'RZ'
+REVERSED_TURTLE_TOKEN = 'RT'
+REVERSED_TURTLE_L_TOKEN = 'RTL'
+REVERSED_TURTLE_XL_TOKEN = 'RTXL'
 EXIT_TOKEN = 'E'
 FROG_TOKEN = 'F'
+FROG_IA_TOKEN = 'FIA'
 ROAD_TOKEN = 'R'
 START_TOKEN = 'S'
-TURTLE_TOKEN = 'T'
 WALL_TOKEN = 'X'
 WATER_TOKEN = 'W'
 WOOD_TOKEN = 'O'
+WOOD_L_TOKEN = 'OL'
+WOOD_XL_TOKEN = 'OXL'
 GROUND_TOKEN = 'G'
+EMPTY_TOKEN = ' '
 
-WORLD = """
-XEEEEEX
-XTWOOWX
-XWWOTWX
-XRCRRCX
-XZZRZZX
-XGGSGGX
-"""
+FORBIDDEN_ENTITY_TOKEN = 'X'
+FORWARD_FORBIDDEN_ENTITY_TOKEN = '>'
+BACKWARD_FORBIDDEN_ENTITY_TOKEN = '<'
+COMMON_WORLD_TOKEN = ' '
+FORWARD_COMMON_TOKEN = 'F'
+BACKWARD_COMMON_TOKEN = 'B'
 
 # ACTIONS
 ACTION_UP = 'U'
 ACTION_DOWN = 'D'
 ACTION_LEFT = 'L'
 ACTION_RIGHT = 'R'
-ACTIONS = [ACTION_UP, ACTION_DOWN, ACTION_LEFT, ACTION_RIGHT]
+ACTION_NONE = 'N'
+ACTIONS = [
+    ACTION_UP,
+    ACTION_LEFT,
+    ACTION_RIGHT,
+    ACTION_DOWN,
+    ACTION_NONE
+]
+ACTIONS_INDEX = {
+    ACTION_UP: 0,
+    ACTION_LEFT: 1,
+    ACTION_RIGHT: 2,
+    ACTION_DOWN: 3,
+    ACTION_NONE: 4
+}
 
-ACTION_MOVES = {ACTION_UP: (-1, 0),
-                ACTION_DOWN: (1, 0),
-                ACTION_LEFT: (0, -1),
-                ACTION_RIGHT: (0, 1)}
+ACTION_MOVES = {
+    ACTION_UP: (-1, 0),
+    ACTION_LEFT: (0, -1),
+    ACTION_RIGHT: (0, 1),
+    ACTION_DOWN: (1, 0),
+    ACTION_NONE: (0, 0)
+}
+
+WATER_COMMONS_TOKENS = [TURTLE_TOKEN, TURTLE_L_TOKEN, TURTLE_XL_TOKEN, REVERSED_TURTLE_TOKEN, REVERSED_TURTLE_L_TOKEN,
+                        REVERSED_TURTLE_XL_TOKEN, WOOD_TOKEN, WOOD_L_TOKEN, WOOD_XL_TOKEN]
+
+AGENT_ENVIRONMENT_TOKENS = {
+    CAR_TOKEN: FORWARD_FORBIDDEN_ENTITY_TOKEN,
+    TRUCK_TOKEN: FORWARD_FORBIDDEN_ENTITY_TOKEN,
+    REVERSED_CAR_TOKEN: BACKWARD_FORBIDDEN_ENTITY_TOKEN,
+    REVERSED_TRUCK_TOKEN: BACKWARD_FORBIDDEN_ENTITY_TOKEN,
+    WATER_TOKEN: FORBIDDEN_ENTITY_TOKEN,
+    TURTLE_TOKEN: COMMON_WORLD_TOKEN,
+    TURTLE_L_TOKEN: COMMON_WORLD_TOKEN,
+    TURTLE_XL_TOKEN: COMMON_WORLD_TOKEN,
+    REVERSED_TURTLE_TOKEN: COMMON_WORLD_TOKEN,
+    REVERSED_TURTLE_L_TOKEN: COMMON_WORLD_TOKEN,
+    REVERSED_TURTLE_XL_TOKEN: COMMON_WORLD_TOKEN,
+    ROAD_TOKEN: COMMON_WORLD_TOKEN,
+    WOOD_TOKEN: COMMON_WORLD_TOKEN,
+    WOOD_L_TOKEN: COMMON_WORLD_TOKEN,
+    WOOD_XL_TOKEN: COMMON_WORLD_TOKEN,
+    GROUND_TOKEN: COMMON_WORLD_TOKEN,
+    START_TOKEN: COMMON_WORLD_TOKEN,
+    EXIT_TOKEN: EXIT_TOKEN,
+    WALL_TOKEN: FORBIDDEN_ENTITY_TOKEN,
+    EMPTY_TOKEN: EMPTY_TOKEN
+}
+
+# LINE DIRECTIONS
+
+DIRECTION_LEFT = -1
+DIRECTION_RIGHT = 1
+DIRECTION_NONE = 0
 
 # REWARDS & STATES
 
 REWARD_DEFAULT = -1
-FORBIDDEN_STATES = [WALL_TOKEN, CAR_TOKEN, TRUCK_TOKEN, WATER_TOKEN]
-
-
-class Rewards:
-    def __init__(self, maze_size: int):
-        self.__rewards = {
-            CAR_TOKEN: -2 * maze_size,
-            TRUCK_TOKEN: -2 * maze_size,
-            EXIT_TOKEN: maze_size,
-            ROAD_TOKEN: REWARD_DEFAULT,
-            START_TOKEN: REWARD_DEFAULT,
-            TURTLE_TOKEN: REWARD_DEFAULT,
-            WALL_TOKEN: -2 * maze_size,
-            WATER_TOKEN: -2 * maze_size,
-            WOOD_TOKEN: REWARD_DEFAULT,
-            GROUND_TOKEN: REWARD_DEFAULT,
-        }
-
-    @property
-    def get_rewards(self):
-        return self.__rewards
-
-    def get_reward(self, token):
-        return self.__rewards[token]
-
+FORBIDDEN_STATES = [WALL_TOKEN, CAR_TOKEN, TRUCK_TOKEN, WATER_TOKEN, REVERSED_CAR_TOKEN, REVERSED_TRUCK_TOKEN]
+WATER_AUTHORISED_STATES = [TURTLE_TOKEN, TURTLE_L_TOKEN, TURTLE_XL_TOKEN, REVERSED_TURTLE_TOKEN,
+                           REVERSED_TURTLE_L_TOKEN, REVERSED_TURTLE_XL_TOKEN, WOOD_TOKEN, WOOD_L_TOKEN, WOOD_XL_TOKEN]
+WIN_STATES = [EXIT_TOKEN]
 
 # ARCADE
 
-SCALE = 2
+SCALE = 1
 SPRITE_SIZE = 64 * SCALE
 
 
@@ -77,33 +120,132 @@ def get_sprite_local(name: str, sprite_size: float = 0.5):
     return arcade.Sprite(f"assets/sprite/{name}.png", sprite_size * SCALE)
 
 
-ROAD_SPRITES = [get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)]
-GROUND_SPRITES = [get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)]
-WATER_SPRITES = [get_sprite_resources('tiles/water')]
-EXIT_SPRITES = [get_sprite_local('grass', 2)]
-START_SPRITES = [get_sprite_local('grass', 2)]
-WALL_SPRITES = [get_sprite_resources('tiles/stoneCenter')]
+# WORLD ENTITIES
 
-FROG_SPRITES = [get_sprite_local('frog')]
-CAR_SPRITES = {
-    'SPRITES': [get_sprite_local("car_1"), get_sprite_local("car_2")],
-    'BACKGROUNDS': ROAD_SPRITES
+ENTITIES: Dict[str, WorldEntity] = {
+    CAR_TOKEN: WorldEntity(1, 1, CAR_TOKEN, get_sprite_local("car_1", 0.65)),
+    TRUCK_TOKEN: WorldEntity(2, 1, TRUCK_TOKEN, get_sprite_local("truck", 0.32)),
+    TURTLE_TOKEN: WorldEntity(1, 1, TURTLE_TOKEN, get_sprite_local("turtle", 0.2)),
+    TURTLE_L_TOKEN: WorldEntity(2, 1, TURTLE_L_TOKEN, get_sprite_local("turtle_l", 0.2)),
+    TURTLE_XL_TOKEN: WorldEntity(3, 1, TURTLE_XL_TOKEN, get_sprite_local("turtle_xl", 0.2)),
+    REVERSED_CAR_TOKEN: WorldEntity(1, 1, REVERSED_CAR_TOKEN, get_sprite_local("car_1_reversed", 0.65)),
+    REVERSED_TRUCK_TOKEN: WorldEntity(2, 1, REVERSED_TRUCK_TOKEN, get_sprite_local("truck_reversed", 0.32)),
+    REVERSED_TURTLE_TOKEN: WorldEntity(1, 1, REVERSED_TURTLE_TOKEN, get_sprite_local("turtle_reversed", 0.2)),
+    REVERSED_TURTLE_L_TOKEN: WorldEntity(2, 1, REVERSED_TURTLE_L_TOKEN, get_sprite_local("turtle_l_reversed", 0.2)),
+    REVERSED_TURTLE_XL_TOKEN: WorldEntity(3, 1, REVERSED_TURTLE_XL_TOKEN, get_sprite_local("turtle_xl_reversed", 0.2)),
+    EXIT_TOKEN: WorldEntity(1, 1, EXIT_TOKEN, get_sprite_local('grass', 2)),
+    FROG_TOKEN: WorldEntity(1, 1, FROG_TOKEN, get_sprite_local('frog', 0.12)),
+    FROG_IA_TOKEN: WorldEntity(1, 1, FROG_IA_TOKEN, get_sprite_local('frog_ia', 0.12)),
+    GROUND_TOKEN: WorldEntity(1, 1, GROUND_TOKEN, get_sprite_resources('tiles/stoneCenter')),
+    ROAD_TOKEN: WorldEntity(1, 1, ROAD_TOKEN, get_sprite_resources('topdown_tanks/tileGrass_roadEast', 1)),
+    START_TOKEN: WorldEntity(1, 1, START_TOKEN, get_sprite_local('grass', 2)),
+    WALL_TOKEN: WorldEntity(1, 1, WALL_TOKEN, get_sprite_resources('tiles/stoneCenter')),
+    WATER_TOKEN: WorldEntity(1, 1, WATER_TOKEN, get_sprite_resources('tiles/water')),
+    WOOD_TOKEN: WorldEntity(1, 1, WOOD_TOKEN, get_sprite_local("wood", 0.2)),
+    WOOD_L_TOKEN: WorldEntity(2, 1, WOOD_L_TOKEN, get_sprite_local("wood_l", 0.2)),
+    WOOD_XL_TOKEN: WorldEntity(3, 1, WOOD_XL_TOKEN, get_sprite_local("wood_xl", 0.2)),
 }
 
-TRUCK_SPRITES = {
-    'SPRITES': [{
-        'FRONT': get_sprite_local("truck_head"),
-        'BACK': get_sprite_local("truck_tail"),
-    }],
-    'BACKGROUNDS': ROAD_SPRITES
-}
+# LINE ENTITIES
 
-TURTLE_SPRITES = {
-    'SPRITES': [get_sprite_local("turtle", 0.1)],
-    'BACKGROUNDS': WATER_SPRITES
-}
+ROAD_ENTITIES: List[WorldEntity] = [ENTITIES[TRUCK_TOKEN], ENTITIES[CAR_TOKEN]]
+REVERSED_ROAD_ENTITIES: List[WorldEntity] = [ENTITIES[REVERSED_TRUCK_TOKEN], ENTITIES[REVERSED_CAR_TOKEN]]
+WATER_TUR_ENTITIES: List[WorldEntity] = [ENTITIES[TURTLE_TOKEN], ENTITIES[TURTLE_L_TOKEN], ENTITIES[TURTLE_XL_TOKEN]]
+REVERSED_WATER_TUR_ENTITIES: List[WorldEntity] = [ENTITIES[REVERSED_TURTLE_TOKEN], ENTITIES[REVERSED_TURTLE_L_TOKEN],
+                                                  ENTITIES[REVERSED_TURTLE_XL_TOKEN]]
+WATER_WOOD_ENTITIES: List[WorldEntity] = [ENTITIES[WOOD_TOKEN], ENTITIES[WOOD_L_TOKEN], ENTITIES[WOOD_XL_TOKEN]]
+NO_ENTITIES: List[WorldEntity] = []
 
-WOOD_SPRITES = {
-    'SPRITES': [get_sprite_local("wood", 0.15)],
-    'BACKGROUNDS': WATER_SPRITES
+# WORLD
+
+WORLD_WIDTH = 180
+WORLD_HEIGHT = 117
+WORLD_SCALING = 9
+
+# Random
+random = random.Random()
+# WORLD LINES
+
+WORLD_LINES: [[WorldLine]] = [
+    [
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[EXIT_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.025, ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 1, DIRECTION_LEFT, 0.025, REVERSED_ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.025, ROAD_ENTITIES,
+                  random),
+
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 3, DIRECTION_LEFT, 0.2,
+                  REVERSED_WATER_TUR_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 2, DIRECTION_LEFT, 0.2, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 1, DIRECTION_RIGHT, 0.2, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.025, ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 1, DIRECTION_LEFT, 0.025, REVERSED_ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.025, ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[START_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+    ],
+    [
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[EXIT_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 1, DIRECTION_LEFT, 0.02, REVERSED_ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 1, DIRECTION_LEFT, 0.02, REVERSED_ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 1, DIRECTION_LEFT, 0.02, REVERSED_ROAD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[ROAD_TOKEN], 5, 2, DIRECTION_RIGHT, 0.02, ROAD_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[START_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+    ],
+    [
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[EXIT_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 3, DIRECTION_LEFT, 0.1,
+                  REVERSED_WATER_TUR_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 2, DIRECTION_LEFT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 1, DIRECTION_RIGHT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 3, DIRECTION_LEFT, 0.1,
+                  REVERSED_WATER_TUR_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 2, DIRECTION_LEFT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 1, DIRECTION_RIGHT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[GROUND_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 3, DIRECTION_LEFT, 0.1,
+                  REVERSED_WATER_TUR_ENTITIES, random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 2, DIRECTION_LEFT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[WATER_TOKEN], 3, 1, DIRECTION_RIGHT, 0.1, WATER_WOOD_ENTITIES,
+                  random),
+        WorldLine(WORLD_WIDTH, WORLD_SCALING, ENTITIES[START_TOKEN], 0, 0, DIRECTION_NONE, 0, NO_ENTITIES, random),
+    ],
+]
+
+WORLD_ENTITIES = {
+    (13, 18): ENTITIES[TURTLE_TOKEN],
+    (13, 30): ENTITIES[TURTLE_TOKEN],
+    (13, 50): ENTITIES[WOOD_TOKEN],
+    (13, 59): ENTITIES[WOOD_TOKEN],
+    (31, 4): ENTITIES[TRUCK_TOKEN],
+    (31, 15): ENTITIES[CAR_TOKEN],
+    (31, 24): ENTITIES[CAR_TOKEN],
+    (31, 60): ENTITIES[REVERSED_CAR_TOKEN],
+    (40, 20): ENTITIES[TRUCK_TOKEN],
+    (40, 70): ENTITIES[CAR_TOKEN],
+    (49, 50): ENTITIES[CAR_TOKEN],
 }

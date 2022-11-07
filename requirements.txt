@@ -1,1 +1,7 @@
 arcade
+xxhash
+refurb
+keyboard
+python-dotenv
+matplotlib
+scikit-learn
