@@ -405,9 +405,9 @@ Nous avoisinons un taux de réussite plus haut (~95%) avec une ligne visible dev
 Cependant, nous avont remarqué que les mouvements de la grenouille étaient plus fluides avec 2 lignes visibles, car une
 meilleure anticipation.
 
-![QLEARNING_L1_C4.history.png](./doc/README-1667746193714.png)
+![QLEARNING_L1_C4.history.png](./doc/README-1667822505680.png)
 
-![QLEARNING_L2_C4.history.png](./doc/README-1667746190518.png)
+![QLEARNING_L2_C4.history.png](./doc/README-1667822509813.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
@@ -523,13 +523,13 @@ Les résultats les plus convaincants ont été obetnus avec les paramètres suiv
 - `EXPLORE_RATE = 0.1`
 - `EXPLORE_RATE_DECAY = 0.9999`
 
-![MQLEARNING_L1_C4.history.png](./doc/README-1667736263139.png)
+![MQLEARNING_L1_C4.history.png](./doc/README-1667822563608.png)
 
-![MQLEARNING_L1_C6.history.png](./doc/README-1667736265073.png)
+![MQLEARNING_L1_C6.history.png](./doc/README-1667822565660.png)
 
-![MQLEARNING_L2_C4.history.png](./doc/README-1667736266885.png)
+![MQLEARNING_L2_C4.history.png](./doc/README-1667822567202.png)
 
-![MQLEARNING_L2_C6.history.png](./doc/README-1667736268641.png)
+![MQLEARNING_L2_C6.history.png](./doc/README-1667822568743.png)
 
 Les pics sont dûs au rechargement du taux d'exploration (1x par heure)
 
